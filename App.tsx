@@ -5,8 +5,9 @@
  * @format
  */
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, {useState} from 'react';
+// import MapView, {Marker} from 'react-native-maps';
+
 import {
   SafeAreaView,
   ScrollView,
@@ -17,102 +18,49 @@ import {
   View,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import usePermissions from './src/hooks/usePermissions';
+import WatchPosition from './src/components/WatchPosition';
+import GetCurrentLocationExample from './src/components/GetCurrentLocation';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+/*
+  Internet connection is required to load the map.
+  https://www.npmjs.com/package/@react-native-community/netinfo
+  
+  Enable location from the application itself:
+  https://www.npmjs.com/package/react-native-android-location-enabler
+*/
 
-function Section({children, title}: SectionProps): React.JSX.Element {
+function App() {
   const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const {arePermissionsApproved} = usePermissions();
+  const [location, setLocation] = useState({
+    latitude: 26.63269143,
+    longitude: 93.6035072,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
+    <SafeAreaView>
+      <View
+        style={{
+          backgroundColor: isDarkMode ? Colors.black : Colors.white,
+          height: '100%',
+          width: '100%',
+        }}>
+        <WatchPosition />
+        <GetCurrentLocationExample
+          location={location}
+          setLocation={setLocation}
+        />
+      </View>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;
