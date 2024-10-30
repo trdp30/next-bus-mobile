@@ -6,7 +6,7 @@
  */
 
 import React, {useState} from 'react';
-// import MapView, {Marker} from 'react-native-maps';
+import MapView, {Marker} from 'react-native-maps';
 
 import {
   SafeAreaView,
@@ -58,6 +58,27 @@ function App() {
           location={location}
           setLocation={setLocation}
         />
+        <MapView
+          style={{flex: 1}}
+          initialRegion={{
+            latitude: location?.latitude,
+            longitude: location?.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+          provider="google"
+          onMapReady={() => {
+            console.log('Map ready');
+          }}>
+          <Marker
+            coordinate={{
+              latitude: location?.latitude,
+              longitude: location?.longitude,
+            }}
+            title={'Current Location'}
+            description={'Current Location'}
+          />
+        </MapView>
       </View>
     </SafeAreaView>
   );
