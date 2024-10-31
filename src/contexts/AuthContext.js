@@ -48,6 +48,8 @@ function AuthProvider(props) {
           toggleAuthenticated(false);
           toggleAuthenticating(false);
         });
+    } else {
+      toggleAuthenticated(false);
     }
   }, [user]);
 
