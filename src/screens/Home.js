@@ -22,6 +22,7 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import usePermissions from '../hooks/usePermissions';
 import WatchPosition from '../components/WatchPosition';
 import GetCurrentLocationExample from '../components/GetCurrentLocation';
+import LogoutButton from '../components/LogoutButton';
 
 /*
   Internet connection is required to load the map.
@@ -79,6 +80,7 @@ function Home() {
             description={'Current Location'}
           />
         </MapView>
+        <LogoutButton />
       </View>
     </SafeAreaView>
   );

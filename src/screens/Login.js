@@ -3,13 +3,12 @@ import {View, Text, StyleSheet} from 'react-native';
 import {AuthContext} from '../contexts/AuthContext';
 import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
 
-const Login = ({navigation}) => {
+const Login = () => {
   const {signInWithGoogle, isAuthenticating} = useContext(AuthContext);
 
   const handleGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
-      navigation.navigate('Home');
     } catch (error) {
       console.error(error);
     }
