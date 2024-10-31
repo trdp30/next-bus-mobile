@@ -4,10 +4,12 @@ import React, {
   createContext,
   useCallback,
   useMemo,
+  useLayoutEffect,
 } from 'react';
 import {Text} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {initializeGoogleSignIn, signInWithGoogle} from '../utils/googleSignIn';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 initializeGoogleSignIn();
 
@@ -27,11 +29,9 @@ function AuthProvider(props) {
   const onAuthStateChanged = useCallback(
     data => {
       setUser(data);
-      if (isAuthenticating) {
-        toggleAuthenticating(prev => !prev);
-      }
+      toggleAuthenticating(false);
     },
-    [toggleAuthenticating, isAuthenticating, setUser],
+    [toggleAuthenticating, setUser],
   );
 
   useEffect(() => {
@@ -40,8 +40,15 @@ function AuthProvider(props) {
     // Todo: Have to handle unsubscribe logic
   }, [onAuthStateChanged]);
 
-  useEffect(() => {
-    toggleAuthenticated(!!user);
+  useLayoutEffect(() => {
+    if (user) {
+      GoogleSignin.getTokens()
+        .then(() => toggleAuthenticated(true))
+        .catch(() => {
+          toggleAuthenticated(false);
+          toggleAuthenticating(false);
+        });
+    }
   }, [user]);
 
   const signInAnonymously = () => {
