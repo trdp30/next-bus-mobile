@@ -1,12 +1,15 @@
 import React from 'react';
 import Navigation from './navigations';
 import {NativeBaseProvider} from 'native-base';
+import AuthProvider from './contexts/AuthContext';
 
 function Root() {
   return (
-    <NativeBaseProvider>
-      <Navigation />
-    </NativeBaseProvider>
+    <AuthProvider>
+      <NativeBaseProvider>
+        <Navigation />
+      </NativeBaseProvider>
+    </AuthProvider>
   );
 }
 

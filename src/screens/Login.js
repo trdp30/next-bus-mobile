@@ -1,22 +1,15 @@
-import React, {useState, useEffect} from 'react';
+import React, {useContext} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-// import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import {Button} from 'native-base';
+import {AuthContext} from '../contexts/AuthContext';
+import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
 
 const Login = ({navigation}) => {
-  // useEffect(() => {
-  //   GoogleSignin.configure({
-  //     // Your Google Cloud Platform configuration here
-  //   });
-  // }, []);
+  const {signInWithGoogle, isAuthenticating} = useContext(AuthContext);
 
   const handleGoogleSignIn = async () => {
     try {
+      await signInWithGoogle();
       navigation.navigate('Home');
-      //   await GoogleSignin.signIn();
-      //   const currentUser = await GoogleSignin.getCurrentUser();
-      //   console.log(currentUser);
-      // Handle user information and navigation to the next screen
     } catch (error) {
       console.error(error);
     }
@@ -25,7 +18,12 @@ const Login = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome</Text>
-      <Button onPress={handleGoogleSignIn}>Sign in with Google</Button>
+      <GoogleSigninButton
+        size={GoogleSigninButton.Size.Wide}
+        color={GoogleSigninButton.Color.Dark}
+        onPress={handleGoogleSignIn}
+        disabled={isAuthenticating}
+      />
     </View>
   );
 };
