@@ -8,6 +8,7 @@ const initialState = {
   tracker: null,
   owner: null,
   vehicle: null,
+  role: null,
 };
 
 export const sessionSlice = createSlice({
@@ -32,6 +33,10 @@ export const sessionSlice = createSlice({
     setVehicle: (state, action) => {
       state.vehicle = action?.payload;
     },
+    getCurrentUserLoaded: () => {},
+    storeUserRole: (state, action) => {
+      state.role = action.payload;
+    },
   },
   extraReducers: builder => {
     builder.addMatcher(
@@ -51,6 +56,8 @@ export const {
   setOwner,
   setTracker,
   setVehicle,
+  getCurrentUserLoaded,
+  storeUserRole,
 } = sessionSlice.actions;
 
 export default sessionSlice.reducer;

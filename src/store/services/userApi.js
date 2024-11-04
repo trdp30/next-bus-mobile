@@ -1,5 +1,6 @@
 import {createApi} from '@reduxjs/toolkit/query/react';
 import baseQuery from './baseQuery';
+import {getCurrentUserLoaded} from '../slices/session';
 
 export const userApi = createApi({
   reducerPath: 'userApi',
@@ -10,6 +11,12 @@ export const userApi = createApi({
       query: () => 'user/me',
       providesTags: result =>
         result ? [{type: 'Users', id: result?._id}] : ['Users'],
+      onQueryStarted: async (id, {dispatch, queryFulfilled}) => {
+        const {data} = await queryFulfilled;
+        if (data) {
+          dispatch(getCurrentUserLoaded(data));
+        }
+      },
     }),
     getUserById: build.query({
       query: userId => `user/${userId}`,
