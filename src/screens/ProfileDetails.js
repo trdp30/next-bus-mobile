@@ -1,20 +1,10 @@
 import React from 'react';
 import Profile from '../components/Profile';
-import {gql, useQuery} from '@apollo/client';
-
-const GET_USERS = gql`
-  query MyQuery {
-    owners {
-      id
-    }
-  }
-`;
+import {useGetCurrentUserQuery} from '../store/services/userApi';
 
 const ProfileDetails = () => {
-  const {loading, error, data} = useQuery(GET_USERS);
-  console.log('loading, error, data', loading, error, data);
-
-  return <Profile />;
+  const {data, isFetching, isLoading, error} = useGetCurrentUserQuery();
+  return <Profile data={data} />;
 };
 
 export default ProfileDetails;

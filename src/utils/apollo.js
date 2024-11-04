@@ -29,11 +29,11 @@ const retryLink = new RetryLink({
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: Config.API_SUBSCRIPTION_ROOT + '/graphql',
+    url: Config.GRAPHQL_API_SUBSCRIPTION_ROOT + '/graphql',
   }),
 );
 
-const httpLink = new HttpLink({uri: Config.API_ROOT + '/graphql'});
+const httpLink = new HttpLink({uri: Config.GRAPHQL_API_ROOT + '/graphql'});
 
 const splitLink = split(
   ({query}) => {

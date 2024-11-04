@@ -1,16 +1,23 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
+import LogoutButton from './LogoutButton';
 
-const Profile = () => {
+const Profile = ({data}) => {
   const user = {
-    name: 'Test user',
-    email: 'test@gmail.com',
+    name: data?.name,
+    email: data?.email,
+    avatarUrl: data?.profile_pic,
   };
   return (
     <View style={styles.container}>
-      {/* <Image style={styles.avatar} source={{ uri: user.avatarUrl }} /> */}
+      {user.avatarUrl ? (
+        <Image style={styles.avatar} source={{uri: user.avatarUrl}} />
+      ) : (
+        <></>
+      )}
       <Text style={styles.name}>{user.name}</Text>
       <Text style={styles.email}>{user.email}</Text>
+      <LogoutButton />
       {/* Add more details as needed */}
     </View>
   );

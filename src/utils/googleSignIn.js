@@ -9,6 +9,7 @@ export const initializeGoogleSignIn = () => {
   GoogleSignin.configure({
     webClientId:
       '416876094817-4fhho62899cgsk9s87dkdsa2olbgvu0v.apps.googleusercontent.com',
+    // webClientId: 'autoDetect',
   });
 };
 
