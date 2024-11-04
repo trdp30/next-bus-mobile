@@ -15,8 +15,8 @@ function Navigation() {
       <Stack.Navigator>
         {isAuthenticated ? (
           <>
-            <Stack.Screen name="ProfileDetails" component={ProfileDetails} />
             <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="ProfileDetails" component={ProfileDetails} />
           </>
         ) : (
           <Stack.Screen name="Login" component={Login} />

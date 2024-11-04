@@ -23,6 +23,8 @@ import usePermissions from '../hooks/usePermissions';
 import WatchPosition from '../components/WatchPosition';
 import GetCurrentLocationExample from '../components/GetCurrentLocation';
 import LogoutButton from '../components/LogoutButton';
+import {useSelector} from 'react-redux';
+import {selectUser} from '../store/selectors/session.selector';
 
 /*
   Internet connection is required to load the map.
@@ -34,6 +36,7 @@ import LogoutButton from '../components/LogoutButton';
 
 function Home() {
   const isDarkMode = useColorScheme() === 'dark';
+  const user = useSelector(selectUser);
   const {arePermissionsApproved} = usePermissions();
   const [location, setLocation] = useState({
     latitude: 26.63269143,

@@ -1,5 +1,5 @@
 import React from 'react';
-import Navigation from './navigations';
+import Navigation from './navigation';
 import {NativeBaseProvider} from 'native-base';
 import AuthProvider from './contexts/AuthContext';
 import {ApolloProvider} from '@apollo/client';
