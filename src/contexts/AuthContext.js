@@ -10,8 +10,9 @@ import {Text} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {initializeGoogleSignIn, signInWithGoogle} from '../utils/googleSignIn';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {authenticated} from '../store/slices/session';
+import { selectFbUser, selectUser } from '../store/selectors/session.selector';
 
 initializeGoogleSignIn();
 
@@ -26,6 +27,8 @@ function AuthProvider(props) {
   const [isAuthenticated, toggleAuthenticated] = useState(false);
   const [isAuthenticating, toggleAuthenticating] = useState(false);
   const [user, setUser] = useState();
+  const currentUser = useSelector(selectUser);
+  const fbUser = useSelector(selectFbUser);
   const dispatch = useDispatch();
 
   // Handle user state changes
@@ -103,13 +106,14 @@ function AuthProvider(props) {
     return {
       isAuthenticated,
       isAuthenticating,
-      user,
+      user: currentUser,
+      fbUser: fbUser,
       signInAnonymously,
       signInWithEmailPassword,
       signOut,
       signInWithGoogle,
     };
-  }, [isAuthenticated, isAuthenticating, user]);
+  }, [isAuthenticated, isAuthenticating, currentUser, fbUser]);
 
   if (isAuthenticating) {
     return <Text>Authenticating...</Text>;

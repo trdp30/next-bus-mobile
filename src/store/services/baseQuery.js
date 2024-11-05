@@ -16,6 +16,10 @@ export const restApiBaseQuery = fetchBaseQuery({
   prepareHeaders,
 });
 
+export const googlePlaceApiBaseQuery = fetchBaseQuery({
+  baseUrl: `${Config.GOOGLE_PLACE_API_ROOT}/${Config.GOOGLE_PLACE_API_VERSION}`,
+});
+
 export const baseQuery = async (args, api, extraOptions) => {
   let response;
 
