@@ -6,18 +6,21 @@ import {ApolloProvider} from '@apollo/client';
 import client from './utils/apollo';
 import {Provider} from 'react-redux';
 import {store} from './store';
+import {LocationProvider} from './contexts/LocationContext';
 
 function Root() {
   return (
-    <Provider store={store}>
-      <ApolloProvider client={client}>
-        <AuthProvider>
-          <NativeBaseProvider>
-            <Navigation />
-          </NativeBaseProvider>
-        </AuthProvider>
-      </ApolloProvider>
-    </Provider>
+    <LocationProvider>
+      <Provider store={store}>
+        <ApolloProvider client={client}>
+          <AuthProvider>
+            <NativeBaseProvider>
+              <Navigation />
+            </NativeBaseProvider>
+          </AuthProvider>
+        </ApolloProvider>
+      </Provider>
+    </LocationProvider>
   );
 }
 
