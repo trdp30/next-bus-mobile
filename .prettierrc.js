@@ -6,4 +6,6 @@ module.exports = {
   trailingComma: 'all',
   indent_style: 'tab',
   indent_size: 2,
+  plugins: ['prettier-plugin-tailwindcss'],
+  tailwindFunctions: ['tva'],
 };

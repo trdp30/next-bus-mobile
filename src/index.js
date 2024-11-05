@@ -1,6 +1,8 @@
 import React from 'react';
 import Navigation from './navigation';
-// import {NativeBaseProvider} from 'native-base';
+import '../global.css';
+import {GluestackUIProvider} from '@/src/components/ui/gluestack-ui-provider';
+
 import AuthProvider from './contexts/AuthContext';
 import {ApolloProvider} from '@apollo/client';
 import client from './utils/apollo';
@@ -14,9 +16,9 @@ function Root() {
       <Provider store={store}>
         <ApolloProvider client={client}>
           <AuthProvider>
-            {/* <NativeBaseProvider> */}
-            <Navigation />
-            {/* </NativeBaseProvider> */}
+            <GluestackUIProvider mode="light">
+              <Navigation />
+            </GluestackUIProvider>
           </AuthProvider>
         </ApolloProvider>
       </Provider>
