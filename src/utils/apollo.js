@@ -80,7 +80,11 @@ const errorLink = onError(({operation, graphQLErrors, networkError}) => {
     );
   }
   if (networkError) {
-    catchError({title: 'Network error', error: networkError, skipToast: true});
+    catchError({
+      title: 'Network error',
+      error: networkError,
+      skipToast: true,
+    });
   }
 });
 

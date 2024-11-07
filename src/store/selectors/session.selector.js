@@ -6,3 +6,19 @@ export const selectFbUser = createSelector(
   selectSession,
   state => state.fbUser,
 );
+export const selectDriver = createSelector(
+  selectSession,
+  state => state.driver,
+);
+
+export const selectOwner = createSelector(selectSession, state => state.owner);
+
+export const selectTracker = createSelector(
+  selectSession,
+  state => state.tracker,
+);
+
+export const selectVehicle = createSelector(
+  selectSession,
+  state => state.vehicle,
+);

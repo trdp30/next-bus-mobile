@@ -1,14 +1,15 @@
-import React from 'react';
-import Navigation from './navigation';
-import '../global.css';
 import {GluestackUIProvider} from '@/src/components/ui/gluestack-ui-provider';
+import React from 'react';
+import '../global.css';
+import Navigation from './navigation';
 
-import AuthProvider from './contexts/AuthContext';
 import {ApolloProvider} from '@apollo/client';
-import client from './utils/apollo';
 import {Provider} from 'react-redux';
-import {store} from './store';
+import {ApplicationProvider} from './contexts/ApplicationContext';
+import AuthProvider from './contexts/AuthContext';
 import {LocationProvider} from './contexts/LocationContext';
+import {store} from './store';
+import client from './utils/apollo';
 
 function Root() {
   return (
@@ -16,9 +17,11 @@ function Root() {
       <Provider store={store}>
         <ApolloProvider client={client}>
           <AuthProvider>
-            <GluestackUIProvider mode="light">
-              <Navigation />
-            </GluestackUIProvider>
+            <ApplicationProvider>
+              <GluestackUIProvider mode="light">
+                <Navigation />
+              </GluestackUIProvider>
+            </ApplicationProvider>
           </AuthProvider>
         </ApolloProvider>
       </Provider>

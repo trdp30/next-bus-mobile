@@ -1,3 +1,29 @@
 {
-  "cSpell.words": ["Signin"]
+  "cSpell.words": [
+    "Signin"
+  ],
+  "editor.tabSize": 2,
+  "files.exclude": {
+    "**/node_modules": true
+  },
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always",
+    "source.organizeImports": "always",
+    "source.fixAll.tslint": "always",
+    "source.fixAll.stylelint": "always",
+    "source.fixAll.javascript": "always",
+    "source.fixAll.javascriptreact": "always",
+    "source.fixAll.typescript": "always",
+    "source.fixAll.typescriptreact": "always",
+    "source.fixAll.json": "always",
+    "source.fixAll.css": "always",
+    "source.fixAll.html": "always",
+    "source.fixAll.yaml": "always",
+    "source.fixAll.graphql": "always",
+    "source.fixAll.markdown": "always",
+  },
+  "editor.codeLensFontSize": 12,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.foldingImportsByDefault": false
 }

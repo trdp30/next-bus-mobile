@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
-import { createIcon } from '@gluestack-ui/icon';
-import { tva } from '@gluestack-ui/nativewind-utils/tva';
-import { VariantProps } from '@gluestack-ui/nativewind-utils';
+import React, {useMemo} from 'react';
+import {createIcon} from '@gluestack-ui/icon';
+import {tva} from '@gluestack-ui/nativewind-utils/tva';
+import {VariantProps} from '@gluestack-ui/nativewind-utils';
 
 const accessClassName = (style: any) => {
   const obj = style[0];
@@ -12,7 +12,7 @@ const accessClassName = (style: any) => {
 const Svg = React.forwardRef<
   React.ElementRef<'svg'>,
   React.ComponentPropsWithoutRef<'svg'>
->(({ style, className, ...props }, ref) => {
+>(({style, className, ...props}, ref) => {
   const calculateClassName = useMemo(() => {
     return className === undefined ? accessClassName(style) : className;
   }, [className, style]);
@@ -48,25 +48,25 @@ const PrimitiveIcon = React.forwardRef<
       as: AsComp,
       ...props
     },
-    ref
+    ref,
   ) => {
     color = color ?? classNameColor;
     const sizeProps = useMemo(() => {
-      if (size) return { size };
-      if (height && width) return { height, width };
-      if (height) return { height };
-      if (width) return { width };
+      if (size) return {size};
+      if (height && width) return {height, width};
+      if (height) return {height};
+      if (width) return {width};
       return {};
     }, [size, height, width]);
 
     let colorProps = {};
     if (fill) {
-      colorProps = { ...colorProps, fill: fill };
+      colorProps = {...colorProps, fill: fill};
     }
     if (stroke !== 'currentColor') {
-      colorProps = { ...colorProps, stroke: stroke };
+      colorProps = {...colorProps, stroke: stroke};
     } else if (stroke === 'currentColor' && color !== undefined) {
-      colorProps = { ...colorProps, stroke: color };
+      colorProps = {...colorProps, stroke: color};
     }
 
     if (AsComp) {
@@ -75,7 +75,7 @@ const PrimitiveIcon = React.forwardRef<
     return (
       <Svg ref={ref} height={height} width={width} {...colorProps} {...props} />
     );
-  }
+  },
 );
 
 export const UIIcon = createIcon({
@@ -87,11 +87,11 @@ const iconStyle = tva({
   variants: {
     size: {
       '2xs': 'h-3 w-3',
-      'xs': 'h-3.5 w-3.5',
-      'sm': 'h-4 w-4',
-      'md': 'h-[18px] w-[18px]',
-      'lg': 'h-5 w-5',
-      'xl': 'h-6 w-6',
+      xs: 'h-3.5 w-3.5',
+      sm: 'h-4 w-4',
+      md: 'h-[18px] w-[18px]',
+      lg: 'h-5 w-5',
+      xl: 'h-6 w-6',
     },
   },
 });
@@ -103,13 +103,13 @@ export const Icon = React.forwardRef<
       height?: number | string;
       width?: number | string;
     }
->(({ size = 'md', className, ...props }, ref) => {
+>(({size = 'md', className, ...props}, ref) => {
   if (typeof size === 'number') {
     return (
       <UIIcon
         ref={ref}
         {...props}
-        className={iconStyle({ class: className })}
+        className={iconStyle({class: className})}
         size={size}
       />
     );
@@ -118,26 +118,22 @@ export const Icon = React.forwardRef<
     size === undefined
   ) {
     return (
-      <UIIcon
-        ref={ref}
-        {...props}
-        className={iconStyle({ class: className })}
-      />
+      <UIIcon ref={ref} {...props} className={iconStyle({class: className})} />
     );
   }
   return (
     <UIIcon
       ref={ref}
       {...props}
-      className={iconStyle({ size, class: className })}
+      className={iconStyle({size, class: className})}
     />
   );
 });
 
 type ParameterTypes = Omit<Parameters<typeof createIcon>[0], 'Root'>;
 
-const createIconUI = ({ ...props }: ParameterTypes) => {
-  const UIIcon = createIcon({ Root: Svg, ...props });
+const createIconUI = ({...props}: ParameterTypes) => {
+  const UIIcon = createIcon({Root: Svg, ...props});
 
   return React.forwardRef<
     React.ElementRef<typeof UIIcon>,
@@ -146,17 +142,17 @@ const createIconUI = ({ ...props }: ParameterTypes) => {
         height?: number | string;
         width?: number | string;
       }
-  >(({ className, size, ...props }, ref) => {
+  >(({className, size, ...props}, ref) => {
     return (
       <UIIcon
         ref={ref}
         {...props}
-        className={iconStyle({ size, class: className })}
+        className={iconStyle({size, class: className})}
       />
     );
   });
 };
-export { createIconUI as createIcon };
+export {createIconUI as createIcon};
 
 // All Icons
 const AddIcon = createIcon({
@@ -181,7 +177,7 @@ const AddIcon = createIcon({
 });
 
 AddIcon.displayName = 'AddIcon';
-export { AddIcon };
+export {AddIcon};
 
 const AlertCircleIcon = createIcon({
   Root: Svg,
@@ -211,7 +207,7 @@ const AlertCircleIcon = createIcon({
 });
 
 AlertCircleIcon.displayName = 'AlertCircleIcon';
-export { AlertCircleIcon };
+export {AlertCircleIcon};
 
 const ArrowUpIcon = createIcon({
   Root: Svg,
@@ -304,7 +300,7 @@ ArrowDownIcon.displayName = 'ArrowDownIcon';
 ArrowRightIcon.displayName = 'ArrowRightIcon';
 ArrowLeftIcon.displayName = 'ArrowLeftIcon';
 
-export { ArrowUpIcon, ArrowDownIcon, ArrowRightIcon, ArrowLeftIcon };
+export {ArrowUpIcon, ArrowDownIcon, ArrowRightIcon, ArrowLeftIcon};
 
 const AtSignIcon = createIcon({
   Root: Svg,
@@ -331,7 +327,7 @@ const AtSignIcon = createIcon({
 
 AtSignIcon.displayName = 'AtSignIcon';
 
-export { AtSignIcon };
+export {AtSignIcon};
 
 const BellIcon = createIcon({
   Root: Svg,
@@ -356,7 +352,7 @@ const BellIcon = createIcon({
 
 BellIcon.displayName = 'BellIcon';
 
-export { BellIcon };
+export {BellIcon};
 
 const CalendarDaysIcon = createIcon({
   Root: Svg,
@@ -429,7 +425,7 @@ const CalendarDaysIcon = createIcon({
 
 CalendarDaysIcon.displayName = 'CalendarDaysIcon';
 
-export { CalendarDaysIcon };
+export {CalendarDaysIcon};
 
 const CheckIcon = createIcon({
   Root: Svg,
@@ -470,7 +466,7 @@ const CheckCircleIcon = createIcon({
 CheckIcon.displayName = 'CheckIcon';
 CheckCircleIcon.displayName = 'CheckCircleIcon';
 
-export { CheckIcon, CheckCircleIcon };
+export {CheckIcon, CheckCircleIcon};
 
 const ChevronUpIcon = createIcon({
   Root: Svg,
@@ -634,7 +630,7 @@ const CircleIcon = createIcon({
 });
 
 CircleIcon.displayName = 'CircleIcon';
-export { CircleIcon };
+export {CircleIcon};
 
 const ClockIcon = createIcon({
   Root: Svg,
@@ -659,7 +655,7 @@ const ClockIcon = createIcon({
 
 ClockIcon.displayName = 'ClockIcon';
 
-export { ClockIcon };
+export {ClockIcon};
 
 const CloseIcon = createIcon({
   Root: Svg,
@@ -712,7 +708,7 @@ const CloseCircleIcon = createIcon({
 CloseIcon.displayName = 'CloseIcon';
 CloseCircleIcon.displayName = 'CloseCircleIcon';
 
-export { CloseIcon, CloseCircleIcon };
+export {CloseIcon, CloseCircleIcon};
 
 const CopyIcon = createIcon({
   Root: Svg,
@@ -737,7 +733,7 @@ const CopyIcon = createIcon({
 
 CopyIcon.displayName = 'CopyIcon';
 
-export { CopyIcon };
+export {CopyIcon};
 
 const DownloadIcon = createIcon({
   Root: Svg,
@@ -767,7 +763,7 @@ const DownloadIcon = createIcon({
 });
 
 DownloadIcon.displayName = 'DownloadIcon';
-export { DownloadIcon };
+export {DownloadIcon};
 
 const EditIcon = createIcon({
   Root: Svg,
@@ -791,7 +787,7 @@ const EditIcon = createIcon({
 });
 
 EditIcon.displayName = 'EditIcon';
-export { EditIcon };
+export {EditIcon};
 
 const EyeIcon = createIcon({
   Root: Svg,
@@ -850,7 +846,7 @@ const EyeOffIcon = createIcon({
 });
 
 EyeOffIcon.displayName = 'EyeOffIcon';
-export { EyeIcon, EyeOffIcon };
+export {EyeIcon, EyeOffIcon};
 
 const FavouriteIcon = createIcon({
   Root: Svg,
@@ -868,7 +864,7 @@ const FavouriteIcon = createIcon({
 });
 
 FavouriteIcon.displayName = 'FavouriteIcon';
-export { FavouriteIcon };
+export {FavouriteIcon};
 
 const GlobeIcon = createIcon({
   Root: Svg,
@@ -898,7 +894,7 @@ const GlobeIcon = createIcon({
 });
 
 GlobeIcon.displayName = 'GlobeIcon';
-export { GlobeIcon };
+export {GlobeIcon};
 
 const GripVerticalIcon = createIcon({
   Root: Svg,
@@ -946,7 +942,7 @@ const GripVerticalIcon = createIcon({
 });
 
 GripVerticalIcon.displayName = 'GripVerticalIcon';
-export { GripVerticalIcon };
+export {GripVerticalIcon};
 
 const HelpCircleIcon = createIcon({
   Root: Svg,
@@ -976,7 +972,7 @@ const HelpCircleIcon = createIcon({
 });
 
 HelpCircleIcon.displayName = 'HelpCircleIcon';
-export { HelpCircleIcon };
+export {HelpCircleIcon};
 
 const InfoIcon = createIcon({
   Root: Svg,
@@ -1006,7 +1002,7 @@ const InfoIcon = createIcon({
 });
 
 InfoIcon.displayName = 'InfoIcon';
-export { InfoIcon };
+export {InfoIcon};
 
 const LinkIcon = createIcon({
   Root: Svg,
@@ -1059,7 +1055,7 @@ const ExternalLinkIcon = createIcon({
 });
 
 ExternalLinkIcon.displayName = 'ExternalLinkIcon';
-export { LinkIcon, ExternalLinkIcon };
+export {LinkIcon, ExternalLinkIcon};
 
 const LoaderIcon = createIcon({
   Root: Svg,
@@ -1077,7 +1073,7 @@ const LoaderIcon = createIcon({
 });
 
 LoaderIcon.displayName = 'LoaderIcon';
-export { LoaderIcon };
+export {LoaderIcon};
 
 const LockIcon = createIcon({
   Root: Svg,
@@ -1101,7 +1097,7 @@ const LockIcon = createIcon({
 });
 
 LockIcon.displayName = 'LockIcon';
-export { LockIcon };
+export {LockIcon};
 
 const MailIcon = createIcon({
   Root: Svg,
@@ -1125,7 +1121,7 @@ const MailIcon = createIcon({
 });
 
 MailIcon.displayName = 'MailIcon';
-export { MailIcon };
+export {MailIcon};
 
 const MenuIcon = createIcon({
   Root: Svg,
@@ -1155,7 +1151,7 @@ const MenuIcon = createIcon({
 });
 
 MenuIcon.displayName = 'MenuIcon';
-export { MenuIcon };
+export {MenuIcon};
 
 const MessageCircleIcon = createIcon({
   Root: Svg,
@@ -1174,7 +1170,7 @@ const MessageCircleIcon = createIcon({
 
 MessageCircleIcon.displayName = 'MessageCircleIcon';
 
-export { MessageCircleIcon };
+export {MessageCircleIcon};
 
 const MoonIcon = createIcon({
   Root: Svg,
@@ -1192,7 +1188,7 @@ const MoonIcon = createIcon({
 });
 
 MoonIcon.displayName = 'MoonIcon';
-export { MoonIcon };
+export {MoonIcon};
 
 const PaperclipIcon = createIcon({
   Root: Svg,
@@ -1210,7 +1206,7 @@ const PaperclipIcon = createIcon({
 });
 
 PaperclipIcon.displayName = 'PaperclipIcon';
-export { PaperclipIcon };
+export {PaperclipIcon};
 
 const PhoneIcon = createIcon({
   Root: Svg,
@@ -1228,7 +1224,7 @@ const PhoneIcon = createIcon({
 });
 
 PhoneIcon.displayName = 'PhoneIcon';
-export { PhoneIcon };
+export {PhoneIcon};
 
 const PlayIcon = createIcon({
   Root: Svg,
@@ -1252,7 +1248,7 @@ const PlayIcon = createIcon({
 });
 
 PlayIcon.displayName = 'PlayIcon';
-export { PlayIcon };
+export {PlayIcon};
 
 const RemoveIcon = createIcon({
   Root: Svg,
@@ -1270,7 +1266,7 @@ const RemoveIcon = createIcon({
 });
 
 RemoveIcon.displayName = 'RemoveIcon';
-export { RemoveIcon };
+export {RemoveIcon};
 
 const RepeatIcon = createIcon({
   Root: Svg,
@@ -1347,7 +1343,7 @@ const Repeat1Icon = createIcon({
 });
 
 Repeat1Icon.displayName = 'Repeat1Icon';
-export { RepeatIcon, Repeat1Icon };
+export {RepeatIcon, Repeat1Icon};
 
 const SearchIcon = createIcon({
   Root: Svg,
@@ -1371,7 +1367,7 @@ const SearchIcon = createIcon({
 });
 
 SearchIcon.displayName = 'SearchIcon';
-export { SearchIcon };
+export {SearchIcon};
 
 const SettingsIcon = createIcon({
   Root: Svg,
@@ -1395,7 +1391,7 @@ const SettingsIcon = createIcon({
 });
 
 SettingsIcon.displayName = 'SettingsIcon';
-export { SettingsIcon };
+export {SettingsIcon};
 
 const ShareIcon = createIcon({
   Root: Svg,
@@ -1437,7 +1433,7 @@ const ShareIcon = createIcon({
 });
 
 ShareIcon.displayName = 'ShareIcon';
-export { ShareIcon };
+export {ShareIcon};
 
 const SlashIcon = createIcon({
   Root: Svg,
@@ -1461,7 +1457,7 @@ const SlashIcon = createIcon({
 });
 
 SlashIcon.displayName = 'SlashIcon';
-export { SlashIcon };
+export {SlashIcon};
 
 const StarIcon = createIcon({
   Root: Svg,
@@ -1479,7 +1475,7 @@ const StarIcon = createIcon({
 });
 
 StarIcon.displayName = 'StarIcon';
-export { StarIcon };
+export {StarIcon};
 
 const SunIcon = createIcon({
   Root: Svg,
@@ -1545,7 +1541,7 @@ const SunIcon = createIcon({
 });
 
 SunIcon.displayName = 'SunIcon';
-export { SunIcon };
+export {SunIcon};
 
 const ThreeDotsIcon = createIcon({
   Root: Svg,
@@ -1575,7 +1571,7 @@ const ThreeDotsIcon = createIcon({
 });
 
 ThreeDotsIcon.displayName = 'ThreeDotsIcon';
-export { ThreeDotsIcon };
+export {ThreeDotsIcon};
 
 const TrashIcon = createIcon({
   Root: Svg,
@@ -1605,7 +1601,7 @@ const TrashIcon = createIcon({
 });
 
 TrashIcon.displayName = 'TrashIcon';
-export { TrashIcon };
+export {TrashIcon};
 
 const UnlockIcon = createIcon({
   Root: Svg,
@@ -1629,4 +1625,4 @@ const UnlockIcon = createIcon({
 });
 
 UnlockIcon.displayName = 'UnlockIcon';
-export { UnlockIcon };
+export {UnlockIcon};

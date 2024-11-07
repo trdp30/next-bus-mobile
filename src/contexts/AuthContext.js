@@ -12,7 +12,7 @@ import {initializeGoogleSignIn, signInWithGoogle} from '../utils/googleSignIn';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {useDispatch, useSelector} from 'react-redux';
 import {authenticated} from '../store/slices/session';
-import { selectFbUser, selectUser } from '../store/selectors/session.selector';
+import {selectFbUser, selectUser} from '../store/selectors/session.selector';
 
 initializeGoogleSignIn();
 

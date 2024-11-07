@@ -7,7 +7,7 @@ import rootSaga from './sagas/index.saga';
 import logger from 'redux-logger';
 import {trackerApi} from './services/trackerApi';
 import {vehicleApi} from './services/vehicleApi';
-import { placeApi } from './services/placeApi';
+import {placeApi} from './services/placeApi';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -21,7 +21,7 @@ export const store = configureStore({
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
-      .concat(logger)
+      // .concat(logger)
       .concat(sagaMiddleware)
       .concat(userApi.middleware)
       .concat(trackerApi.middleware)
