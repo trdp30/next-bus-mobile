@@ -1,4 +1,4 @@
-import React, {useContext, useReducer, useState} from 'react';
+import React, {useContext, useEffect, useReducer} from 'react';
 import { Box } from '../components/ui/box';
 import { Heading } from '../components/ui/heading';
 import { VStack } from '../components/ui/vstack';
@@ -11,6 +11,9 @@ import { Button, ButtonText } from '../components/ui/button';
 import { useGetPlacesQuery } from '../store/services/placeApi';
 import { useCreateTrackerMutation } from '../store/services/trackerApi';
 import { produce } from 'immer';
+import { Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import Snackbar from 'react-native-snackbar';
 
 const initialState = {
   vehicle: null,
@@ -22,7 +25,6 @@ const initialState = {
 
 const reducer = (state, action) => {
   return produce(state, (draft) => {
-    debugger
     switch (action.type) {
       case 'SET_VEHICLE':
         draft.vehicle = action.payload;
@@ -49,9 +51,17 @@ function StartTrip() {
   const {data: vehicleData, isLoading: vehicleLoading, error: vehicleRequestError} = useGetVehiclesQuery();
   const {data: placeData, isLoading: placeLoading, error: placeRequestError} = useGetPlacesQuery();
   const [createTracker, trackerResponse] = useCreateTrackerMutation()
+  const {isError,isLoading,isSuccess,error} = trackerResponse
   const [state, dispatch] = useReducer(reducer, initialState)
+  const navigation = useNavigation();
+
+  console.log("trackerResponse", trackerResponse)
 
   const handleSubmit = async () => {
+    const {vehicle, started_from, destination} = state;
+    if (!vehicle || !started_from || !destination) {
+      return Alert.alert('Missing fields', 'Please fill all fields.');
+    }
     createTracker({
       driver: state.driver || user._id,
       vehicle: state.vehicle,
@@ -59,7 +69,31 @@ function StartTrip() {
       trackerLogs: [], // add the current location as the first log
       destination: state.destination,
     });
-  }
+}
+
+  useEffect(() => {
+    if(!isLoading){
+      if(isError) {
+        Alert.alert('Error', error?.data?.message, [
+          {
+            text: 'OK',
+            onPress: () => {
+              if(error?.data?.message.includes('already started')) {
+                navigation.navigate('Tracker')
+              }
+            }
+        }])
+      } else if(isSuccess) {
+        Snackbar.show({
+          text: 'Trip started successfully',
+          duration: Snackbar.LENGTH_SHORT,
+          backgroundColor: '#2E7D32',
+          textColor: '#fff'
+        });
+        navigation.navigate('Tracker')
+      }
+    }
+  },[isError,isLoading,isSuccess,error, navigation])
 
 
   return (
@@ -141,12 +175,12 @@ function StartTrip() {
               </Select>
               </Box>
           </VStack>
-          <Button size="md" variant="solid" action="primary">
-            <ButtonText onPress={handleSubmit}>Start Trip</ButtonText>
+          <Button size="md" variant="solid" action="primary" disabled={isLoading}>
+            <ButtonText onPress={handleSubmit} disabled={isLoading}>Start Trip</ButtonText>
           </Button>
         </VStack>
       </Box>
   );
 }
 
-export default StartTrip;
+export default StartTrip

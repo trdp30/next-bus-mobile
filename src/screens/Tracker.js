@@ -34,7 +34,7 @@ import {selectUser} from '../store/selectors/session.selector';
   https://www.npmjs.com/package/react-native-android-location-enabler
 */
 
-function Home() {
+function Tracker() {
   const isDarkMode = useColorScheme() === 'dark';
   const user = useSelector(selectUser);
   const {arePermissionsApproved} = usePermissions();
@@ -89,4 +89,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Tracker;

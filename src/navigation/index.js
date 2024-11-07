@@ -5,6 +5,7 @@ import Home from '../screens/Home';
 import Login from '../screens/Login';
 import {AuthContext} from '../contexts/AuthContext';
 import ProfileDetails from '../screens/ProfileDetails';
+import Tracker from '../screens/Tracker';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,6 +17,7 @@ function Navigation() {
         {isAuthenticated ? (
           <>
             <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="Tracker" component={Tracker} />
             <Stack.Screen name="ProfileDetails" component={ProfileDetails} />
           </>
         ) : (
