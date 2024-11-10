@@ -1,18 +1,18 @@
+import auth from '@react-native-firebase/auth';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import React, {
-  useState,
-  useEffect,
   createContext,
   useCallback,
-  useMemo,
+  useEffect,
   useLayoutEffect,
+  useMemo,
+  useState,
 } from 'react';
 import {Text} from 'react-native';
-import auth from '@react-native-firebase/auth';
-import {initializeGoogleSignIn, signInWithGoogle} from '../utils/googleSignIn';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {useDispatch, useSelector} from 'react-redux';
-import {authenticated} from '../store/slices/session';
 import {selectFbUser, selectUser} from '../store/selectors/session.selector';
+import {authenticated} from '../store/slices/session';
+import {initializeGoogleSignIn, signInWithGoogle} from '../utils/googleSignIn';
 
 initializeGoogleSignIn();
 
@@ -77,23 +77,22 @@ function AuthProvider(props) {
       });
   };
 
-  const signInWithEmailPassword = ({email, password}) => {
-    return auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(() => {
-        console.log('User account created & signed in!');
-      })
-      .catch(error => {
-        if (error.code === 'auth/email-already-in-use') {
-          console.log('That email address is already in use!');
-        }
+  const signInWithEmailPassword = async ({email, password}) => {
+    try {
+      // const res = await auth().createUserWithEmailAndPassword(email, password);
+      const res = await auth().signInWithEmailAndPassword(email, password);
+      return res;
+    } catch (error) {
+      let errorMessage = error?.message;
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'That email address is already in use!';
+      }
 
-        if (error.code === 'auth/invalid-email') {
-          console.log('That email address is invalid!');
-        }
-
-        console.error(error);
-      });
+      if (error.code === 'auth/invalid-email') {
+        errorMessage = 'That email address is invalid!';
+      }
+      return {error: errorMessage};
+    }
   };
 
   const signOut = () => {

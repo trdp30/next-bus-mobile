@@ -1,6 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useContext, useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
+import LogoutButton from '../components/LogoutButton';
 import StartTrip from '../components/StartTrip';
 import {ApplicationContext} from '../contexts/ApplicationContext';
 import {useLazyFindTrackerQuery} from '../store/services/trackerApi';
@@ -35,6 +36,7 @@ function Home() {
   return (
     <View style={styles.container}>
       <StartTrip fetchTracker={fetchTracker} />
+      <LogoutButton />
     </View>
   );
 }

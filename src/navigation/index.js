@@ -1,9 +1,9 @@
-import React, {useContext} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, {useContext} from 'react';
+import {AuthContext} from '../contexts/AuthContext';
 import Home from '../screens/Home';
 import Login from '../screens/Login';
-import {AuthContext} from '../contexts/AuthContext';
 import ProfileDetails from '../screens/ProfileDetails';
 import Tracker from '../screens/Tracker';
 
@@ -21,7 +21,11 @@ function Navigation() {
             <Stack.Screen name="ProfileDetails" component={ProfileDetails} />
           </>
         ) : (
-          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{headerShown: false}}
+          />
         )}
       </Stack.Navigator>
     </NavigationContainer>
