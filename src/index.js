@@ -13,8 +13,8 @@ import client from './utils/apollo';
 
 function Root() {
   return (
-    <LocationProvider>
-      <Provider store={store}>
+    <Provider store={store}>
+      <LocationProvider>
         <ApolloProvider client={client}>
           <AuthProvider>
             <ApplicationProvider>
@@ -24,8 +24,8 @@ function Root() {
             </ApplicationProvider>
           </AuthProvider>
         </ApolloProvider>
-      </Provider>
-    </LocationProvider>
+      </LocationProvider>
+    </Provider>
   );
 }
 

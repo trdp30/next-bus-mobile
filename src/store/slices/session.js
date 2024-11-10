@@ -1,4 +1,5 @@
 import {getStartOfDay} from '@/src/utils/dateHelpers';
+import {formatLocation} from '@/src/utils/locationHelper';
 import {createSlice} from '@reduxjs/toolkit';
 import {trackerApi} from '../services/trackerApi';
 import {userApi} from '../services/userApi';
@@ -11,7 +12,9 @@ const initialState = {
   owner: null,
   vehicle: null,
   role: null,
+  currentLocation: null,
   date: getStartOfDay(new Date()),
+  isLocationChangeWatcherActive: false,
 };
 
 export const sessionSlice = createSlice({
@@ -53,6 +56,24 @@ export const sessionSlice = createSlice({
         destination: action.payload.destination,
       };
     },
+    startLocationChangeWatcher: () => {},
+    locationChangeWatcherStarted: state => {
+      state.isLocationChangeWatcherActive = true;
+    },
+    stopLocationChangeWatcher: () => {},
+    locationChangeWatcherStopped: state => {
+      state.isLocationChangeWatcherActive = false;
+    },
+    updateTrackerLogs: (state, action) => {
+      if (Array.isArray(state.tracker.trackerLogs)) {
+        state.tracker.trackerLogs.push(action.payload);
+      } else {
+        state.tracker.trackerLogs = [action.payload];
+      }
+    },
+    updateCurrentLocation: (state, action) => {
+      state.currentLocation = formatLocation(action.payload);
+    },
   },
   extraReducers: builder => {
     builder
@@ -88,6 +109,12 @@ export const {
   getCurrentUserLoaded,
   storeUserRole,
   storeTrackerRelatedDetails,
+  startLocationChangeWatcher,
+  locationChangeWatcherStarted,
+  stopLocationChangeWatcher,
+  locationChangeWatcherStopped,
+  updateTrackerLogs,
+  updateCurrentLocation,
 } = sessionSlice.actions;
 
 export default sessionSlice.reducer;

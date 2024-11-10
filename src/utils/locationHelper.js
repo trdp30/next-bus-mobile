@@ -1,12 +1,12 @@
+import Geolocation from '@react-native-community/geolocation';
+import {Platform} from 'react-native';
 import {
   isLocationEnabled,
   promptForEnableLocationIfNeeded,
 } from 'react-native-android-location-enabler';
-import Geolocation from '@react-native-community/geolocation';
-import {Platform} from 'react-native';
-import {catchError} from './catchError';
 import {PERMISSIONS, requestMultiple, RESULTS} from 'react-native-permissions';
 import Snackbar from 'react-native-snackbar';
+import {catchError} from './catchError';
 
 export async function checkIsLocationEnabled() {
   if (Platform.OS === 'android') {
@@ -55,10 +55,8 @@ export const getPermissions = async () => {
       : [PERMISSIONS.IOS.LOCATION_ALWAYS];
 
   try {
-    console.log('hreer');
     const permissionStatuses = await requestMultiple(toRequestPermissions);
     // Todo: Have to check the "precise location" is granted or not.
-    console.log('permissionStatuses', permissionStatuses);
     const result = permissionStatuses[toRequestPermissions[0]];
 
     if (result === RESULTS.GRANTED) {
@@ -73,4 +71,29 @@ export const getPermissions = async () => {
     console.error('Error requesting permissions', error);
     return false;
   }
+};
+
+export const formatLocation = location => {
+  if (location) {
+    if (location?.coords) {
+      const {latitude, longitude, ...rest} = location.coords;
+      if (latitude && longitude) {
+        return {
+          latitude: latitude,
+          longitude: longitude,
+          ...rest,
+        };
+      } else {
+        return null;
+      }
+    } else if (location?.latitude && location?.longitude) {
+      const {latitude, longitude, ...rest} = location;
+      return {
+        latitude: latitude,
+        longitude: longitude,
+        ...rest,
+      };
+    }
+  }
+  return null;
 };

@@ -1,14 +1,14 @@
 import {call, fork, put, select, takeLatest} from 'redux-saga/effects';
+import {catchError} from '../../utils/catchError';
+import {getCurrentRole} from '../../utils/roles';
+import {selectUser} from '../selectors/session.selector';
+import {userApi} from '../services/userApi';
+import {vehicleApi} from '../services/vehicleApi';
 import {
   authenticated,
   getCurrentUserLoaded,
   storeUserRole,
 } from '../slices/session';
-import {userApi} from '../services/userApi';
-import {catchError} from '../../utils/catchError';
-import {selectUser} from '../selectors/session.selector';
-import {getCurrentRole} from '../../utils/roles';
-import {vehicleApi} from '../services/vehicleApi';
 
 function* authenticatedWorker() {
   try {
@@ -40,7 +40,7 @@ function* currentUserWorker() {
 }
 
 function* currentUserWatcher() {
-  yield takeLatest(getCurrentUserLoaded, currentUserWorker);
+  yield takeLatest(getCurrentUserLoaded.type, currentUserWorker);
 }
 
 export function* sessionSaga() {

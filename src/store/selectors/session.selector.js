@@ -22,3 +22,8 @@ export const selectVehicle = createSelector(
   selectSession,
   state => state.vehicle,
 );
+
+export const selectCurrentLocation = createSelector(
+  selectSession,
+  state => state.currentLocation,
+);

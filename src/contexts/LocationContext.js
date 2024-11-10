@@ -5,14 +5,17 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import {Text, View} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import PermissionAndSettingError from '../screens/PermissionAndSettingError';
+import {selectCurrentLocation} from '../store/selectors/session.selector';
+import {updateCurrentLocation} from '../store/slices/session';
 import {
   checkIsLocationEnabled,
   getCurrentPosition,
   getPermissions,
   requestEnableLocation,
 } from '../utils/locationHelper';
-import PermissionAndSettingError from '../screens/PermissionAndSettingError';
-import {View, Text} from 'react-native';
 
 export const LocationContext = createContext({});
 
@@ -21,21 +24,25 @@ export const LocationProvider = ({children}) => {
   const [validating, setValidating] = useState(false);
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState(null);
+  const currentLocation = useSelector(selectCurrentLocation);
   const [currentLocationError, setCurrentLocationError] = useState(null);
+  const dispatch = useDispatch();
 
-  const storeLocation = useCallback(pos => {
-    setCurrentLocation(pos);
-  }, []);
+  const storeLocation = useCallback(
+    pos => {
+      dispatch(updateCurrentLocation(pos));
+    },
+    [dispatch],
+  );
 
   const reset = useCallback(() => {
     setProcessing(() => true);
     setPermissionGranted(() => false);
     setIsLocationEnabled(() => false);
-    setCurrentLocation(() => null);
+    storeLocation(null);
     setCurrentLocationError(() => null);
     initiateCheck();
-  }, []);
+  }, [storeLocation]);
 
   const initiateCheck = async () => {
     const enabled = await checkIsLocationEnabled();
@@ -80,8 +87,6 @@ export const LocationProvider = ({children}) => {
     isLocationEnabled,
     handleRequestCurrentLocation,
   ]);
-
-  console.log('isLocationEnabled', isLocationEnabled);
 
   const handleRequestCurrentLocation = useCallback(() => {
     getCurrentPosition({

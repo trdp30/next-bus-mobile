@@ -1,13 +1,12 @@
 import {configureStore} from '@reduxjs/toolkit';
 import {setupListeners} from '@reduxjs/toolkit/query';
-import {userApi} from './services/userApi';
-import {sessionSlice} from './slices/session';
 import createSagaMiddleware from 'redux-saga';
 import rootSaga from './sagas/index.saga';
-import logger from 'redux-logger';
-import {trackerApi} from './services/trackerApi';
-import {vehicleApi} from './services/vehicleApi';
 import {placeApi} from './services/placeApi';
+import {trackerApi} from './services/trackerApi';
+import {userApi} from './services/userApi';
+import {vehicleApi} from './services/vehicleApi';
+import {sessionSlice} from './slices/session';
 
 const sagaMiddleware = createSagaMiddleware();
 

@@ -5,88 +5,136 @@
  * @format
  */
 
-import React, {useState} from 'react';
-import MapView, {Marker} from 'react-native-maps';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
+import MapView from 'react-native-maps';
 
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
 
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import usePermissions from '../hooks/usePermissions';
-import WatchPosition from '../components/WatchPosition';
-import GetCurrentLocationExample from '../components/GetCurrentLocation';
-import LogoutButton from '../components/LogoutButton';
-import {useSelector} from 'react-redux';
-import {selectUser} from '../store/selectors/session.selector';
+import {useNavigation} from '@react-navigation/native';
+import Config from 'react-native-config';
+import MapViewDirections from 'react-native-maps-directions';
+import {ApplicationContext} from '../contexts/ApplicationContext';
+import {LocationContext} from '../contexts/LocationContext';
 
 /*
   Internet connection is required to load the map.
   https://www.npmjs.com/package/@react-native-community/netinfo
-  
-  Enable location from the application itself:
-  https://www.npmjs.com/package/react-native-android-location-enabler
 */
 
 function Tracker() {
-  const isDarkMode = useColorScheme() === 'dark';
-  const user = useSelector(selectUser);
-  const {arePermissionsApproved} = usePermissions();
-  const [location, setLocation] = useState({
-    latitude: 26.63269143,
-    longitude: 93.6035072,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
+  const {
+    currentLocation,
+    // currentLocationError,
+    // isLocationEnabled,
+    // reInitiateCheck,
+    storeLocation,
+    // handleRequestCurrentLocation,
+  } = useContext(LocationContext);
+  const {tracker} = useContext(ApplicationContext);
+  const navigation = useNavigation();
+  const [isMapReady, setIsMapReady] = useState(false);
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const directionPoints = useMemo(() => {
+    return {
+      origin: {
+        latitude: currentLocation?.latitude,
+        longitude: currentLocation?.longitude,
+      },
+      destination: {
+        latitude: tracker?.destination?.location?.latitude,
+        longitude: tracker?.destination?.location?.longitude,
+      },
+      // enable: !!(
+      //   currentLocation?.latitude &&
+      //   currentLocation?.longitude &&
+      //   tracker?.destination?.location?.latitude &&
+      //   tracker?.destination?.location?.longitude
+      // ),
+      enable: false,
+    };
+  }, [tracker, currentLocation]);
+
+  useEffect(() => {
+    if (!tracker?._id) {
+      navigation.navigate('Home');
+    }
+  }, [tracker, navigation]);
+
+  // useEffect(() => {
+  //   if (currentLocation && tracker?._id) {
+  //     updateTrackerLog({
+  //       id: tracker?._id,
+  //       location: currentLocation,
+  //     });
+  //   }
+  // }, [currentLocation, tracker, updateTrackerLog]);
+
+  const handleOnUserLocationChange = e => {
+    if (e?.nativeEvent) {
+      storeLocation(e?.nativeEvent?.coordinate);
+    }
   };
 
   return (
     <SafeAreaView>
-      <View
-        style={{
-          backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          height: '100%',
-          width: '100%',
-        }}>
-        <WatchPosition />
-        <GetCurrentLocationExample
-          location={location}
-          setLocation={setLocation}
-        />
+      <View className="flex h-full">
         <MapView
-          style={{flex: 1}}
+          // Handle this region change in such a way that when the user moves the map, the region should not change
+          // region={{
+          //   latitude:
+          //     directionPoints?.origin?.latitude ||
+          //     currentLocation?.latitude,
+          //   longitude:
+          //     directionPoints?.origin?.longitude ||
+          //     currentLocation?.longitude,
+          //   latitudeDelta: 0.0422,
+          //   longitudeDelta: 0,
+          // }}
+          showsUserLocation={true}
+          followsUserLocation={true}
+          showsBuildings={false}
+          showsCompass={true}
+          showsTraffic={true}
+          showsIndoors={false}
+          loadingEnabled={true}
+          zoomControlEnabled={true}
+          moveOnMarkerPress={true}
+          userInterfaceStyle="light"
+          onUserLocationChange={handleOnUserLocationChange}
+          style={styles.map}
+          userLocationUpdateInterval={30000}
           initialRegion={{
-            latitude: location?.latitude,
-            longitude: location?.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitude: currentLocation?.latitude,
+            longitude: currentLocation?.longitude,
+            latitudeDelta: 0.0422,
+            longitudeDelta: 0,
           }}
           provider="google"
           onMapReady={() => {
-            console.log('Map ready');
+            setIsMapReady(true);
           }}>
-          <Marker
-            coordinate={{
-              latitude: location?.latitude,
-              longitude: location?.longitude,
-            }}
-            title={'Current Location'}
-            description={'Current Location'}
-          />
+          {isMapReady && directionPoints?.enable ? (
+            <MapViewDirections
+              origin={directionPoints?.origin}
+              destination={directionPoints?.destination}
+              apikey={Config.GOOGLE_MAPS_API_KEY}
+              // timePrecision="now"
+              strokeWidth={5}
+              strokeColor="blue"
+            />
+          ) : (
+            <></>
+          )}
         </MapView>
-        <LogoutButton />
       </View>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  map: {
+    flex: 1,
+  },
+});
 
 export default Tracker;

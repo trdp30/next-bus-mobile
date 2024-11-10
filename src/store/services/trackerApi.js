@@ -27,7 +27,7 @@ export const trackerApi = createApi({
     findTracker: build.query({
       query: queryParams => ({
         url: 'tracker',
-        params: queryParams,
+        params: {...queryParams, isFindTracker: true},
       }),
       providesTags: result =>
         result
