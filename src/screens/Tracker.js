@@ -29,6 +29,8 @@ function Tracker() {
     // reInitiateCheck,
     storeLocation,
     // handleRequestCurrentLocation,
+    handleStartLocationChangeObserver,
+    isLocationChangeWatcherActive,
   } = useContext(LocationContext);
   const {tracker} = useContext(ApplicationContext);
   const navigation = useNavigation();
@@ -59,6 +61,19 @@ function Tracker() {
       navigation.navigate('Home');
     }
   }, [tracker, navigation]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (!isLocationChangeWatcherActive) {
+        handleStartLocationChangeObserver();
+      }
+    });
+    return unsubscribe;
+  }, [
+    navigation,
+    isLocationChangeWatcherActive,
+    handleStartLocationChangeObserver,
+  ]);
 
   // useEffect(() => {
   //   if (currentLocation && tracker?._id) {

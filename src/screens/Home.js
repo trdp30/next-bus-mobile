@@ -4,10 +4,14 @@ import {StyleSheet, View} from 'react-native';
 import LogoutButton from '../components/LogoutButton';
 import StartTrip from '../components/StartTrip';
 import {ApplicationContext} from '../contexts/ApplicationContext';
+import {LocationContext} from '../contexts/LocationContext';
 import {useLazyFindTrackerQuery} from '../store/services/trackerApi';
+import {catchError} from '../utils/catchError';
 
 function Home() {
   const {tracker} = useContext(ApplicationContext);
+  const {handleStopLocationChangeObserver, isLocationChangeWatcherActive} =
+    useContext(LocationContext);
   const [findTracker] = useLazyFindTrackerQuery();
 
   const navigation = useNavigation();
@@ -21,11 +25,24 @@ function Home() {
       };
       const response = await findTracker(queryParams);
       if (response?.error) {
-        // Todo: Handle error
+        catchError(response.error);
       }
     },
     [findTracker],
   );
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (isLocationChangeWatcherActive) {
+        handleStopLocationChangeObserver();
+      }
+    });
+    return unsubscribe;
+  }, [
+    navigation,
+    isLocationChangeWatcherActive,
+    handleStopLocationChangeObserver,
+  ]);
 
   useEffect(() => {
     if (tracker?._id) {

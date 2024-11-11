@@ -1,4 +1,4 @@
-import {getStartOfDay} from '@/src/utils/dateHelpers';
+import {getIsoGetStartOfDay} from '@/src/utils/dateHelpers';
 import {formatLocation} from '@/src/utils/locationHelper';
 import {createSlice} from '@reduxjs/toolkit';
 import {trackerApi} from '../services/trackerApi';
@@ -13,7 +13,7 @@ const initialState = {
   vehicle: null,
   role: null,
   currentLocation: null,
-  date: getStartOfDay(new Date()),
+  date: getIsoGetStartOfDay(),
   isLocationChangeWatcherActive: false,
 };
 
@@ -51,7 +51,7 @@ export const sessionSlice = createSlice({
         trackerLogs: action.payload.trackerLogs || [],
         driver: action.payload.driver,
         vehicle: action.payload.vehicle,
-        date: action.payload.date || getStartOfDay(new Date()),
+        date: action.payload.date || getIsoGetStartOfDay(),
         started_from: action.payload.started_from,
         destination: action.payload.destination,
       };

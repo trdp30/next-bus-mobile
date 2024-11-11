@@ -8,8 +8,15 @@ import React, {
 import {Text, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import PermissionAndSettingError from '../screens/PermissionAndSettingError';
-import {selectCurrentLocation} from '../store/selectors/session.selector';
-import {updateCurrentLocation} from '../store/slices/session';
+import {
+  selectCurrentLocation,
+  selectLocationChangeWatcher,
+} from '../store/selectors/session.selector';
+import {
+  startLocationChangeWatcher,
+  stopLocationChangeWatcher,
+  updateCurrentLocation,
+} from '../store/slices/session';
 import {
   checkIsLocationEnabled,
   getCurrentPosition,
@@ -26,11 +33,16 @@ export const LocationProvider = ({children}) => {
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
   const currentLocation = useSelector(selectCurrentLocation);
   const [currentLocationError, setCurrentLocationError] = useState(null);
+  const isLocationChangeWatcherActive = useSelector(
+    selectLocationChangeWatcher,
+  );
   const dispatch = useDispatch();
 
   const storeLocation = useCallback(
     pos => {
-      dispatch(updateCurrentLocation(pos));
+      if (pos) {
+        dispatch(updateCurrentLocation(pos));
+      }
     },
     [dispatch],
   );
@@ -99,6 +111,14 @@ export const LocationProvider = ({children}) => {
     });
   }, [storeLocation, setCurrentLocationError]);
 
+  const handleStartLocationChangeObserver = useCallback(() => {
+    dispatch(startLocationChangeWatcher());
+  }, [dispatch]);
+
+  const handleStopLocationChangeObserver = useCallback(() => {
+    dispatch(stopLocationChangeWatcher());
+  }, [dispatch]);
+
   const value = useMemo(
     () => ({
       processing,
@@ -108,6 +128,9 @@ export const LocationProvider = ({children}) => {
       currentLocationError,
       reInitiateCheck: reset,
       storeLocation,
+      handleStartLocationChangeObserver,
+      handleStopLocationChangeObserver,
+      isLocationChangeWatcherActive,
     }),
     [
       handleRequestCurrentLocation,
@@ -116,6 +139,9 @@ export const LocationProvider = ({children}) => {
       processing,
       reset,
       storeLocation,
+      handleStartLocationChangeObserver,
+      handleStopLocationChangeObserver,
+      isLocationChangeWatcherActive,
     ],
   );
 

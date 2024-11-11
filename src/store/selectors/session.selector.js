@@ -27,3 +27,8 @@ export const selectCurrentLocation = createSelector(
   selectSession,
   state => state.currentLocation,
 );
+
+export const selectLocationChangeWatcher = createSelector(
+  selectSession,
+  state => state.isLocationChangeWatcherActive,
+);

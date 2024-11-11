@@ -24,7 +24,7 @@ import {AuthContext} from '../contexts/AuthContext';
 import {useGetPlacesQuery} from '../store/services/placeApi';
 import {useCreateTrackerMutation} from '../store/services/trackerApi';
 import {useGetVehiclesQuery} from '../store/services/vehicleApi';
-import {getStartOfDay} from '../utils/dateHelpers';
+import {getIsoGetStartOfDay} from '../utils/dateHelpers';
 
 const initialState = {
   vehicle: null,
@@ -77,7 +77,7 @@ function StartTrip({fetchTracker}) {
               started_from: state?.started_from,
               trackerLogs: [], // add the current location as the first log
               destination: state?.destination,
-              date: getStartOfDay(new Date()),
+              date: getIsoGetStartOfDay(),
             });
           }
           toggleLoading(false);
@@ -112,6 +112,7 @@ function StartTrip({fetchTracker}) {
     const response = await createTracker({
       driver: state?.driver || user?._id,
       vehicle: state?.vehicle,
+      date: getIsoGetStartOfDay(),
       started_from: state?.started_from,
       trackerLogs: [], // add the current location as the first log
       destination: state?.destination,
@@ -237,8 +238,12 @@ function StartTrip({fetchTracker}) {
             </Select>
           </Box>
         </VStack>
-        <Button size="md" variant="solid" action="primary" disabled={isLoading}>
-          <ButtonText onPress={handleSubmit} disabled={isLoading}>
+        <Button
+          size="md"
+          variant="solid"
+          action="primary"
+          isDisabled={isLoading}>
+          <ButtonText onPress={handleSubmit} isDisabled={isLoading}>
             Start Trip
           </ButtonText>
         </Button>
