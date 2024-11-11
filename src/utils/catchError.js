@@ -1,8 +1,16 @@
 // import {triggerToast} from '@components/base/Notification';
 // import * as Sentry from '@sentry/react';
 
+import {Alert} from 'react-native';
+
 export const catchError = props => {
-  console.error(`${props?.title} error: `, props?.error?.message);
+  console.log('props', props);
+  Alert.alert(
+    'Error',
+    `${props?.error?.error} ${props?.error?.originalStatus} ${props?.error?.originalStatus} ${props?.error?.status}`,
+  );
+  // console.error(`${props?.title} error: `, props?.error?.message);
+  // Alert.alert(props?.title, props?.error?.message);
   if (!props.skipToast) {
     // triggerToast({
     //   message: {

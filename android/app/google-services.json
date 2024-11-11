@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "416876094817",
     "project_id": "next-bus-67f78",
-    "storage_bucket": "next-bus-67f78.appspot.com"
+    "storage_bucket": "next-bus-67f78.firebasestorage.app"
   },
   "client": [
     {
@@ -19,6 +19,14 @@
           "android_info": {
             "package_name": "com.nextbus",
             "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "416876094817-vg4tlgum39fehoq123sc7t8bk7b7e0pd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nextbus",
+            "certificate_hash": "cac3925053837fad18e1980f475a6163fcafb853"
           }
         },
         {

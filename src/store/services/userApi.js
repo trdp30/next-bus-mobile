@@ -1,6 +1,7 @@
+import {catchError} from '@/src/utils/catchError';
 import {createApi} from '@reduxjs/toolkit/query/react';
-import baseQuery from './baseQuery';
 import {getCurrentUserLoaded} from '../slices/session';
+import baseQuery from './baseQuery';
 
 export const userApi = createApi({
   reducerPath: 'userApi',
@@ -12,9 +13,13 @@ export const userApi = createApi({
       providesTags: result =>
         result ? [{type: 'Users', id: result?._id}] : ['Users'],
       onQueryStarted: async (id, {dispatch, queryFulfilled}) => {
-        const {data} = await queryFulfilled;
-        if (data) {
-          dispatch(getCurrentUserLoaded(data));
+        try {
+          const {data} = await queryFulfilled;
+          if (data) {
+            dispatch(getCurrentUserLoaded(data));
+          }
+        } catch (error) {
+          catchError(error);
         }
       },
     }),

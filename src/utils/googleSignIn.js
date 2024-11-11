@@ -1,9 +1,10 @@
+import auth from '@react-native-firebase/auth';
 import {
   GoogleSignin,
   isErrorWithCode,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import auth from '@react-native-firebase/auth';
+import {catchError} from './catchError';
 
 export const initializeGoogleSignIn = () => {
   GoogleSignin.configure({
@@ -36,6 +37,7 @@ export async function signInWithGoogle() {
     // Sign-in the user with the credential
     return auth().signInWithCredential(googleCredential);
   } catch (error) {
+    catchError(error);
     if (isErrorWithCode(error)) {
       switch (error.code) {
         case statusCodes.IN_PROGRESS:

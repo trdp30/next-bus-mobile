@@ -1,19 +1,19 @@
 import {
   ApolloClient,
-  InMemoryCache,
-  HttpLink,
   ApolloLink,
   from,
+  HttpLink,
+  InMemoryCache,
   split,
 } from '@apollo/client';
-import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
-import {createClient} from 'graphql-ws';
-import {RetryLink} from '@apollo/client/link/retry';
-import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/client/link/error';
-import {catchError} from './catchError';
-import Config from 'react-native-config';
+import {RetryLink} from '@apollo/client/link/retry';
+import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
+import {getMainDefinition} from '@apollo/client/utilities';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {createClient} from 'graphql-ws';
+import Config from 'react-native-config';
+import {catchError} from './catchError';
 
 const retryLink = new RetryLink({
   delay: {

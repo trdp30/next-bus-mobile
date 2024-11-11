@@ -1,5 +1,4 @@
 import auth from '@react-native-firebase/auth';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import React, {
   createContext,
   useCallback,
@@ -34,7 +33,7 @@ function AuthProvider(props) {
   // Handle user state changes
   const onAuthStateChanged = useCallback(
     data => {
-      setUser(data);
+      setUser(data?.toJSON ? data?.toJSON() : data);
       toggleAuthenticating(false);
     },
     [toggleAuthenticating, setUser],
@@ -48,20 +47,22 @@ function AuthProvider(props) {
 
   useLayoutEffect(() => {
     if (user) {
-      GoogleSignin.getTokens()
+      auth()
+        .currentUser?.getIdToken()
         .then(() => {
           toggleAuthenticated(true);
-          return user.toJSON();
+          return user;
         })
         .then(data => dispatch(authenticated(data)))
         .catch(() => {
+          // Todo: Have to handle this error
           toggleAuthenticated(false);
           toggleAuthenticating(false);
         });
     } else {
       toggleAuthenticated(false);
     }
-  }, [user, dispatch]);
+  }, [user, dispatch, isAuthenticating]);
 
   const signInAnonymously = () => {
     return auth()
@@ -79,7 +80,6 @@ function AuthProvider(props) {
 
   const signInWithEmailPassword = async ({email, password}) => {
     try {
-      // const res = await auth().createUserWithEmailAndPassword(email, password);
       const res = await auth().signInWithEmailAndPassword(email, password);
       return res;
     } catch (error) {
