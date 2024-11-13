@@ -5,16 +5,20 @@
  * @format
  */
 
-import React, {useContext, useEffect, useMemo, useState} from 'react';
-import MapView from 'react-native-maps';
+import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 
 import {SafeAreaView, StyleSheet, View} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
+import {last} from 'lodash';
 import Config from 'react-native-config';
 import MapViewDirections from 'react-native-maps-directions';
+import TravellerImage from '../assets/traveller_sm.png';
 import {ApplicationContext} from '../contexts/ApplicationContext';
 import {LocationContext} from '../contexts/LocationContext';
+import {useGetTrackersQuery} from '../store/services/trackerApi';
+import {getIsoGetStartOfDay} from '../utils/dateHelpers';
 
 /*
   Internet connection is required to load the map.
@@ -35,6 +39,44 @@ function Tracker() {
   const {tracker} = useContext(ApplicationContext);
   const navigation = useNavigation();
   const [isMapReady, setIsMapReady] = useState(false);
+  const mapRef = useRef(null);
+  const {data: trackers} = useGetTrackersQuery(
+    {date: getIsoGetStartOfDay()},
+    {
+      pollingInterval: 30000,
+      skipPollingIfUnfocused: true,
+    },
+  );
+
+  console.count('tracker');
+
+  const markerData = useMemo(() => {
+    if (trackers && trackers.length) {
+      const markers = trackers?.map(data => {
+        const trackerLog = last(data?.trackerLogs);
+        return {
+          id: data?._id,
+          title: data?.vehicle?.name,
+          description: data?.destination?.address,
+          // image
+          // icon
+          // pinColor
+          coordinate: {
+            latitude: trackerLog?.location?.latitude,
+            longitude: trackerLog?.location?.longitude,
+          },
+          heading: trackerLog?.location?.heading,
+        };
+      });
+      return markers?.filter(
+        marker =>
+          marker?.coordinate?.latitude &&
+          marker?.coordinate?.longitude &&
+          marker?.id !== tracker?._id,
+      );
+    }
+    return [];
+  }, [trackers, tracker]);
 
   const directionPoints = useMemo(() => {
     return {
@@ -74,15 +116,6 @@ function Tracker() {
     isLocationChangeWatcherActive,
     handleStartLocationChangeObserver,
   ]);
-
-  // useEffect(() => {
-  //   if (currentLocation && tracker?._id) {
-  //     updateTrackerLog({
-  //       id: tracker?._id,
-  //       location: currentLocation,
-  //     });
-  //   }
-  // }, [currentLocation, tracker, updateTrackerLog]);
 
   const handleOnUserLocationChange = e => {
     if (e?.nativeEvent) {
@@ -124,15 +157,35 @@ function Tracker() {
             latitudeDelta: 0.0422,
             longitudeDelta: 0,
           }}
-          provider="google"
+          provider={PROVIDER_GOOGLE}
           onMapReady={() => {
             setIsMapReady(true);
-          }}>
+          }}
+          ref={mapRef}>
+          <Marker
+            coordinate={{
+              latitude: currentLocation?.latitude,
+              longitude: currentLocation?.longitude,
+            }}
+            title="My Position"
+            image={TravellerImage}
+            rotation={currentLocation?.heading}
+          />
+          {markerData?.map((marker, index) => (
+            <Marker
+              key={index || marker?.id}
+              coordinate={marker?.coordinate}
+              title={marker.title}
+              image={TravellerImage}
+              rotation={marker?.heading}
+            />
+          ))}
           {isMapReady && directionPoints?.enable ? (
             <MapViewDirections
               origin={directionPoints?.origin}
-              destination={directionPoints?.destination}
+              destination={'directionPoints?.destination'}
               apikey={Config.GOOGLE_MAPS_API_KEY}
+              titleVisibility={'visible'}
               // timePrecision="now"
               strokeWidth={5}
               strokeColor="blue"
@@ -149,6 +202,11 @@ function Tracker() {
 const styles = StyleSheet.create({
   map: {
     flex: 1,
+    ...StyleSheet.absoluteFillObject,
+  },
+
+  plainView: {
+    width: 60,
   },
 });
 

@@ -242,10 +242,9 @@ function StartTrip({fetchTracker}) {
           size="md"
           variant="solid"
           action="primary"
+          onPress={handleSubmit}
           isDisabled={isLoading}>
-          <ButtonText onPress={handleSubmit} isDisabled={isLoading}>
-            Start Trip
-          </ButtonText>
+          <ButtonText isDisabled={isLoading}>Start Trip</ButtonText>
         </Button>
       </VStack>
     </Box>
