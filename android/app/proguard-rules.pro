@@ -9,4 +9,4 @@
 
 # Add any project specific keep options here:
 
--keep class com.nextbus.BuildConfig { *; }
+-keep class com.lachit.nextbus.BuildConfig { *; }

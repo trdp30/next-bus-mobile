@@ -1,4 +1,4 @@
-package com.nextbus
+package com.lachit.nextbus
 
 import android.os.Bundle;
 import com.facebook.react.ReactActivity

@@ -7,26 +7,26 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:416876094817:android:3b39a595d819f0c46c5120",
+        "mobilesdk_app_id": "1:416876094817:android:40043c2b67ada2dc6c5120",
         "android_client_info": {
-          "package_name": "com.nextbus"
+          "package_name": "com.lachit.nextbus"
         }
       },
       "oauth_client": [
         {
-          "client_id": "416876094817-j28vmtcnqd7to836tnbo9qr08bq44t31.apps.googleusercontent.com",
+          "client_id": "416876094817-jnodc0pm2tvpkt1pu8931ko5hl9tgoug.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.nextbus",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+            "package_name": "com.lachit.nextbus",
+            "certificate_hash": "67f36861fd547266e33f1581ed85afb0a3572004"
           }
         },
         {
-          "client_id": "416876094817-vg4tlgum39fehoq123sc7t8bk7b7e0pd.apps.googleusercontent.com",
+          "client_id": "416876094817-v82fb6uglb2gc12k2o3k78u4nvg381gv.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.nextbus",
-            "certificate_hash": "cac3925053837fad18e1980f475a6163fcafb853"
+            "package_name": "com.lachit.nextbus",
+            "certificate_hash": "dc6d8b74735818b37f4e4c5fcc5d9035cc5f3a39"
           }
         },
         {
