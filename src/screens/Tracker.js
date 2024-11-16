@@ -14,7 +14,7 @@ import {useNavigation} from '@react-navigation/native';
 import {last} from 'lodash';
 import Config from 'react-native-config';
 import MapViewDirections from 'react-native-maps-directions';
-import TravellerImage from '../assets/traveller_sm.png';
+import TravellerImage from '../assets/traveller_xs.png';
 import {ApplicationContext} from '../contexts/ApplicationContext';
 import {LocationContext} from '../contexts/LocationContext';
 import {useGetTrackersQuery} from '../store/services/trackerApi';
@@ -47,8 +47,6 @@ function Tracker() {
       skipPollingIfUnfocused: true,
     },
   );
-
-  console.count('tracker');
 
   const markerData = useMemo(() => {
     if (trackers && trackers.length) {
