@@ -30,7 +30,7 @@ function locationWatcherChannel() {
   return eventChannel(emitter => {
     const subscriptionId = setInterval(() => {
       emitter({trigger: true});
-    }, 10000);
+    }, 20000);
     // const subscriptionId = Geolocation.watchPosition(
     //   position => {
     //     getCurrentPosition({
