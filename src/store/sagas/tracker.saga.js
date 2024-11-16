@@ -65,6 +65,7 @@ function* startLocationWorker() {
       const tracker = yield select(selectTracker);
       const location = yield select(selectCurrentLocation);
       if (tracker?._id && location) {
+        // console.log('startLocationWorker', new Date().toISOString());
         // yield put(updateTrackerLogs({location: formatLocation(location)}));
         yield put(
           trackerApi.endpoints.updateTrackerLog.initiate({
