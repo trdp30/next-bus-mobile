@@ -8,10 +8,7 @@ import React, {
 import {AppState} from 'react-native';
 import {useSelector} from 'react-redux';
 import {selectTracker} from '../store/selectors/session.selector';
-import {
-  startBackgroundService,
-  stopBackgroundService,
-} from '../utils/backgroundTasks';
+import {startBackgroundService} from '../utils/backgroundTasks';
 
 const ApplicationContext = createContext({
   tracker: null,
@@ -28,7 +25,8 @@ const ApplicationProvider = ({children}) => {
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        stopBackgroundService();
+        // stopBackgroundService();
+        startBackgroundService();
       } else {
         startBackgroundService();
       }

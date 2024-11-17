@@ -5,13 +5,14 @@ import {makePutRequest} from './axiosHelper';
 import {catchError} from './catchError';
 import {formatLocation, getCurrentPosition} from './locationHelper';
 
-const {BackgroundTaskModule} = NativeModules;
+const {BackgroundTaskModule, ForegroundServiceModule} = NativeModules;
 
 let timer = false;
 
 export const startBackgroundService = async () => {
   try {
-    BackgroundTaskModule.startBackgroundTask('bar');
+    // BackgroundTaskModule.startBackgroundTask('bar');
+    startBackgroundLocationService();
   } catch (e) {
     console.error(e);
   }
@@ -19,7 +20,8 @@ export const startBackgroundService = async () => {
 
 export const stopBackgroundService = async () => {
   // BackgroundTaskModule.stopBackgroundTask();
-  clearInterval(timer);
+  stopBackgroundLocationService();
+  // clearInterval(timer);
 };
 
 export const backgroundTask = async taskData => {
@@ -60,4 +62,14 @@ export const backgroundTask = async taskData => {
     }, Config.POLLING_INTERVAL);
     trigger();
   });
+};
+
+// Start the service
+const startBackgroundLocationService = () => {
+  ForegroundServiceModule.startService();
+};
+
+// Stop the service
+const stopBackgroundLocationService = () => {
+  ForegroundServiceModule.stopService();
 };
