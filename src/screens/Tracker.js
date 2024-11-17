@@ -35,6 +35,7 @@ function Tracker() {
     // handleRequestCurrentLocation,
     handleStartLocationChangeObserver,
     isLocationChangeWatcherActive,
+    handleStopLocationChangeObserver,
   } = useContext(LocationContext);
   const {tracker} = useContext(ApplicationContext);
   const navigation = useNavigation();
@@ -43,7 +44,7 @@ function Tracker() {
   const {data: trackers} = useGetTrackersQuery(
     {date: getIsoGetStartOfDay()},
     {
-      pollingInterval: 30000,
+      pollingInterval: Config.POLLING_INTERVAL,
       skipPollingIfUnfocused: true,
     },
   );
@@ -103,16 +104,22 @@ function Tracker() {
   }, [tracker, navigation]);
 
   useEffect(() => {
+    handleStartLocationChangeObserver();
+    return () => {
+      handleStopLocationChangeObserver();
+    };
+  }, [handleStartLocationChangeObserver, handleStopLocationChangeObserver]);
+
+  useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      if (!isLocationChangeWatcherActive) {
-        handleStartLocationChangeObserver();
-      }
+      handleStartLocationChangeObserver();
     });
     return unsubscribe;
   }, [
     navigation,
     isLocationChangeWatcherActive,
     handleStartLocationChangeObserver,
+    handleStopLocationChangeObserver,
   ]);
 
   const handleOnUserLocationChange = e => {

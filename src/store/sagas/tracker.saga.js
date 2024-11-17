@@ -1,4 +1,7 @@
 import {catchError} from '@/src/utils/catchError';
+import {formatLocation, getCurrentPosition} from '@/src/utils/locationHelper';
+import {Alert} from 'react-native';
+import Config from 'react-native-config';
 import {eventChannel} from 'redux-saga';
 import {
   call,
@@ -9,10 +12,7 @@ import {
   take,
   takeLatest,
 } from 'redux-saga/effects';
-import {
-  selectCurrentLocation,
-  selectTracker,
-} from '../selectors/session.selector';
+import {selectTracker} from '../selectors/session.selector';
 import {trackerApi} from '../services/trackerApi';
 import {
   locationChangeWatcherStarted,
@@ -29,8 +29,15 @@ const clearWatch = subscriptionId => {
 function locationWatcherChannel() {
   return eventChannel(emitter => {
     const subscriptionId = setInterval(() => {
-      emitter({trigger: true});
-    }, 20000);
+      getCurrentPosition({
+        onSuccess: position => {
+          emitter(formatLocation(position));
+        },
+        onError: error => {
+          Alert.alert('Error', JSON.stringify(error));
+        },
+      });
+    }, Config.POLLING_INTERVAL);
     // const subscriptionId = Geolocation.watchPosition(
     //   position => {
     //     getCurrentPosition({
@@ -61,11 +68,9 @@ function* startLocationWorker() {
   try {
     while (true) {
       yield put(locationChangeWatcherStarted());
-      yield take(locationChannel);
+      const location = yield take(locationChannel);
       const tracker = yield select(selectTracker);
-      const location = yield select(selectCurrentLocation);
       if (tracker?._id && location) {
-        // console.log('startLocationWorker', new Date().toISOString());
         // yield put(updateTrackerLogs({location: formatLocation(location)}));
         yield put(
           trackerApi.endpoints.updateTrackerLog.initiate({

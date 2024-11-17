@@ -1,6 +1,9 @@
-import {NativeModules} from 'react-native';
+import {Alert, NativeModules} from 'react-native';
+import Config from 'react-native-config';
 import {store} from '../store';
-import {startLocationChangeWatcher} from '../store/slices/session';
+import {makePutRequest} from './axiosHelper';
+import {catchError} from './catchError';
+import {formatLocation, getCurrentPosition} from './locationHelper';
 
 const {BackgroundTaskModule} = NativeModules;
 
@@ -21,15 +24,40 @@ export const stopBackgroundService = async () => {
 
 export const backgroundTask = async taskData => {
   return new Promise((resolve, reject) => {
-    timer = setInterval(() => {
-      const isLocationChangeWatcherActive =
-        store?.getState()?.session?.isLocationChangeWatcherActive;
-      if (!isLocationChangeWatcherActive) {
-        store.dispatch(startLocationChangeWatcher());
+    const trigger = () => {
+      try {
+        const tracker = store?.getState()?.session?.tracker;
+        if (tracker?._id) {
+          getCurrentPosition({
+            onSuccess: position => {
+              const location = formatLocation(position);
+              console.log('Location: ', location);
+              if (!location) {
+                return;
+              }
+              makePutRequest('/tracker', {
+                id: tracker._id,
+                location: location,
+              });
+            },
+            onError: error => {
+              Alert.alert('Error', JSON.stringify(error));
+            },
+          });
+        } else {
+          clearInterval(timer);
+          resolve();
+        }
+      } catch (error) {
+        catchError(error);
       }
+    };
+    timer = setInterval(() => {
+      trigger();
       if (!timer) {
         resolve();
       }
-    }, 600000);
+    }, Config.POLLING_INTERVAL);
+    trigger();
   });
 };

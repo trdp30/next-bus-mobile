@@ -2,6 +2,8 @@ import {firebase} from '@react-native-firebase/auth';
 import {fetchBaseQuery} from '@reduxjs/toolkit/query';
 import Config from 'react-native-config';
 
+export const endpoint = `${Config.REST_API_ROOT}/${Config.REST_API_VERSION}`;
+
 export async function prepareHeaders(headers, api) {
   const user = firebase.auth()?.currentUser;
   if (user) {
@@ -12,7 +14,7 @@ export async function prepareHeaders(headers, api) {
 }
 
 export const restApiBaseQuery = fetchBaseQuery({
-  baseUrl: `${Config.REST_API_ROOT}/${Config.REST_API_VERSION}`,
+  baseUrl: endpoint,
   prepareHeaders,
 });
 
