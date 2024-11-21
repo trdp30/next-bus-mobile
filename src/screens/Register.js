@@ -24,7 +24,6 @@ import {getCurrentRole, roleList} from '../utils/roles';
 
 export default function Register() {
   const {user} = useContext(AuthContext);
-  console.log('user', user);
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [phone, setPhone] = useState(user?.phone || '');
