@@ -11,7 +11,7 @@ let timer = false;
 
 export const startBackgroundService = async () => {
   try {
-    BackgroundTaskModule.startBackgroundTask('bar');
+    // BackgroundTaskModule.startBackgroundTask('bar');
   } catch (e) {
     console.error(e);
   }

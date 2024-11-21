@@ -8,6 +8,14 @@ export const roles = {
   consumer: 'CONSUMER',
 };
 
+export const roleList = [
+  {value: roles.owner, label: 'Owner'},
+  {value: roles.driver, label: 'Driver'},
+  {value: roles.assistantDriver, label: 'Assistant Driver'},
+  {value: roles.handyman, label: 'Handyman'},
+  {value: roles.consumer, label: 'Passenger'},
+];
+
 export const getCurrentRole = user => {
   const rs = user?.roles || [];
   if (rs.includes(roles.admin)) {
