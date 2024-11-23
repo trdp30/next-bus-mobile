@@ -12,10 +12,10 @@ export async function makePutRequest(url, data) {
   try {
     const user = firebase.auth()?.currentUser;
     const token = user ? await user?.getIdToken() : null;
-    axiosInstance.defaults.headers.common.Authorization = token;
-    console.log('request making');
+    axiosInstance.defaults.headers.common.Authorization = `Bearer ${token}`;
+    console.log('request making', new Date().toLocaleDateString());
     const response = await axiosInstance.put(url, data);
-    console.log('request made', response);
+    console.log('request made', response.status);
     return response.data;
   } catch (error) {
     // Handle errors

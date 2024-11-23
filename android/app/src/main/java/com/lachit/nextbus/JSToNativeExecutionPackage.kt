@@ -6,11 +6,11 @@ import com.facebook.react.bridge.NativeModule
 import com.facebook.react.views.view.ReactViewManager
 import java.util.Collections
 
-class BackgroundTaskPackage : ReactPackage {
+class JSToNativeExecutionPackage : ReactPackage {
 
     // Return a list of native modules that should be available to JavaScript
     override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
-        return listOf(BackgroundTaskModule(reactContext))
+        return listOf(JSToNativeExecutionModule(reactContext))
     }
 
     // Optional: Return a list of view managers if necessary (in this case, we're not using any)
