@@ -77,9 +77,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.nextbus"
+    namespace "com.lachit.nextbus"
     defaultConfig {
-        applicationId "com.nextbus"
+        applicationId "com.lachit.nextbus"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

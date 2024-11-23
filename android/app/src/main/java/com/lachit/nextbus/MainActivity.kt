@@ -1,4 +1,4 @@
-package com.nextbus
+package com.lachit.nextbus
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
