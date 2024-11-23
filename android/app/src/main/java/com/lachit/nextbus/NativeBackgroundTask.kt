@@ -1,11 +1,13 @@
 package com.lachit.nextbus
 import android.content.Intent
+import android.util.Log
 import com.facebook.react.HeadlessJsTaskService
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.jstasks.HeadlessJsTaskConfig
 
 class NativeBackgroundTask : HeadlessJsTaskService() {
     override fun getTaskConfig(intent: Intent): HeadlessJsTaskConfig? {
+        Log.d("NativeBackgroundTask", "getTaskConfig called")
         return intent.extras?.let {
             HeadlessJsTaskConfig(
                 "BackgroundTask",
