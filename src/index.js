@@ -8,7 +8,7 @@ import {Provider} from 'react-redux';
 import {ApplicationProvider} from './contexts/ApplicationContext';
 import AuthProvider from './contexts/AuthContext';
 import {LocationProvider} from './contexts/LocationContext';
-import {BottomTabNavigator} from './navigation/BottomTabNavigation';
+import Navigation from './navigation';
 import {store} from './store';
 import client from './utils/apollo';
 
@@ -21,7 +21,8 @@ function Root() {
             <AuthProvider>
               <ApplicationProvider>
                 <GluestackUIProvider mode="light">
-                  <BottomTabNavigator />
+                  {/* <BottomTabNavigator /> */}
+                  <Navigation />
                 </GluestackUIProvider>
               </ApplicationProvider>
             </AuthProvider>
