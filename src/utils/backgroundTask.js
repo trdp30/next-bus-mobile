@@ -6,17 +6,16 @@ let timer = false;
 
 export const startBackgroundService = async () => {
   try {
-    debugger;
     JSToNativeExecutionModule.startBackgroundTask('bar');
   } catch (e) {
-    debugger;
     console.error(e);
   }
 };
 
 export const stopBackgroundService = async () => {
-  // BackgroundTaskModule.stopBackgroundTask();
+  console.log('Background Task Stopped', new Date().toLocaleDateString());
   clearInterval(timer);
+  timer = null;
 };
 
 export const backgroundTask = async taskData => {

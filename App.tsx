@@ -7,7 +7,10 @@
 
 import React, {useEffect, useRef, useState} from 'react';
 import {AppState, Text, View} from 'react-native';
-import {startBackgroundService} from './src/utils/backgroundTask';
+import {
+  startBackgroundService,
+  stopBackgroundService,
+} from './src/utils/backgroundTask';
 
 function App() {
   const appState = useRef(AppState.currentState);
@@ -19,7 +22,7 @@ function App() {
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        // stopBackgroundService();
+        stopBackgroundService();
       } else {
         startBackgroundService();
       }
