@@ -1,5 +1,7 @@
 import {NativeModules} from 'react-native';
+import {store} from '../store';
 import {makePutRequest} from './axiosHelper';
+import {formatLocation, getNewCurrentPosition} from './locationHelper';
 
 const {JSToNativeExecutionModule} = NativeModules;
 
@@ -76,10 +78,22 @@ export const backgroundTask = async taskData => {
   return new Promise((resolve, reject) => {
     const trigger = async () => {
       console.log('Background Task Triggered', new Date().toLocaleDateString());
-      await makePutRequest(`tracker/log/${payload.id}`, {
-        location: payload.location,
-      });
-      console.log('request completed, waiting for next trigger');
+      const tracker = store?.getState()?.session?.tracker;
+      console.log('Tracker: ', tracker?._id);
+      if (tracker?._id) {
+        console.log('inside');
+        const location = await getNewCurrentPosition();
+        console.log('getNewCurrentPosition Location: ', location);
+        const formattedLocation = formatLocation(location);
+        await makePutRequest(`/tracker/log/${tracker._id}`, {
+          location: formattedLocation,
+        });
+        console.log('request completed, waiting for next trigger');
+      }
+      // await makePutRequest(`tracker/log/${payload.id}`, {
+      //   location: payload.location,
+      // });
+      // console.log('request completed, waiting for next trigger');
     };
     timer = setInterval(() => {
       trigger();

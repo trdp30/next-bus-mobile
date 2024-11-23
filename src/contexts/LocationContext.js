@@ -21,7 +21,9 @@ import {
   checkIsLocationEnabled,
   getCurrentPosition,
   getPermissions,
+  requestBackgroundLocationPermission,
   requestEnableLocation,
+  requestNotificationPermission,
 } from '../utils/locationHelper';
 
 export const LocationContext = createContext({});
@@ -99,6 +101,22 @@ export const LocationProvider = ({children}) => {
     isLocationEnabled,
     handleRequestCurrentLocation,
   ]);
+
+  useEffect(() => {
+    if (!(!processing && currentLocationError && !validating)) {
+      requestNotificationPermission()
+        .then(status => {
+          console.log('Notification permission granted', status);
+        })
+        .then(() => requestBackgroundLocationPermission())
+        .then(status => {
+          console.log('Background location permission granted', status);
+        })
+        .catch(error => {
+          console.error('Background location permission error', error);
+        });
+    }
+  }, [processing, currentLocationError, validating]);
 
   const handleRequestCurrentLocation = useCallback(() => {
     getCurrentPosition({

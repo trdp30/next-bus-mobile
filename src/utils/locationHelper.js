@@ -44,6 +44,14 @@ export const getCurrentPosition = ({onSuccess, onError}) => {
   });
 };
 
+export const getNewCurrentPosition = async () => {
+  return new Promise((resolve, reject) => {
+    Geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: true,
+    });
+  });
+};
+
 export const getPermissions = async () => {
   const toRequestPermissions =
     Platform.OS === 'android'
@@ -96,4 +104,12 @@ export const formatLocation = location => {
     }
   }
   return null;
+};
+
+export const requestBackgroundLocationPermission = async () => {
+  return await requestMultiple([PERMISSIONS.ACCESS_BACKGROUND_LOCATION]);
+};
+
+export const requestNotificationPermission = async () => {
+  return await requestMultiple([PERMISSIONS.POST_NOTIFICATION]);
 };
