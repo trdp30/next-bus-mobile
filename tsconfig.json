@@ -2,8 +2,12 @@
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
     "paths": {
-      "@/*": ["./*"],
-      "tailwind.config": ["./tailwind.config.js"]
+      "@/*": [
+        "./*"
+      ],
+      "tailwind.config": [
+        "./tailwind.config.js"
+      ]
     },
     "jsxImportSource": "nativewind"
   }

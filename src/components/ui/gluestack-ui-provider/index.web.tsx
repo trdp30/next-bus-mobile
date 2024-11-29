@@ -1,13 +1,13 @@
 'use client';
-import {setFlushStyles} from '@gluestack-ui/nativewind-utils/flush';
-import {OverlayProvider} from '@gluestack-ui/overlay';
-import {ToastProvider} from '@gluestack-ui/toast';
-import React, {useEffect, useLayoutEffect} from 'react';
-import {config} from './config';
-import {script} from './script';
+import React, { useEffect, useLayoutEffect } from 'react';
+import { config } from './config';
+import { OverlayProvider } from '@gluestack-ui/overlay';
+import { ToastProvider } from '@gluestack-ui/toast';
+import { setFlushStyles } from '@gluestack-ui/nativewind-utils/flush';
+import { script } from './script';
 
 const variableStyleTagId = 'nativewind-style';
-const createStyle = styleTagId => {
+const createStyle = (styleTagId: string) => {
   const style = document.createElement('style');
   style.id = styleTagId;
   style.appendChild(document.createTextNode(''));
@@ -17,13 +17,21 @@ const createStyle = styleTagId => {
 export const useSafeLayoutEffect =
   typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
-export function GluestackUIProvider({mode = 'light', ...props}) {
-  let cssVariablesWithMode = '';
-  Object.keys(config).forEach(configKey => {
+export function GluestackUIProvider({
+  mode = 'light',
+  ...props
+}: {
+  mode?: 'light' | 'dark' | 'system';
+  children?: React.ReactNode;
+}) {
+  let cssVariablesWithMode = ``;
+  Object.keys(config).forEach((configKey) => {
     cssVariablesWithMode +=
-      configKey === 'dark' ? '\n .dark {\n ' : '\n:root {\n';
-    const cssVariables = Object.keys(config[configKey]).reduce((acc, curr) => {
-      acc += `${curr}:${config[configKey][curr]}; `;
+      configKey === 'dark' ? `\n .dark {\n ` : `\n:root {\n`;
+    const cssVariables = Object.keys(
+      config[configKey as keyof typeof config]
+    ).reduce((acc: string, curr: string) => {
+      acc += `${curr}:${config[configKey as keyof typeof config][curr]}; `;
       return acc;
     }, '');
     cssVariablesWithMode += `${cssVariables} \n}`;
@@ -31,7 +39,7 @@ export function GluestackUIProvider({mode = 'light', ...props}) {
 
   setFlushStyles(cssVariablesWithMode);
 
-  const handleMediaQuery = React.useCallback(e => {
+  const handleMediaQuery = React.useCallback((e: MediaQueryListEvent) => {
     script(e.matches ? 'dark' : 'light');
   }, []);
 
@@ -47,9 +55,7 @@ export function GluestackUIProvider({mode = 'light', ...props}) {
   }, [mode]);
 
   useSafeLayoutEffect(() => {
-    if (mode !== 'system') {
-      return;
-    }
+    if (mode !== 'system') return;
     const media = window.matchMedia('(prefers-color-scheme: dark)');
 
     media.addListener(handleMediaQuery);
@@ -66,9 +72,7 @@ export function GluestackUIProvider({mode = 'light', ...props}) {
         if (!style) {
           style = createStyle(variableStyleTagId);
           style.innerHTML = cssVariablesWithMode;
-          if (head) {
-            head.appendChild(style);
-          }
+          if (head) head.appendChild(style);
         }
       }
     }
