@@ -1,6 +1,9 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
-import React from 'react';
+import React, {useContext} from 'react';
+import Icon from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {AuthContext} from '../contexts/AuthContext';
 import {Home} from '../Screens/Home';
 import {Road} from '../Screens/Road';
 import {Settings} from '../Screens/Setting';
@@ -8,15 +11,41 @@ import AuthNavigation from './AuthNavigation';
 
 const Tab = createBottomTabNavigator();
 
+const screenOptions = ({route}) => ({
+  headerShown: false,
+  tabBarIcon: ({focused, color, size}) => {
+    let iconName;
+
+    if (route.name === 'Home') {
+      iconName = 'home';
+    } else if (route.name === 'Setting') {
+      iconName = 'settings';
+    } else if (route.name === 'Road') {
+      iconName = 'bus';
+    }
+
+    // Return the icon component
+    if (iconName === 'bus') {
+      return <Ionicons name={iconName} size={size} color={color} />;
+    }
+    return <Icon name={iconName} size={size} color={color} />;
+  },
+  tabBarActiveTintColor: 'tomato',
+  tabBarInactiveTintColor: 'gray',
+});
 export default function BottomTabNavigation() {
+  const {isAuthenticated} = useContext(AuthContext);
   return (
     <NavigationContainer>
-      <Tab.Navigator screenOptions={{headerShown: false}}>
-        <Tab.Screen name="Auth" component={AuthNavigation} />
-        <Tab.Screen name="Home" component={Home} />
-        <Tab.Screen name="Setting" component={Settings} />
-        <Tab.Screen name="Road" component={Road} />
-      </Tab.Navigator>
+      {isAuthenticated ? (
+        <Tab.Navigator screenOptions={screenOptions}>
+          <Tab.Screen name="Home" component={Home} />
+          <Tab.Screen name="Road" component={Road} />
+          <Tab.Screen name="Setting" component={Settings} />
+        </Tab.Navigator>
+      ) : (
+        <AuthNavigation />
+      )}
     </NavigationContainer>
   );
 }
