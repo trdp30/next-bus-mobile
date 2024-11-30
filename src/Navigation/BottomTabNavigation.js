@@ -6,8 +6,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {AuthContext} from '../contexts/AuthContext';
 import {Home} from '../Screens/Home';
 import {Road} from '../Screens/Road';
-import {Settings} from '../Screens/Setting';
 import AuthNavigation from './AuthNavigation';
+import SettingNavigation from './SettingNavigation';
 
 const Tab = createBottomTabNavigator();
 
@@ -41,7 +41,7 @@ export default function BottomTabNavigation() {
         <Tab.Navigator screenOptions={screenOptions}>
           <Tab.Screen name="Home" component={Home} />
           <Tab.Screen name="Road" component={Road} />
-          <Tab.Screen name="Setting" component={Settings} />
+          <Tab.Screen name="Setting" component={SettingNavigation} />
         </Tab.Navigator>
       ) : (
         <AuthNavigation />

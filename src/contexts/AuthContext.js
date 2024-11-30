@@ -31,6 +31,8 @@ function AuthProvider(props) {
   const fbUser = useSelector(selectFbUser);
   const dispatch = useDispatch();
 
+  console.log('currentUser', currentUser);
+
   // Handle user state changes
   const onAuthStateChanged = useCallback(
     data => {
