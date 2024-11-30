@@ -11,6 +11,7 @@ import SupportSection from './SupportSection';
 export const Settings = ({isActive}) => {
   const [openLogoutAlertDialog, setOpenLogoutAlertDialog] =
     React.useState(false);
+
   return (
     <ScrollView>
       <VStack className="px-5 py-4 flex-1" space="lg">

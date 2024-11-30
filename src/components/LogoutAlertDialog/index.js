@@ -1,4 +1,5 @@
-import React from 'react';
+import {AuthContext} from '@/src/contexts/AuthContext';
+import React, {useContext} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {
   AlertDialog,
@@ -17,6 +18,8 @@ const LogoutAlertDialog = ({
   openLogoutAlertDialog,
   setOpenLogoutAlertDialog,
 }) => {
+  const {signOut} = useContext(AuthContext);
+
   const handleClose = () => {
     setOpenLogoutAlertDialog(false);
   };
@@ -38,7 +41,7 @@ const LogoutAlertDialog = ({
           <Button variant="outline" action="secondary" onPress={handleClose}>
             <ButtonText>Cancel</ButtonText>
           </Button>
-          <Button action="negative" onPress={handleClose}>
+          <Button action="negative" onPress={signOut}>
             <ButtonText className="text-white">Logout</ButtonText>
           </Button>
         </AlertDialogFooter>
