@@ -14,8 +14,8 @@ export const userApi = createApi({
         result ? [{type: 'Users', id: result?._id}] : ['Users'],
       onQueryStarted: async (id, {dispatch, queryFulfilled}) => {
         try {
-          const {data} = await queryFulfilled;
-          if (data) {
+          const {data, error} = await queryFulfilled;
+          if (!error) {
             dispatch(getCurrentUserLoaded(data));
           }
         } catch (error) {

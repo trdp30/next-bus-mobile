@@ -9,10 +9,18 @@ import React, {
 } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import AuthenticationLoader from '../components/AuthenticationLoader';
-import {selectFbUser, selectUser} from '../store/selectors/session.selector';
+import {
+  selectFbUser,
+  selectUser,
+  selectUserDataLoaded,
+} from '../store/selectors/session.selector';
 import {authenticated} from '../store/slices/session';
 import {catchError} from '../utils/catchError';
-import {initializeGoogleSignIn, signInWithGoogle} from '../utils/googleSignIn';
+import {
+  googleSignOut,
+  initializeGoogleSignIn,
+  signInWithGoogle,
+} from '../utils/googleSignIn';
 
 initializeGoogleSignIn();
 
@@ -29,9 +37,8 @@ function AuthProvider(props) {
   const [user, setUser] = useState();
   const currentUser = useSelector(selectUser);
   const fbUser = useSelector(selectFbUser);
+  const userDataLoaded = useSelector(selectUserDataLoaded);
   const dispatch = useDispatch();
-
-  console.log('currentUser', currentUser);
 
   // Handle user state changes
   const onAuthStateChanged = useCallback(
@@ -101,9 +108,14 @@ function AuthProvider(props) {
   };
 
   const signOut = () => {
-    return auth()
-      .signOut()
-      .then(() => console.log('User signed out!'));
+    return (
+      auth()
+        .signOut()
+        .then(googleSignOut)
+        .then(() => console.log('User signed out!'))
+        //Todo: handle logout error cases
+        .catch(error => console.error('Error while signinOut', error))
+    );
   };
 
   const value = useMemo(() => {
@@ -112,12 +124,13 @@ function AuthProvider(props) {
       isAuthenticating,
       user: currentUser,
       fbUser: fbUser,
+      userDataLoaded,
       // signInAnonymously,
       signInWithEmailPassword,
       signOut,
       signInWithGoogle,
     };
-  }, [isAuthenticated, isAuthenticating, currentUser, fbUser]);
+  }, [isAuthenticated, isAuthenticating, currentUser, fbUser, userDataLoaded]);
 
   if (isAuthenticating) {
     return <AuthenticationLoader />;

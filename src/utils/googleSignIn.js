@@ -54,3 +54,7 @@ export async function signInWithGoogle() {
     }
   }
 }
+
+export async function googleSignOut() {
+  return await GoogleSignin.revokeAccess();
+}

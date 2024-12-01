@@ -32,3 +32,8 @@ export const selectLocationChangeWatcher = createSelector(
   selectSession,
   state => state.isLocationChangeWatcherActive,
 );
+
+export const selectUserDataLoaded = createSelector(
+  selectSession,
+  state => state.userDataLoaded,
+);

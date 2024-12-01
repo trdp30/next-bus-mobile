@@ -13,7 +13,7 @@ import React, {useContext} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const ProfileSection = () => {
-  const {user} = useContext(AuthContext);
+  const {user, fbUser} = useContext(AuthContext);
   const navigation = useNavigation();
   const handlePress = () => {
     navigation.navigate('Profile');
@@ -23,10 +23,12 @@ const ProfileSection = () => {
       <HStack className="justify-between items-center">
         <HStack space="md">
           <Avatar className="bg-primary-500">
-            <AvatarFallbackText>{user?.name}</AvatarFallbackText>
+            <AvatarFallbackText>
+              {user?.name || fbUser?.displayName}
+            </AvatarFallbackText>
             <AvatarImage
               source={{
-                uri: user?.profile_pic,
+                uri: user?.profile_pic || fbUser?.photoURL,
               }}
             />
           </Avatar>

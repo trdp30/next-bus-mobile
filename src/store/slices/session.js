@@ -15,6 +15,7 @@ const initialState = {
   currentLocation: null,
   // date: getIsoGetStartOfDay(),
   isLocationChangeWatcherActive: false,
+  userDataLoaded: false,
 };
 
 export const sessionSlice = createSlice({
@@ -23,6 +24,7 @@ export const sessionSlice = createSlice({
   reducers: {
     authenticated: (state, action) => {
       state.fbUser = action.payload;
+      // state.userDataLoaded = false;
     },
     unauthenticated: () => {
       return initialState;
@@ -39,7 +41,10 @@ export const sessionSlice = createSlice({
     setVehicle: (state, action) => {
       state.vehicle = action?.payload;
     },
-    getCurrentUserLoaded: () => {},
+    getCurrentUserLoaded: state => {
+      debugger;
+      state.userDataLoaded = true;
+    },
     storeUserRole: (state, action) => {
       state.role = action.payload;
     },
