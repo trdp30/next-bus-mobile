@@ -12,9 +12,10 @@ import AuthenticationLoader from '../components/AuthenticationLoader';
 import {
   selectFbUser,
   selectUser,
+  selectUserCurrentRole,
   selectUserDataLoaded,
 } from '../store/selectors/session.selector';
-import {authenticated} from '../store/slices/session';
+import {authenticated, unauthenticated} from '../store/slices/session';
 import {catchError} from '../utils/catchError';
 import {
   googleSignOut,
@@ -38,7 +39,19 @@ function AuthProvider(props) {
   const currentUser = useSelector(selectUser);
   const fbUser = useSelector(selectFbUser);
   const userDataLoaded = useSelector(selectUserDataLoaded);
+  const currentRole = useSelector(selectUserCurrentRole);
   const dispatch = useDispatch();
+
+  const handleVerifyUserRegistration = useCallback(
+    navigation => {
+      if (userDataLoaded) {
+        if (!currentUser) {
+          navigation.navigate('Register');
+        }
+      }
+    },
+    [userDataLoaded, currentUser],
+  );
 
   // Handle user state changes
   const onAuthStateChanged = useCallback(
@@ -107,16 +120,33 @@ function AuthProvider(props) {
     }
   };
 
-  const signOut = () => {
+  const handleSignInWithCustomToken = useCallback(
+    async token => {
+      try {
+        toggleAuthenticating(true);
+        await signOut();
+        await auth().signInWithCustomToken(token);
+        toggleAuthenticating(false);
+      } catch (error) {
+        // Todo: Handle the error format
+        console.log('handleSignInWithCustomToken error', error);
+        toggleAuthenticating(false);
+      }
+    },
+    [signOut, toggleAuthenticating],
+  );
+
+  const signOut = useCallback(() => {
     return (
       auth()
         .signOut()
+        .then(() => dispatch(unauthenticated()))
         .then(googleSignOut)
         .then(() => console.log('User signed out!'))
         //Todo: handle logout error cases
         .catch(error => console.error('Error while signinOut', error))
     );
-  };
+  }, [dispatch]);
 
   const value = useMemo(() => {
     return {
@@ -129,10 +159,27 @@ function AuthProvider(props) {
       signInWithEmailPassword,
       signOut,
       signInWithGoogle,
+      handleVerifyUserRegistration,
+      currentRole,
+      handleSignInWithCustomToken,
     };
-  }, [isAuthenticated, isAuthenticating, currentUser, fbUser, userDataLoaded]);
+  }, [
+    isAuthenticated,
+    isAuthenticating,
+    currentUser,
+    fbUser,
+    userDataLoaded,
+    handleVerifyUserRegistration,
+    signOut,
+    currentRole,
+    handleSignInWithCustomToken,
+  ]);
 
   if (isAuthenticating) {
+    return <AuthenticationLoader />;
+  }
+
+  if (isAuthenticated && !userDataLoaded) {
     return <AuthenticationLoader />;
   }
 

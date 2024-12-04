@@ -59,6 +59,14 @@ export const userApi = createApi({
       }),
       invalidatesTags: ['Users'],
     }),
+    registerUser: build.mutation({
+      query: payload => ({
+        url: 'user/register',
+        method: 'POST',
+        body: payload,
+      }),
+      invalidatesTags: ['Users'],
+    }),
   }),
 });
 
@@ -66,4 +74,5 @@ export const {
   useGetCurrentUserQuery,
   useGetUserByIdQuery,
   useLazyGetUserByIdQuery,
+  useRegisterUserMutation,
 } = userApi;

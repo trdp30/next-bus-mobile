@@ -5,15 +5,14 @@ export const roles = {
   driver: 'DRIVER',
   assistantDriver: 'ASSISTANT_DRIVER',
   handyman: 'HANDYMAN',
-  consumer: 'CONSUMER',
+  passenger: 'PASSENGER',
 };
 
 export const roleList = [
-  {value: roles.owner, label: 'Owner'},
+  // {value: roles.passenger, label: 'Passenger'},
   {value: roles.driver, label: 'Driver'},
-  {value: roles.assistantDriver, label: 'Assistant Driver'},
-  {value: roles.handyman, label: 'Handyman'},
-  {value: roles.consumer, label: 'Passenger'},
+  {value: roles.owner, label: 'Owner'},
+  {value: roles.areaManager, label: 'Service Manager'},
 ];
 
 export const getCurrentRole = user => {

@@ -42,7 +42,6 @@ export const sessionSlice = createSlice({
       state.vehicle = action?.payload;
     },
     getCurrentUserLoaded: state => {
-      debugger;
       state.userDataLoaded = true;
     },
     storeUserRole: (state, action) => {

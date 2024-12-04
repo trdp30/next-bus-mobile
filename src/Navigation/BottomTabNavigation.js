@@ -30,14 +30,14 @@ const screenOptions = ({route}) => ({
     }
     return <Icon name={iconName} size={size} color={color} />;
   },
-  tabBarActiveTintColor: 'tomato',
+  tabBarActiveTintColor: 'teal',
   tabBarInactiveTintColor: 'gray',
 });
 export default function BottomTabNavigation() {
-  const {isAuthenticated} = useContext(AuthContext);
+  const {isAuthenticated, userDataLoaded, user} = useContext(AuthContext);
   return (
     <NavigationContainer>
-      {isAuthenticated ? (
+      {isAuthenticated && userDataLoaded && user?._id ? (
         <Tab.Navigator screenOptions={screenOptions}>
           <Tab.Screen name="Home" component={HomeNavigation} />
           <Tab.Screen name="Road" component={Road} />

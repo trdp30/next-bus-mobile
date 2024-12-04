@@ -37,3 +37,8 @@ export const selectUserDataLoaded = createSelector(
   selectSession,
   state => state.userDataLoaded,
 );
+
+export const selectUserCurrentRole = createSelector(
+  selectSession,
+  state => state.role,
+);
