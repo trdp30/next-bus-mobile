@@ -36,6 +36,8 @@ export const formFields = [
     placeholder: 'Enter your phone number',
     required: true,
     disabled: false,
+    maxLength: 10,
+    minLength: 10,
   },
   {
     name: 'password',
@@ -44,6 +46,8 @@ export const formFields = [
     label: 'Password',
     placeholder: 'Enter your password',
     required: true,
+    maxLength: 20,
+    minLength: 6,
   },
   // {
   //   name: 'confirm_password',

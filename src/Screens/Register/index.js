@@ -34,7 +34,7 @@ export default function Register() {
   } = useForm({
     defaultValues: initialState(fbUser),
   });
-  const [selectedRole, setSelectedRole] = useState(roles.passenger);
+  const [selectedRole, setSelectedRole] = useState(roles.driver);
   const onSubmit = async data => {
     const payload = {
       ...data,
@@ -109,6 +109,8 @@ export default function Register() {
                       control={control}
                       rules={{
                         required: formField.required,
+                        maxLength: formField.maxLength,
+                        minLength: formField.minLength,
                       }}
                       disabled={result.isLoading}
                       render={({field: {onChange, onBlur, value}}) => (

@@ -12,8 +12,8 @@ import {
 
 function* authenticatedWorker() {
   try {
-    // yield put(userApi.endpoints.getCurrentUser.initiate(new Date().getTime()));
-    yield put(userApi.endpoints.getCurrentUser.initiate());
+    yield put(userApi.endpoints.getCurrentUser.initiate(new Date().getTime()));
+    // yield put(userApi.endpoints.getCurrentUser.initiate());
   } catch (error) {
     yield call(catchError, error);
   }
