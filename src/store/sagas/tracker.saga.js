@@ -2,7 +2,7 @@ import {catchError} from '@/src/utils/catchError';
 import {
   formatLocation,
   getNewCurrentPosition,
-} from '@/src/utils/locationHelper';
+} from '@/src/utils/permissionHelpers';
 import {Alert} from 'react-native';
 import Config from 'react-native-config';
 import {END, eventChannel} from 'redux-saga';

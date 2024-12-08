@@ -2,7 +2,6 @@ import {Box} from '@/src/components/ui/box';
 import {Pressable} from '@/src/components/ui/pressable';
 import {Text} from '@/src/components/ui/text';
 import {AuthContext} from '@/src/contexts/AuthContext';
-import {useGetCurrentUserQuery} from '@/src/store/services/userApi';
 import {useNavigation} from '@react-navigation/native';
 import classname from 'classname';
 import React, {useContext} from 'react';
@@ -12,8 +11,6 @@ export function Home() {
   const isDarkMode = useColorScheme() === 'dark';
   const {user} = useContext(AuthContext);
   const navigation = useNavigation();
-  const {data} = useGetCurrentUserQuery();
-  console.log('home data', data);
 
   const handleStartTrip = () => {
     navigation.navigate('StartTrip');

@@ -138,8 +138,8 @@ function StartTrip() {
               Start Public Trip
             </Text>
             <Text className="text-md text-black px-8 text-left">
-              The trip will be visible to all users available or whoever request
-              in the app network.
+              The trip will be visible to all users available or whoever
+              requested in the app network.
             </Text>
           </Pressable>
           <Box className="shadow-sm bg-white rounded-full absolute bottom-0 ring-4">
@@ -154,7 +154,7 @@ function StartTrip() {
               Start Private Trip
             </Text>
             <Text className="text-md text-black px-8 text-left">
-              The trip will be visible to only to owner in the app network.
+              The trip will be visible only to the owner in the app network.
             </Text>
           </Pressable>
           <Box className="shadow-sm bg-white rounded-full absolute bottom-0 ring-4">

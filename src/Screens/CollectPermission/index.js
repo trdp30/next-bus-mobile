@@ -1,63 +1,34 @@
 import {Box} from '@/src/components/ui/box';
-import {CheckIcon, Icon} from '@/src/components/ui/icon';
+import {CheckIcon, CloseIcon, Icon} from '@/src/components/ui/icon';
 import {Spinner} from '@/src/components/ui/spinner';
 import {Text} from '@/src/components/ui/text';
+import {PermissionContext} from '@/src/contexts/PermissionContext';
 import classname from 'classname';
-import {produce} from 'immer';
-import React, {useReducer} from 'react';
-import {useColorScheme} from 'react-native';
-
-const initialState = {
-  notification: {
-    granted: false,
-    name: 'Notification',
-    description: 'To notify you about the trip status and updates.',
-    error: '',
-  },
-  location: {
-    granted: false,
-    name: 'Location',
-    description: 'To track your trip and provide you with the best experience.',
-    error: '',
-  },
-  background: {
-    granted: false,
-    name: 'Background Location',
-    description: 'To track your trip even when the app is not in use.',
-    error: '',
-  },
-  foreground: {
-    granted: false,
-    name: 'Foreground Location',
-    description: 'To track your trip when the app is in use.',
-    error: '',
-  },
-};
-
-const reducer = (state, action) => {
-  return produce(state, draft => {
-    switch (action.type) {
-      case 'NOTIFICATION':
-        draft.notification = action.payload;
-        break;
-      case 'LOCATION':
-        draft.driver = action.payload;
-        break;
-      case 'BACKGROUND_LOCATION':
-        draft.started_from = action.payload;
-        break;
-      case 'FOREGROUND_LOCATION':
-        draft.destination = action.payload;
-        break;
-      default:
-        break;
-    }
-  });
-};
+import React, {useContext, useEffect} from 'react';
+import {ScrollView, useColorScheme} from 'react-native';
+import {openSettings} from 'react-native-permissions';
 
 const CollectPermission = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const {
+    state,
+    startRequestingPermission,
+    isRequesting,
+    requestError,
+    hasMissingPermissions,
+  } = useContext(PermissionContext);
   const isDarkMode = useColorScheme() === 'dark';
+
+  useEffect(() => {
+    startRequestingPermission();
+  }, [startRequestingPermission]);
+
+  const handleOpenSettings = () => {
+    openSettings(
+      hasMissingPermissions === 'background_location'
+        ? 'location'
+        : 'notification',
+    );
+  };
 
   return (
     <Box className="flex flex-1 items-center">
@@ -79,29 +50,81 @@ const CollectPermission = () => {
         </Box>
       </Box>
       <Box className="flex flex-1 flex-col space-y-4 px-8 py-4">
-        <Box className="bg-white p-6 rounded-md shadow-md">
-          {Object.keys(state).map(key => {
-            const item = state[key];
-            return (
-              <Box className="flex">
-                <Box className="flex justify-start flex-row">
-                  {item.granted ? (
-                    <Icon
-                      as={CheckIcon}
-                      className="text-green-500 m-2 w-4 h-4"
-                    />
-                  ) : (
-                    <Spinner size="14" className="mr-6" />
-                  )}
-                  <Text className="text-md font-bold text-left">
-                    {item.name}
+        <ScrollView>
+          <Box className="bg-white p-6 rounded-md shadow-md">
+            {Object.keys(state).map(key => {
+              const item = state[key];
+              return (
+                <Box className="flex" key={key}>
+                  <Box className="flex justify-start flex-row">
+                    {item.granted ? (
+                      <Icon
+                        as={CheckIcon}
+                        className="text-green-500 mr-5 top-1"
+                      />
+                    ) : (
+                      <>
+                        {isRequesting ? (
+                          <Spinner size="14" className="mr-6" />
+                        ) : (
+                          <Icon
+                            as={CloseIcon}
+                            className="text-red-500 mr-5 top-1"
+                          />
+                        )}
+                      </>
+                    )}
+                    <Text className="text-md font-bold text-left">
+                      {item.name}
+                    </Text>
+                  </Box>
+                  <Text className="font-normal ml-10">{item.description}</Text>
+                  <Text className="font-normal ml-10 text-red-500">
+                    {item?.error}
                   </Text>
                 </Box>
-                <Text className="font-normal ml-10">{item.description}</Text>
+              );
+            })}
+            {requestError ? (
+              <Box className="py-6">
+                <Box>
+                  <Text className="font-medium">
+                    Requesting Permission failed with the below mentioned error:
+                  </Text>
+                </Box>
+                <Box className="p-2 bg-gray-200 rounded">
+                  <Text className="text-md text-left text-red-500">
+                    {requestError}
+                  </Text>
+                </Box>
               </Box>
-            );
-          })}
-        </Box>
+            ) : (
+              <></>
+            )}
+            {hasMissingPermissions ? (
+              <Box className="flex justify-center">
+                <Box className="mt-4">
+                  <Text className="text-center">
+                    Fix the permission error from the setting. Once done, click
+                    the retry.
+                  </Text>
+                  <Text
+                    className="text-blue-500 text-md underline text-center"
+                    onPress={handleOpenSettings}>
+                    Open Settings
+                  </Text>
+                  <Text
+                    className="text-blue-500 text-md underline text-center"
+                    onPress={startRequestingPermission}>
+                    Retry
+                  </Text>
+                </Box>
+              </Box>
+            ) : (
+              <></>
+            )}
+          </Box>
+        </ScrollView>
       </Box>
     </Box>
   );
