@@ -4,7 +4,6 @@ import React, {useContext} from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {AuthContext} from '../contexts/AuthContext';
-import {Road} from '../Screens/Road';
 import AuthNavigation from './AuthNavigation';
 import HomeNavigation from './HomeNavigation';
 import SettingNavigation from './SettingNavigation';
@@ -40,7 +39,7 @@ export default function BottomTabNavigation() {
       {isAuthenticated && userDataLoaded && user?._id ? (
         <Tab.Navigator screenOptions={screenOptions}>
           <Tab.Screen name="Home" component={HomeNavigation} />
-          <Tab.Screen name="Road" component={Road} />
+          {/* <Tab.Screen name="Road" component={Road} /> */}
           <Tab.Screen name="Setting" component={SettingNavigation} />
         </Tab.Navigator>
       ) : (

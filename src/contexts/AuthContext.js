@@ -42,17 +42,6 @@ function AuthProvider(props) {
   const currentRole = useSelector(selectUserCurrentRole);
   const dispatch = useDispatch();
 
-  const handleVerifyUserRegistration = useCallback(
-    navigation => {
-      if (userDataLoaded) {
-        if (!currentUser) {
-          navigation.navigate('Register');
-        }
-      }
-    },
-    [userDataLoaded, currentUser],
-  );
-
   // Handle user state changes
   const onAuthStateChanged = useCallback(
     data => {
@@ -159,7 +148,6 @@ function AuthProvider(props) {
       signInWithEmailPassword,
       signOut,
       signInWithGoogle,
-      handleVerifyUserRegistration,
       currentRole,
       handleSignInWithCustomToken,
     };
@@ -169,7 +157,6 @@ function AuthProvider(props) {
     currentUser,
     fbUser,
     userDataLoaded,
-    handleVerifyUserRegistration,
     signOut,
     currentRole,
     handleSignInWithCustomToken,

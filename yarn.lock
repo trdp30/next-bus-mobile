@@ -1631,6 +1631,19 @@
     "@react-native-aria/focus" "^0.2.9"
     "@react-native-aria/interactions" "0.2.13"
 
+"@gluestack-ui/modal@^0.1.35":
+  version "0.1.35"
+  resolved "https://registry.yarnpkg.com/@gluestack-ui/modal/-/modal-0.1.35.tgz#5ed5df4b999926bc13456d94a2ae4fc647b98e16"
+  integrity sha512-KfA2aJ/ZsdM5rggAAJOykVHsOZf7aYjTfDNsd5JHUC7Uo8IrQAZJBX1DEz+Y3V8dPMXEIlEFGMaVh4o29nZXcw==
+  dependencies:
+    "@gluestack-ui/hooks" "0.1.12"
+    "@gluestack-ui/overlay" "^0.1.16"
+    "@gluestack-ui/utils" "^0.1.14"
+    "@react-native-aria/dialog" "^0.0.4"
+    "@react-native-aria/focus" "^0.2.9"
+    "@react-native-aria/interactions" "0.2.13"
+    "@react-native-aria/overlays" "^0.3.12"
+
 "@gluestack-ui/nativewind-utils@^1.0.26-alpha.2":
   version "1.0.26-alpha.2"
   resolved "https://registry.yarnpkg.com/@gluestack-ui/nativewind-utils/-/nativewind-utils-1.0.26-alpha.2.tgz#c3ae0459f12e0187d985082681434d9ed7544cf4"
@@ -1696,6 +1709,11 @@
     "@gluestack-ui/hooks" "0.1.12"
     "@gluestack-ui/utils" "^0.1.14"
     "@react-native-aria/focus" "^0.2.9"
+
+"@gluestack-ui/spinner@^0.1.15":
+  version "0.1.15"
+  resolved "https://registry.yarnpkg.com/@gluestack-ui/spinner/-/spinner-0.1.15.tgz#712276227568476f55672b7bbe0082478c0c0a65"
+  integrity sha512-jkXOGhna05HM2tcPKbA+t+vqcVRgRowwC6ES0A9kY5fcuURH1V41UFx/YWyHdSsHwmWlIoCCdWycF78UbNVdPg==
 
 "@gluestack-ui/toast@^1.0.8":
   version "1.0.8"
