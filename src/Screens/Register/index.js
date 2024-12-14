@@ -7,7 +7,7 @@ import {VStack} from '@/src/components/ui/vstack';
 import {AuthContext} from '@/src/contexts/AuthContext';
 import {useRegisterUserMutation} from '@/src/store/services/userApi';
 import {roles} from '@/src/utils/roles';
-import classname from 'classname';
+import classNames from 'classnames';
 import React, {useContext, useEffect, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {
@@ -62,7 +62,7 @@ export default function Register() {
           backgroundColor={isDarkMode ? 'gray' : 'white'}
         />
         <Box
-          className={classname(
+          className={classNames(
             'flex flex-1 justify-center items-center',
             isDarkMode ? 'bg-gray-700' : 'bg-white',
           )}>
@@ -74,7 +74,7 @@ export default function Register() {
             </Pressable>
           </Box>
           <Box
-            className={classname(
+            className={classNames(
               'absolute h-2/4 w-full top-0 rounded-b-[30%]',
               isDarkMode ? 'bg-white' : 'bg-teal-200',
             )}
@@ -86,7 +86,7 @@ export default function Register() {
             Once registered, you can login to the application
           </Text>
           <Box
-            className={classname(
+            className={classNames(
               'rounded-lg border border-background-200 p-5 m-4 bg-white',
               isDarkMode ? 'bg-teal-600' : 'bg-white',
             )}>

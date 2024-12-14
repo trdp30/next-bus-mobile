@@ -4,10 +4,11 @@ import {Pressable} from '@/src/components/ui/pressable';
 import {Text} from '@/src/components/ui/text';
 import {AuthContext} from '@/src/contexts/AuthContext';
 import {useNavigation} from '@react-navigation/native';
-import classname from 'classname';
+import classNames from 'classnames';
 import {produce} from 'immer';
 import React, {useContext} from 'react';
 import {useColorScheme} from 'react-native';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 const initialState = {
   vehicle: null,
@@ -40,7 +41,7 @@ const reducer = (state, action) => {
     }
   });
 };
-function StartTrip() {
+function SelectTripType() {
   const isDarkMode = useColorScheme() === 'dark';
   const {user} = useContext(AuthContext);
   const navigation = useNavigation();
@@ -114,18 +115,33 @@ function StartTrip() {
     navigation.navigate('CollectPermission', {stripType: type});
   };
 
+  const handleBack = () => {
+    navigation.goBack();
+  };
+
+  const handlePublicStart = () => {
+    navigation.navigate('StartPublicTrip');
+  };
+
   return (
     <Box className="flex flex-1">
+      <Box className="absolute z-20 w-full px-4 pt-4 top-0">
+        <Pressable onPress={handleBack}>
+          <Box className="z-20 w-12 rounded-full p-2">
+            <FeatherIcon name={'arrow-left'} size={28} />
+          </Box>
+        </Pressable>
+      </Box>
       <Box
-        className={classname(
+        className={classNames(
           'absolute h-2/6 w-full top-0 rounded-b-[50%] shadow-md',
           isDarkMode ? 'bg-white' : 'bg-teal-200',
         )}
       />
-      <Box className="flex h-[35%]">
+      <Box className="flex h-[35%] py-12">
         <Box className="flex flex-1 py-5 justify-end">
-          <Text className="text-blue-600 text-4xl font-bold font-roboto text-center pb-6">
-            Start Trip
+          <Text className="text-teal-900 text-4xl font-bold font-roboto text-center">
+            Select Trip Type
           </Text>
         </Box>
       </Box>
@@ -133,7 +149,7 @@ function StartTrip() {
         <Box className="flex w-full text-center justify-center items-center px-4 py-6 ">
           <Pressable
             className="rounded-md w-full shadow-sm bg-white border border-teal-900 py-8"
-            onPress={() => handleStartTrip('public')}>
+            onPress={handlePublicStart}>
             <Text className="text-3xl font-bold text-teal-900 text-center">
               Start Public Trip
             </Text>
@@ -169,4 +185,4 @@ function StartTrip() {
   );
 }
 
-export default StartTrip;
+export default SelectTripType;

@@ -1,37 +1,21 @@
-// import {triggerToast} from '@components/base/Notification';
-// import * as Sentry from '@sentry/react';
-
 import {Alert} from 'react-native';
 
 export const catchError = props => {
-  console.log('props', props);
-  Alert.alert(
-    'Error',
-    `${props?.error?.error} ${props?.error?.originalStatus} ${props?.error?.originalStatus} ${props?.error?.status}`,
-  );
-  // console.error(`${props?.title} error: `, props?.error?.message);
-  // Alert.alert(props?.title, props?.error?.message);
-  if (!props.skipToast) {
-    // triggerToast({
-    //   message: {
-    //     title: props?.title,
-    //     summary: props?.error?.message,
-    //   },
-    //   variant: 'danger',
-    // });
-  }
-  if (props.extraScope && props.extraScope.key && props.extraScope.value) {
-    // Sentry.withScope((scope) => {
-    //   if (props.extraScope) {
-    //     const { key, value } = props.extraScope;
-    //     if (key && value) {
-    //       scope.setTag(key, value);
-    //     }
-    //   }
-    //   Sentry.captureException(props?.error);
-    // });
+  const err = typeof props === 'object' ? JSON.stringify(err) : String(props);
+  if (props?.error?.status) {
+    Alert.alert(
+      'Opps, Somwthing went wrong',
+      `Status Code: ${String(props?.error?.status)}.\n${
+        props?.error?.error
+      }\nRequest Url: ${props?.meta?.request?.url}`,
+    );
   } else {
-    // Sentry.captureException(props?.error);
+    return Alert.alert(
+      'Error',
+      Object.keys(props.error.error)
+        .map(key => `${key}: ${props[key]}`)
+        .join('\n'),
+    );
   }
 };
 

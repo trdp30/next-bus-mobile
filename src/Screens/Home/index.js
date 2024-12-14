@@ -3,7 +3,7 @@ import {Pressable} from '@/src/components/ui/pressable';
 import {Text} from '@/src/components/ui/text';
 import {AuthContext} from '@/src/contexts/AuthContext';
 import {useNavigation} from '@react-navigation/native';
-import classname from 'classname';
+import classNames from 'classnames';
 import React, {useContext} from 'react';
 import {useColorScheme} from 'react-native';
 
@@ -13,13 +13,13 @@ export function Home() {
   const navigation = useNavigation();
 
   const handleStartTrip = () => {
-    navigation.navigate('StartTrip');
+    navigation.navigate('SelectTripType');
   };
 
   return (
     <Box className="flex flex-1">
       <Box
-        className={classname(
+        className={classNames(
           'absolute h-2/6 w-full top-0 rounded-b-[50%] shadow-md',
           isDarkMode ? 'bg-white' : 'bg-teal-200',
         )}

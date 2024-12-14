@@ -1,12 +1,15 @@
 import {Box} from '@/src/components/ui/box';
 import {CheckIcon, CloseIcon, Icon} from '@/src/components/ui/icon';
+import {Pressable} from '@/src/components/ui/pressable';
 import {Spinner} from '@/src/components/ui/spinner';
 import {Text} from '@/src/components/ui/text';
 import {PermissionContext} from '@/src/contexts/PermissionContext';
-import classname from 'classname';
+import {useNavigation} from '@react-navigation/native';
+import classNames from 'classnames';
 import React, {useContext, useEffect} from 'react';
 import {ScrollView, useColorScheme} from 'react-native';
 import {openSettings} from 'react-native-permissions';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 const CollectPermission = () => {
   const {
@@ -17,6 +20,7 @@ const CollectPermission = () => {
     hasMissingPermissions,
   } = useContext(PermissionContext);
   const isDarkMode = useColorScheme() === 'dark';
+  const navigation = useNavigation();
 
   useEffect(() => {
     startRequestingPermission();
@@ -30,10 +34,21 @@ const CollectPermission = () => {
     );
   };
 
+  const handleBack = () => {
+    navigation.goBack();
+  };
+
   return (
     <Box className="flex flex-1 items-center">
+      <Box className="absolute z-20 w-full px-4 pt-4 top-0">
+        <Pressable onPress={handleBack}>
+          <Box className="z-20 w-12 rounded-full p-2">
+            <FeatherIcon name={'arrow-left'} size={28} />
+          </Box>
+        </Pressable>
+      </Box>
       <Box
-        className={classname(
+        className={classNames(
           'absolute h-2/6 w-full top-0 rounded-b-[50%] shadow-md',
           isDarkMode ? 'bg-white' : 'bg-teal-200',
         )}
