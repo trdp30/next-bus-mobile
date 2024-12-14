@@ -1,7 +1,6 @@
 import {Alert} from 'react-native';
 
 export const catchError = props => {
-  const err = typeof props === 'object' ? JSON.stringify(err) : String(props);
   if (props?.error?.status) {
     Alert.alert(
       'Opps, Somwthing went wrong',
@@ -9,13 +8,10 @@ export const catchError = props => {
         props?.error?.error
       }\nRequest Url: ${props?.meta?.request?.url}`,
     );
+  } else if (props?.message) {
+    return Alert.alert('Opps, Somwthing went wrong', props.message);
   } else {
-    return Alert.alert(
-      'Error',
-      Object.keys(props.error.error)
-        .map(key => `${key}: ${props[key]}`)
-        .join('\n'),
-    );
+    return Alert.alert('Opps, Somwthing went wrong', props);
   }
 };
 

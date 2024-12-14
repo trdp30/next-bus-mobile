@@ -75,3 +75,9 @@ yarn-error.log
 
 # dotenv environment variables file
 .env
+android/app/deployment_cert.der
+android/app/next-bus-manually-created-upload-key.pem
+ic_launcher/
+android/app/upload_cert.der
+logo-icons/
+android/app/google-services.json

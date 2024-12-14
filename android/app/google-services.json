@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "416876094817-fju97075o920f3p7fq6t0t6odl5q71s1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lachit.nextbus",
+            "certificate_hash": "8b4e3746bb3cf4f5e81c17e2bb3dc4238900b93a"
+          }
+        },
+        {
           "client_id": "416876094817-jnodc0pm2tvpkt1pu8931ko5hl9tgoug.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -53,6 +61,13 @@
             {
               "client_id": "416876094817-4fhho62899cgsk9s87dkdsa2olbgvu0v.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "416876094817-cblpn5fhh04acpspibmdsc4b5mmgv1pq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.lachit.nextbus"
+              }
             }
           ]
         }
