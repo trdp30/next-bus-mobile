@@ -23,10 +23,13 @@ const Login = () => {
     try {
       toggleLoading(true);
       setError(null);
-      await signInWithGoogle();
+      const res = await signInWithGoogle();
+      if (res.error) {
+        setError(res?.error?.message || res?.error);
+      }
       toggleLoading(false);
     } catch (err) {
-      setError(err.message);
+      setError(err?.message || err);
       toggleLoading(false);
     }
   };
@@ -44,7 +47,7 @@ const Login = () => {
       password,
     });
     if (res.error) {
-      setError(res.error);
+      setError(res?.error?.message || res?.error);
     }
     toggleLoading(false);
   };

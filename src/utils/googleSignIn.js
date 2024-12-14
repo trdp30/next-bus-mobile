@@ -37,36 +37,32 @@ export async function signInWithGoogle() {
     // Sign-in the user with the credential
     return auth().signInWithCredential(googleCredential);
   } catch (error) {
+    let errorMessage = error?.message;
     if (isErrorWithCode(error)) {
       switch (error.code) {
         case statusCodes.IN_PROGRESS:
-          catchError(new Error('Sign in already in progress'));
+          errorMessage = 'Sign in already in progress';
           break;
         case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-          catchError(
-            new Error('Android only, play services not available or outdated'),
-          );
+          errorMessage =
+            'Play services not available or outdated. Please update your Google Play Services.';
+
           break;
         case '7':
-          catchError(
-            new Error(
-              'Network error occurred. Please check you internet connection.',
-            ),
-          );
+          errorMessage =
+            'Network error occurred. Please check you internet connection.';
           break;
         default:
-          catchError(
-            new Error(
-              'Google signin failed with a status code: ' + String(error?.code),
-            ),
-          );
+          errorMessage =
+            'Google signin failed with a status code: ' + String(error?.code);
           break;
       }
     } else {
-      catchError(
-        new Error('Google signin failed. ' + (error?.code || error?.message)),
-      );
+      errorMessage = 'Google signin failed. ' + (error?.code || error?.message);
     }
+    const err = new Error(errorMessage);
+    catchError(err);
+    return {error: err};
   }
 }
 
