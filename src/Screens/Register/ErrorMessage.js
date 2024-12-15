@@ -2,8 +2,6 @@ import {Text} from '@/src/components/ui/text';
 import React from 'react';
 
 export const ErrorMessage = ({errors, formField}) => {
-  console.log('errors', errors);
-  console.log('formField', errors[formField.name]);
   switch (errors[formField.name]?.type) {
     case 'required':
       return <Text className="text-red-500">This field is required</Text>;

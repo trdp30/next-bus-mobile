@@ -52,8 +52,6 @@ export default function Register() {
     }
   }, [result, handleSignInWithCustomToken]);
 
-  console.log('result', result);
-
   return (
     <>
       <ScrollView contentContainerStyle={styles.contentContainer}>

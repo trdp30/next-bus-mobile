@@ -1,12 +1,26 @@
+import {Dropdown} from '@/src/components/Dropdown';
 import {Box} from '@/src/components/ui/box';
+import {Button, ButtonText} from '@/src/components/ui/button';
 import {Pressable} from '@/src/components/ui/pressable';
+import {Spinner} from '@/src/components/ui/spinner';
 import {Text} from '@/src/components/ui/text';
+import {AuthContext} from '@/src/contexts/AuthContext';
+import {useGetPlacesQuery} from '@/src/store/services/placeApi';
+import {useCreateTrackerMutation} from '@/src/store/services/trackerApi';
+import {useGetVehiclesQuery} from '@/src/store/services/vehicleApi';
 import {useNavigation} from '@react-navigation/native';
 import classNames from 'classnames';
 import {produce} from 'immer';
-import React from 'react';
-import {useColorScheme} from 'react-native';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from 'react';
+import {Alert, useColorScheme} from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import {TrackerContext} from '@/src/contexts/TrackerContext';
 
 const initialState = {
   vehicle: null,
@@ -25,9 +39,6 @@ const reducer = (state, action) => {
       case 'SET_DRIVER':
         draft.driver = action.payload;
         break;
-      // case 'SET_TRACKER_LOGS':
-      //   draft.trackerLogs = action.payload;
-      //   break;
       case 'SET_STARTED_FROM':
         draft.started_from = action.payload;
         break;
@@ -39,80 +50,61 @@ const reducer = (state, action) => {
     }
   });
 };
+
 function StartPublicTrip() {
   const navigation = useNavigation();
   const isDarkMode = useColorScheme() === 'dark';
 
-  // const {user} = useContext(AuthContext);
-  // const {data: vehicleData, isLoading: vehicleLoading} = useGetVehiclesQuery();
-  // const {data: placeData, isLoading: placeLoading} = useGetPlacesQuery();
-  // const [createTracker] = useCreateTrackerMutation();
-  // const [isLoading, toggleLoading] = useState(false);
-  // const [state, dispatch] = useReducer(reducer, initialState);
+  const {data: vehicleData, isLoading: vehicleLoading} = useGetVehiclesQuery();
+  const {data: placeData, isLoading: placeLoading} = useGetPlacesQuery();
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const {handleCreateTracker, createTrackerRequest} =
+    useContext(TrackerContext);
 
-  // const onError = error => {
-  //   Alert.alert('Error', error?.data?.message, [
-  //     {
-  //       text: 'Proceed',
-  //       onPress: async () => {
-  //         if (error?.data?.message.includes('already started')) {
-  //           await fetchTracker({
-  //             driver: state?.driver || user?._id,
-  //             vehicle: state?.vehicle,
-  //             started_from: state?.started_from,
-  //             trackerLogs: [], // add the current location as the first log
-  //             destination: state?.destination,
-  //             date: getIsoGetStartOfDay(),
-  //           });
-  //         }
-  //         toggleLoading(false);
-  //       },
-  //     },
-  //     {
-  //       text: 'Make Changes',
-  //       cancelable: true,
-  //       onPress: () => {
-  //         toggleLoading(false);
-  //       },
-  //     },
-  //   ]);
-  // };
+  console.log('state', state);
 
-  // const onSuccess = () => {
-  //   Snackbar.show({
-  //     text: 'Trip started successfully',
-  //     duration: Snackbar.LENGTH_SHORT,
-  //     backgroundColor: '#2E7D32',
-  //     textColor: '#fff',
-  //   });
-  //   toggleLoading(false);
-  // };
+  const onError = error => {
+    Alert.alert(
+      'Oops!, Something went wrong',
+      error.message || 'An error occurred while creating the tracker.',
+    );
+  };
 
-  // const handleSubmit = async () => {
-  //   const {vehicle, started_from, destination} = state;
-  //   if (!vehicle || !started_from || !destination) {
-  //     return Alert.alert('Missing fields', 'Please fill all fields.');
-  //   }
-  //   toggleLoading(true);
-  //   const response = await createTracker({
-  //     driver: state?.driver || user?._id,
-  //     vehicle: state?.vehicle,
-  //     date: getIsoGetStartOfDay(),
-  //     started_from: state?.started_from,
-  //     trackerLogs: [], // add the current location as the first log
-  //     destination: state?.destination,
-  //   });
+  const onSuccess = useCallback(() => {
+    Alert.alert('Success', 'Tracker created successfully.');
+    if (createTrackerRequest?.data?.existingTracker) {
+      console.log(
+        'createTrackerRequest?.data?.existingTracker',
+        createTrackerRequest?.data?.existingTracker,
+      );
+    }
+    console.log('createTrackerRequest', createTrackerRequest);
+  }, [createTrackerRequest]);
 
-  //   if (response.error) {
-  //     onError(response.error);
-  //   } else {
-  //     onSuccess(response.data);
-  //   }
-  // };
+  const handleSubmit = async () => {
+    const {vehicle, started_from, destination} = state;
+    if (!vehicle || !started_from || !destination) {
+      return Alert.alert(
+        'Oops!, Something went wrong',
+        'Please fill all fields.',
+      );
+    }
+    handleCreateTracker(state);
+  };
 
   const handleBack = () => {
     navigation.goBack();
   };
+
+  useEffect(() => {
+    const {isError, isSuccess} = createTrackerRequest;
+    if (isError) {
+      onError();
+    }
+    if (isSuccess) {
+      onSuccess();
+    }
+  }, [createTrackerRequest, onSuccess]);
 
   return (
     <Box className="flex flex-1">
@@ -137,113 +129,62 @@ function StartPublicTrip() {
           </Text>
         </Box>
       </Box>
-      <Box>
-        <Box>
-          {/* <Select
-            onValueChange={e => dispatch({type: 'SET_VEHICLE', payload: e})}
-            isDisabled={isLoading}>
-            <SelectTrigger variant="outline" size="lg">
-              <SelectInput placeholder="Select vehicle" />
-              <SelectIcon className="mr-3" as={ChevronDownIcon} />
-            </SelectTrigger>
-            <SelectPortal>
-              <SelectBackdrop />
-              <SelectContent>
-                <SelectDragIndicatorWrapper>
-                  <SelectDragIndicator />
-                </SelectDragIndicatorWrapper>
-                {vehicleLoading ? (
-                  <></>
-                ) : (
-                  <>
-                    {map(vehicleData, vehicle => (
-                      <SelectItem
-                        key={vehicle._id}
-                        label={vehicle.name}
-                        value={vehicle._id}
-                      />
-                    ))}
-                  </>
-                )}
-              </SelectContent>
-            </SelectPortal>
-          </Select> */}
-        </Box>
-        <Box>
-          {/* <Select
-            isDisabled={isLoading}
-            onValueChange={e =>
-              dispatch({type: 'SET_STARTED_FROM', payload: e})
-            }>
-            <SelectTrigger variant="outline" size="lg">
-              <SelectInput placeholder="Select starting location" />
-              <SelectIcon className="mr-3" as={ChevronDownIcon} />
-            </SelectTrigger>
-            <SelectPortal>
-              <SelectBackdrop />
-              <SelectContent>
-                <SelectDragIndicatorWrapper>
-                  <SelectDragIndicator />
-                </SelectDragIndicatorWrapper>
-                {placeLoading ? (
-                  <></>
-                ) : (
-                  <>
-                    {map(placeData, place => (
-                      <SelectItem
-                        key={place._id}
-                        label={place.name}
-                        value={place._id}
-                      />
-                    ))}
-                  </>
-                )}
-              </SelectContent>
-            </SelectPortal>
-          </Select> */}
-        </Box>
-        <Box>
-          {/* <Select
-            isDisabled={isLoading}
-            onValueChange={e =>
-              dispatch({type: 'SET_DESTINATION', payload: e})
-            }>
-            <SelectTrigger variant="outline" size="lg">
-              <SelectInput placeholder="Select destination location" />
-              <SelectIcon className="mr-3" as={ChevronDownIcon} />
-            </SelectTrigger>
-            <SelectPortal>
-              <SelectBackdrop />
-              <SelectContent>
-                <SelectDragIndicatorWrapper>
-                  <SelectDragIndicator />
-                </SelectDragIndicatorWrapper>
-                {placeLoading ? (
-                  <></>
-                ) : (
-                  <>
-                    {map(placeData, place => (
-                      <SelectItem
-                        key={place._id}
-                        label={place.name}
-                        value={place._id}
-                      />
-                    ))}
-                  </>
-                )}
-              </SelectContent>
-            </SelectPortal>
-          </Select> */}
+      <Box className="flex flex-1 p-4">
+        <Box
+          className={classNames(
+            'flex flex-1 shadow-lg bg-white rounded-lg justify-center items-center',
+          )}>
+          {placeLoading && vehicleLoading ? (
+            <Box>
+              <Spinner size="14" className="mr-6" />
+              <Text className="py-2">Loading...</Text>
+            </Box>
+          ) : (
+            <Box className="flex flex-1 w-full gap-y-4 p-6">
+              <Box className="">
+                <Dropdown
+                  isDisabled={createTrackerRequest?.isLoading}
+                  options={vehicleData}
+                  placeholder="Select Vehicle"
+                  onSelectedChange={e =>
+                    dispatch({type: 'SET_VEHICLE', payload: e})
+                  }
+                />
+              </Box>
+              <Box className="w-full">
+                <Dropdown
+                  isDisabled={createTrackerRequest?.isLoading}
+                  options={placeData}
+                  placeholder="Select Starting location"
+                  onSelectedChange={e =>
+                    dispatch({type: 'SET_STARTED_FROM', payload: e})
+                  }
+                />
+              </Box>
+              <Box>
+                <Dropdown
+                  isDisabled={createTrackerRequest?.isLoading}
+                  options={placeData}
+                  placeholder="Select destination location"
+                  onSelectedChange={e =>
+                    dispatch({type: 'SET_DESTINATION', payload: e})
+                  }
+                />
+              </Box>
+              <Button
+                size="md"
+                variant="solid"
+                action="primary"
+                onPress={handleSubmit}
+                isDisabled={createTrackerRequest?.isLoading}>
+                <ButtonText isDisabled={createTrackerRequest?.isLoading}>
+                  Start Trip
+                </ButtonText>
+              </Button>
+            </Box>
+          )}
         </Box>
       </Box>
-      {/* <Button
-        size="md"
-        variant="solid"
-        action="primary"
-        onPress={handleSubmit}
-        isDisabled={isLoading}>
-        <ButtonText isDisabled={isLoading}>Start Trip</ButtonText>
-      </Button> */}
     </Box>
   );
 }
