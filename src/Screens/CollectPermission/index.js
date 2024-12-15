@@ -4,7 +4,7 @@ import {Pressable} from '@/src/components/ui/pressable';
 import {Spinner} from '@/src/components/ui/spinner';
 import {Text} from '@/src/components/ui/text';
 import {PermissionContext} from '@/src/contexts/PermissionContext';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import classNames from 'classnames';
 import React, {useContext, useEffect} from 'react';
 import {ScrollView, useColorScheme} from 'react-native';
@@ -19,6 +19,8 @@ const CollectPermission = () => {
     requestError,
     hasMissingPermissions,
   } = useContext(PermissionContext);
+  const route = useRoute();
+
   const isDarkMode = useColorScheme() === 'dark';
   const navigation = useNavigation();
 
@@ -37,6 +39,25 @@ const CollectPermission = () => {
   const handleBack = () => {
     navigation.goBack();
   };
+
+  useEffect(() => {
+    if (!hasMissingPermissions && !isRequesting) {
+      setTimeout(() => {
+        const screen =
+          route?.params?.stripType === 'public'
+            ? 'StartPublicTrip'
+            : 'StartPrivateTrip';
+        navigation.navigate(screen, {
+          stripType: route?.params?.stripType,
+        });
+      }, 1000);
+    }
+  }, [
+    hasMissingPermissions,
+    isRequesting,
+    navigation,
+    route?.params?.stripType,
+  ]);
 
   return (
     <Box className="flex flex-1 items-center">

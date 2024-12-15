@@ -75,4 +75,5 @@ export const {
   useFindTrackerQuery,
   useLazyFindTrackerQuery,
   useGetTrackersQuery,
+  useUpdateTrackerMutation,
 } = trackerApi;

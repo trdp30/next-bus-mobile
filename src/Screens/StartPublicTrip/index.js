@@ -4,9 +4,7 @@ import {Button, ButtonText} from '@/src/components/ui/button';
 import {Pressable} from '@/src/components/ui/pressable';
 import {Spinner} from '@/src/components/ui/spinner';
 import {Text} from '@/src/components/ui/text';
-import {AuthContext} from '@/src/contexts/AuthContext';
 import {useGetPlacesQuery} from '@/src/store/services/placeApi';
-import {useCreateTrackerMutation} from '@/src/store/services/trackerApi';
 import {useGetVehiclesQuery} from '@/src/store/services/vehicleApi';
 import {useNavigation} from '@react-navigation/native';
 import classNames from 'classnames';
@@ -84,9 +82,12 @@ function StartPublicTrip() {
   const handleSubmit = async () => {
     const {vehicle, started_from, destination} = state;
     if (!vehicle || !started_from || !destination) {
+      return Alert.alert('Waring', 'Please fill all fields.');
+    }
+    if (started_from === destination) {
       return Alert.alert(
-        'Oops!, Something went wrong',
-        'Please fill all fields.',
+        'Waring',
+        'Start and destination location cannot be same.',
       );
     }
     handleCreateTracker(state);
