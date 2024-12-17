@@ -59,12 +59,11 @@ function StartPublicTrip() {
   const {handleCreateTracker, createTrackerRequest} =
     useContext(TrackerContext);
 
-  console.log('state', state);
-
-  const onError = error => {
+  const onError = () => {
+    const error = createTrackerRequest?.error;
     Alert.alert(
       'Oops!, Something went wrong',
-      error.message || 'An error occurred while creating the tracker.',
+      error?.message || 'An error occurred while creating the tracker.',
     );
   };
 

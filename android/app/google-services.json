@@ -38,6 +38,14 @@
           }
         },
         {
+          "client_id": "416876094817-jv3b4joso5rkj9hrah9l26ekofmvbagu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lachit.nextbus",
+            "certificate_hash": "678b7e8f09a378d893163fd2a55f8d538ab87ae7"
+          }
+        },
+        {
           "client_id": "416876094817-v82fb6uglb2gc12k2o3k78u4nvg381gv.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
