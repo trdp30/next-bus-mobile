@@ -1,5 +1,6 @@
 import LogoutAlertDialog from '@/src/components/LogoutAlertDialog';
 import {Button, ButtonText} from '@/src/components/ui/button';
+import {Text} from '@/src/components/ui/text';
 import {Divider} from '@/src/components/ui/divider';
 import {Heading} from '@/src/components/ui/heading';
 import {VStack} from '@/src/components/ui/vstack';
@@ -7,6 +8,7 @@ import React from 'react';
 import {ScrollView} from 'react-native';
 import ProfileSection from './ProfileSection';
 import SupportSection from './SupportSection';
+import Config from 'react-native-config';
 
 export const Settings = ({isActive}) => {
   const [openLogoutAlertDialog, setOpenLogoutAlertDialog] =
@@ -37,6 +39,9 @@ export const Settings = ({isActive}) => {
         setOpenLogoutAlertDialog={setOpenLogoutAlertDialog}
         openLogoutAlertDialog={openLogoutAlertDialog}
       />
+      <Text className={'text-center text-sm'}>
+        App Version: {Config.VERSION}
+      </Text>
     </ScrollView>
   );
 };

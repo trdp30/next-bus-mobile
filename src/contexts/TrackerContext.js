@@ -193,6 +193,7 @@ const TrackerProvider = ({children}) => {
       currentTracker,
       fetchingExistingTracker: isLoading,
       vehicles,
+      isTrackerActive: currentTracker?._id && currentTracker?.active,
     };
   }, [
     handleFetchTrackerForCurrentUser,
