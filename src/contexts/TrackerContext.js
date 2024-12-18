@@ -11,13 +11,20 @@ import {
   useUpdateTrackerMutation,
 } from '../store/services/trackerApi';
 import {AuthContext} from './AuthContext';
-import {getIsoGetStartOfDay} from '@/src/utils/dateHelpers';
+import {
+  getIsoGetStartOfDay,
+  getStartOfDay,
+  parseDateTime,
+} from '@/src/utils/dateHelpers';
 import {roles} from '@/src/utils/roles';
 import {catchError} from '@/src/utils/catchError';
 import {
   startProximityCheck,
   stopProximityCheck,
 } from '@/src/utils/locationHelpers';
+import {find, uniq} from 'lodash';
+import ActiveTrackerFloatingCard from '@/src/components/ActiveTrackerFloatingCard';
+import {useGetVehiclesQuery} from '@/src/store/services/vehicleApi';
 
 export const TrackerContext = React.createContext();
 
@@ -37,20 +44,35 @@ export const TrackerContext = React.createContext();
 const TrackerProvider = ({children}) => {
   const {user, currentRole} = useContext(AuthContext);
   const [isLoading, toggleLoading] = useState(true);
-  const [currentTracker, setCurrentTracker] = useState();
   const [createTracker, createTrackerRequest] = useCreateTrackerMutation();
   const [updateTracker, updateTrackerRequest] = useUpdateTrackerMutation();
-  // const [] = useFindTrackerQuery();
-  // const [] = useUpdateTrackerLogMutation();
-  const [lazyFindTracker] = useLazyFindTrackerQuery();
-  // console.log('isLoading', isLoading);
-  // console.log('currentTracker', currentTracker);
+  const [lazyFindTracker, lazyFindTrackerResult] = useLazyFindTrackerQuery();
+
+  const vehicleIds = useMemo(() => {
+    const data = lazyFindTrackerResult?.data;
+    if (Array.isArray(data) && data.length) {
+      const ids = data.map(tracker => tracker?.vehicle);
+      return uniq([...ids]);
+    }
+    return [];
+  }, [lazyFindTrackerResult?.data]);
+
+  const {data: vehicles, isLoading: vehicleRequestLoading} =
+    useGetVehiclesQuery(
+      {
+        vehicleIds,
+      },
+      {
+        skip: !vehicleIds?.length,
+      },
+    );
 
   const handleFetchTrackerForCurrentUser = useCallback(
     async payload => {
       return lazyFindTracker({
         driver: user?._id,
         date: getIsoGetStartOfDay(),
+        active: true,
       });
     },
     [lazyFindTracker, user],
@@ -106,12 +128,7 @@ const TrackerProvider = ({children}) => {
     if (currentRole === roles.driver && user?._id) {
       toggleLoading(true);
       handleFetchTrackerForCurrentUser()
-        .then(res => {
-          if (res?.data?.length) {
-            setCurrentTracker(res?.data[0]);
-          }
-          toggleLoading(false);
-        })
+        .then(() => toggleLoading(false))
         .catch(error => {
           toggleLoading(false);
           catchError(error);
@@ -134,6 +151,30 @@ const TrackerProvider = ({children}) => {
     [handleUpdateTrackerToInactive],
   );
 
+  const currentTracker = useMemo(() => {
+    const data =
+      lazyFindTrackerResult?.data ||
+      createTrackerRequest?.data?.existingTracker ||
+      createTrackerRequest.data;
+    if (currentRole === roles.driver && user?._id) {
+      if (Array.isArray(data) && data?.length) {
+        return find(data, tracker => {
+          return (
+            tracker?.active &&
+            tracker?.date &&
+            parseDateTime(tracker?.date) &&
+            +getStartOfDay() === +parseDateTime(tracker?.date)
+          );
+        });
+      }
+    }
+  }, [
+    createTrackerRequest.data,
+    currentRole,
+    lazyFindTrackerResult?.data,
+    user?._id,
+  ]);
+
   useEffect(() => {
     if (currentTracker?.destination?.location?.latitude) {
       startCheckingProximity(currentTracker?.destination?.location);
@@ -151,6 +192,7 @@ const TrackerProvider = ({children}) => {
       handleFetchTrackerByPayload,
       currentTracker,
       fetchingExistingTracker: isLoading,
+      vehicles,
     };
   }, [
     handleFetchTrackerForCurrentUser,
@@ -161,10 +203,18 @@ const TrackerProvider = ({children}) => {
     handleFetchTrackerByPayload,
     currentTracker,
     isLoading,
+    vehicles,
   ]);
 
   return (
-    <TrackerContext.Provider value={value}>{children}</TrackerContext.Provider>
+    <TrackerContext.Provider value={value}>
+      {children}
+      {currentTracker?._id && currentTracker?.active ? (
+        <ActiveTrackerFloatingCard />
+      ) : (
+        <></>
+      )}
+    </TrackerContext.Provider>
   );
 };
 

@@ -27,7 +27,7 @@ export const trackerApi = createApi({
     findTracker: build.query({
       query: queryParams => ({
         url: 'tracker',
-        params: {...queryParams, isFindTracker: true},
+        params: queryParams,
       }),
       providesTags: result =>
         result
@@ -45,7 +45,9 @@ export const trackerApi = createApi({
           body: payload,
         };
       },
-      invalidatesTags: (result, error, arg) => [{type: 'Trackers', id: arg.id}],
+      invalidatesTags: (result, error, arg) => [
+        {type: 'Trackers', id: arg._id},
+      ],
     }),
     updateTrackerLog: build.mutation({
       query({id, ...payload}) {
@@ -55,7 +57,9 @@ export const trackerApi = createApi({
           body: payload,
         };
       },
-      invalidatesTags: (result, error, arg) => [{type: 'Trackers', id: arg.id}],
+      invalidatesTags: (result, error, arg) => [
+        {type: 'Trackers', id: arg._id},
+      ],
     }),
     createTracker: build.mutation({
       query: payload => ({
