@@ -8,6 +8,7 @@ import {PermissionProvider} from './contexts/PermissionContext';
 import TrackerProvider from './contexts/TrackerContext';
 import BottomTabNavigation from './Navigation/BottomTabNavigation';
 import {store} from './store';
+import {ApplicationProvider} from '@/src/contexts/ApplicationContext';
 
 function Root() {
   // const isDarkMode = useColorScheme() === 'dark';
@@ -18,21 +19,23 @@ function Root() {
   };
 
   return (
-    <GluestackUIProvider mode={isDarkMode ? 'dark' : 'light'}>
-      <Provider store={store}>
-        <PermissionProvider>
-          <AuthProvider>
-            <TrackerProvider>
-              <StatusBar
-                barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-                backgroundColor={backgroundStyle.backgroundColor}
-              />
-              <BottomTabNavigation />
-            </TrackerProvider>
-          </AuthProvider>
-        </PermissionProvider>
-      </Provider>
-    </GluestackUIProvider>
+    <ApplicationProvider>
+      <GluestackUIProvider mode={isDarkMode ? 'dark' : 'light'}>
+        <Provider store={store}>
+          <PermissionProvider>
+            <AuthProvider>
+              <TrackerProvider>
+                <StatusBar
+                  barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+                  backgroundColor={backgroundStyle.backgroundColor}
+                />
+                <BottomTabNavigation />
+              </TrackerProvider>
+            </AuthProvider>
+          </PermissionProvider>
+        </Provider>
+      </GluestackUIProvider>
+    </ApplicationProvider>
   );
 }
 
