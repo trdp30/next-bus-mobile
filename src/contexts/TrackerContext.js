@@ -153,17 +153,19 @@ const TrackerProvider = ({children}) => {
 
   const currentTracker = useMemo(() => {
     const data =
-      lazyFindTrackerResult?.data ||
-      createTrackerRequest?.data?.existingTracker ||
-      createTrackerRequest.data;
+      (lazyFindTrackerResult?.data?.length && lazyFindTrackerResult?.data) ||
+      (createTrackerRequest.data?.length && createTrackerRequest.data) ||
+      (createTrackerRequest?.data?.existingTracker?.length &&
+        createTrackerRequest?.data?.existingTracker) ||
+      [];
     if (currentRole === roles.driver && user?._id) {
       if (Array.isArray(data) && data?.length) {
         return find(data, tracker => {
           return (
-            tracker?.active &&
             tracker?.date &&
             parseDateTime(tracker?.date) &&
-            +getStartOfDay() === +parseDateTime(tracker?.date)
+            +getStartOfDay() === +parseDateTime(tracker?.date) &&
+            tracker?.driver === user?._id
           );
         });
       }
@@ -210,11 +212,7 @@ const TrackerProvider = ({children}) => {
   return (
     <TrackerContext.Provider value={value}>
       {children}
-      {currentTracker?._id && currentTracker?.active ? (
-        <ActiveTrackerFloatingCard />
-      ) : (
-        <></>
-      )}
+      {currentTracker?._id ? <ActiveTrackerFloatingCard /> : <></>}
     </TrackerContext.Provider>
   );
 };

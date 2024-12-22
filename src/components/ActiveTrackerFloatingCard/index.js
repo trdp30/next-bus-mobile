@@ -30,7 +30,11 @@ const ActiveTrackerFloatingCard = () => {
         <Box className="flex-1">
           <Text className="text-md font-bold mb-1">
             Your tracker is currently{' '}
-            <Text className={'text-green-500'}>Active</Text>
+            {currentTracker?.active ? (
+              <Text className={'text-green-500'}>Active</Text>
+            ) : (
+              <Text className={'text-red-500'}>In Active</Text>
+            )}
           </Text>
           <Text className="text-sm text-gray-600">
             Vehicle Name: {vehicle?.name}
