@@ -1,4 +1,3 @@
-import ActiveTrackerFloatingCard from '@/src/components/ActiveTrackerFloatingCard';
 import {useGetVehiclesQuery} from '@/src/store/services/vehicleApi';
 import {catchError} from '@/src/utils/catchError';
 import {
@@ -11,7 +10,7 @@ import {
   stopProximityCheck,
 } from '@/src/utils/locationHelpers';
 import {roles} from '@/src/utils/roles';
-import {find, uniq} from 'lodash';
+import {find, map, reverse, sortBy, uniq} from 'lodash';
 import React, {
   useCallback,
   useContext,
@@ -19,6 +18,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import ActiveTrackerFloatingCard from '../components/ActiveTrackerFloatingCard';
 import {
   useCreateTrackerMutation,
   useLazyFindTrackerQuery,
@@ -44,7 +44,7 @@ export const TrackerContext = React.createContext();
 
 const TrackerProvider = ({children}) => {
   const {showActiveTracker} = useContext(ApplicationContext);
-  const {user, currentRole} = useContext(AuthContext);
+  const {user} = useContext(AuthContext);
   const [isLoading, toggleLoading] = useState(true);
   const [createTracker, createTrackerRequest] = useCreateTrackerMutation();
   const [updateTracker, updateTrackerRequest] = useUpdateTrackerMutation();
@@ -69,12 +69,50 @@ const TrackerProvider = ({children}) => {
       },
     );
 
+  const currentTracker = useMemo(() => {
+    const data =
+      (lazyFindTrackerResult?.data?.length && lazyFindTrackerResult?.data) ||
+      (createTrackerRequest.data?.length && createTrackerRequest.data) ||
+      (createTrackerRequest?.data?.existingTracker?.length &&
+        createTrackerRequest?.data?.existingTracker) ||
+      [];
+    if (
+      user?._id &&
+      user?.roles?.length &&
+      user?.roles.includes(roles.driver)
+    ) {
+      if (Array.isArray(data) && data?.length) {
+        return find(data, tracker => {
+          return (
+            tracker?.date &&
+            parseDateTime(tracker?.date) &&
+            +getStartOfDay() === +parseDateTime(tracker?.date) &&
+            tracker?.driver === user?._id &&
+            tracker?.active
+          );
+        });
+      }
+    }
+  }, [
+    createTrackerRequest.data,
+    user?.roles,
+    lazyFindTrackerResult?.data,
+    user?._id,
+  ]);
+
+  const currentTrackerVehicle = useMemo(() => {
+    if (vehicles && Array.isArray(vehicles)) {
+      return vehicles?.find(v => v._id === currentTracker?.vehicle);
+    }
+    return null;
+  }, [vehicles, currentTracker]);
+
   const handleFetchTrackerForCurrentUser = useCallback(
     async payload => {
       return lazyFindTracker({
         driver: user?._id,
         date: getIsoGetStartOfDay(),
-        active: true,
+        // active: true,
       });
     },
     [lazyFindTracker, user],
@@ -113,12 +151,15 @@ const TrackerProvider = ({children}) => {
 
   const handleFetchAllTrackers = useCallback(async () => {}, []);
 
-  const handleUpdateTrackerToInactive = useCallback(async () => {
-    return updateTracker({
-      id: currentTracker?._id,
-      active: false,
-    });
-  }, [updateTracker, currentTracker]);
+  const handleUpdateTrackerToInactive = useCallback(
+    async tracker => {
+      return updateTracker({
+        id: tracker?._id || currentTracker?._id,
+        active: false,
+      });
+    },
+    [updateTracker, currentTracker],
+  );
 
   const handleUpdateTrackerToActive = useCallback(async () => {
     return updateTracker({
@@ -128,7 +169,11 @@ const TrackerProvider = ({children}) => {
   }, [updateTracker, currentTracker]);
 
   useEffect(() => {
-    if (currentRole === roles.driver && user?._id) {
+    if (
+      user?._id &&
+      user?.roles?.length &&
+      user?.roles.includes(roles.driver)
+    ) {
       toggleLoading(true);
       handleFetchTrackerForCurrentUser()
         .then(() => toggleLoading(false))
@@ -137,7 +182,7 @@ const TrackerProvider = ({children}) => {
           catchError(error);
         });
     }
-  }, [handleFetchTrackerForCurrentUser, currentRole, user]);
+  }, [handleFetchTrackerForCurrentUser, user, user?.roles]);
 
   const startCheckingProximity = useCallback(
     async targetLocation => {
@@ -154,38 +199,30 @@ const TrackerProvider = ({children}) => {
     [handleUpdateTrackerToInactive],
   );
 
-  const currentTracker = useMemo(() => {
-    const data =
-      (lazyFindTrackerResult?.data?.length && lazyFindTrackerResult?.data) ||
-      (createTrackerRequest.data?.length && createTrackerRequest.data) ||
-      (createTrackerRequest?.data?.existingTracker?.length &&
-        createTrackerRequest?.data?.existingTracker) ||
-      [];
-    if (currentRole === roles.driver && user?._id) {
-      if (Array.isArray(data) && data?.length) {
-        return find(data, tracker => {
-          return (
-            tracker?.date &&
-            parseDateTime(tracker?.date) &&
-            +getStartOfDay() === +parseDateTime(tracker?.date) &&
-            tracker?.driver === user?._id
-          );
-        });
-      }
-    }
-  }, [
-    createTrackerRequest.data,
-    currentRole,
-    lazyFindTrackerResult?.data,
-    user?._id,
-  ]);
-
   useEffect(() => {
     if (currentTracker?.destination?.location?.latitude) {
       startCheckingProximity(currentTracker?.destination?.location);
     }
     return () => stopProximityCheck();
   }, [currentTracker, startCheckingProximity]);
+
+  const allTrackersForToday = useMemo(() => {
+    if (lazyFindTrackerResult?.data?.length) {
+      return reverse(
+        sortBy(
+          map(lazyFindTrackerResult?.data, tracker => {
+            return {
+              ...tracker,
+              vehicle: vehicles?.find(v => v._id === tracker?.vehicle),
+              sortOrder: +parseDateTime(tracker?.createdAt),
+            };
+          }),
+          'sortOrder',
+        ),
+      );
+    }
+    return [];
+  }, [lazyFindTrackerResult?.data, vehicles]);
 
   const value = useMemo(() => {
     return {
@@ -196,10 +233,13 @@ const TrackerProvider = ({children}) => {
       createTrackerRequest,
       handleFetchTrackerByPayload,
       currentTracker,
+      currentTrackerVehicle,
       fetchingExistingTracker: isLoading,
       vehicles,
       isTrackerActive: currentTracker?._id && currentTracker?.active,
       tripType: currentTracker?.isPrivate ? 'private' : 'public',
+      handleUpdateTrackerToInactive,
+      allTrackersForToday,
     };
   }, [
     handleFetchTrackerForCurrentUser,
@@ -211,6 +251,9 @@ const TrackerProvider = ({children}) => {
     currentTracker,
     isLoading,
     vehicles,
+    handleUpdateTrackerToInactive,
+    currentTrackerVehicle,
+    allTrackersForToday,
   ]);
 
   return (
