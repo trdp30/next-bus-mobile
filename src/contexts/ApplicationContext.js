@@ -1,10 +1,12 @@
-import React, {createContext, useMemo, useEffect} from 'react';
-import SpInAppUpdates, {IAUUpdateKind} from 'sp-react-native-in-app-updates';
+import React, {createContext, useEffect, useMemo, useState} from 'react';
 import {Platform} from 'react-native';
+import SpInAppUpdates, {IAUUpdateKind} from 'sp-react-native-in-app-updates';
 
 const ApplicationContext = createContext();
 
 export const ApplicationProvider = ({children}) => {
+  const [showActiveTracker, setShowActiveTracker] = useState(false);
+
   useEffect(() => {
     const inAppUpdates = new SpInAppUpdates();
     inAppUpdates.checkNeedsUpdate().then(result => {
@@ -21,8 +23,8 @@ export const ApplicationProvider = ({children}) => {
   }, []);
 
   const value = useMemo(() => {
-    return {};
-  }, []);
+    return {showActiveTracker, setShowActiveTracker};
+  }, [showActiveTracker, setShowActiveTracker]);
 
   return (
     <ApplicationContext.Provider value={value}>

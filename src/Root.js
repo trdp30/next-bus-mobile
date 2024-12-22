@@ -1,4 +1,5 @@
 import {GluestackUIProvider} from '@/src/components/ui/gluestack-ui-provider';
+import {ApplicationProvider} from '@/src/contexts/ApplicationContext';
 import React from 'react';
 import {StatusBar} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
@@ -8,7 +9,6 @@ import {PermissionProvider} from './contexts/PermissionContext';
 import TrackerProvider from './contexts/TrackerContext';
 import BottomTabNavigation from './Navigation/BottomTabNavigation';
 import {store} from './store';
-import {ApplicationProvider} from '@/src/contexts/ApplicationContext';
 
 function Root() {
   // const isDarkMode = useColorScheme() === 'dark';

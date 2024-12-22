@@ -4,6 +4,7 @@ import React, {useContext} from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {AuthContext} from '../contexts/AuthContext';
+import TrackerProvider from '../contexts/TrackerContext';
 import AuthNavigation from './AuthNavigation';
 import HomeNavigation from './HomeNavigation';
 import SettingNavigation from './SettingNavigation';
@@ -36,15 +37,17 @@ export default function BottomTabNavigation() {
   const {isAuthenticated, userDataLoaded, user} = useContext(AuthContext);
   return (
     <NavigationContainer>
-      {isAuthenticated && userDataLoaded && user?._id ? (
-        <Tab.Navigator screenOptions={screenOptions}>
-          <Tab.Screen name="Home" component={HomeNavigation} />
-          {/* <Tab.Screen name="Road" component={Road} /> */}
-          <Tab.Screen name="Setting" component={SettingNavigation} />
-        </Tab.Navigator>
-      ) : (
-        <AuthNavigation />
-      )}
+      <TrackerProvider>
+        {isAuthenticated && userDataLoaded && user?._id ? (
+          <Tab.Navigator screenOptions={screenOptions}>
+            <Tab.Screen name="Home" component={HomeNavigation} />
+            {/* <Tab.Screen name="Road" component={Road} /> */}
+            <Tab.Screen name="Setting" component={SettingNavigation} />
+          </Tab.Navigator>
+        ) : (
+          <AuthNavigation />
+        )}
+      </TrackerProvider>
     </NavigationContainer>
   );
 }

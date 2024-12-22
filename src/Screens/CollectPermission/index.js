@@ -4,10 +4,11 @@ import {Pressable} from '@/src/components/ui/pressable';
 import {Spinner} from '@/src/components/ui/spinner';
 import {Text} from '@/src/components/ui/text';
 import {PermissionContext} from '@/src/contexts/PermissionContext';
+import {TrackerContext} from '@/src/contexts/TrackerContext';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import classNames from 'classnames';
-import React, {useContext, useEffect} from 'react';
-import {ScrollView, useColorScheme} from 'react-native';
+import React, {useCallback, useContext, useEffect} from 'react';
+import {BackHandler, ScrollView, useColorScheme} from 'react-native';
 import {openSettings} from 'react-native-permissions';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
@@ -19,6 +20,7 @@ const CollectPermission = () => {
     requestError,
     hasMissingPermissions,
   } = useContext(PermissionContext);
+  const {isTrackerActive} = useContext(TrackerContext);
   const route = useRoute();
 
   const isDarkMode = useColorScheme() === 'dark';
@@ -36,9 +38,23 @@ const CollectPermission = () => {
     );
   };
 
-  const handleBack = () => {
-    navigation.goBack();
-  };
+  const handleBack = useCallback(() => {
+    if (isTrackerActive) {
+      navigation.navigate('Dashboard');
+      return true;
+    } else {
+      navigation.goBack();
+      return true;
+    }
+  }, [navigation, isTrackerActive]);
+
+  React.useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBack,
+    );
+    return () => backHandler.remove();
+  }, [isTrackerActive, handleBack]);
 
   useEffect(() => {
     if (!hasMissingPermissions && !isRequesting) {

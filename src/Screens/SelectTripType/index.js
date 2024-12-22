@@ -2,23 +2,39 @@ import {Box} from '@/src/components/ui/box';
 import {ArrowRightIcon, Icon, ShareIcon} from '@/src/components/ui/icon';
 import {Pressable} from '@/src/components/ui/pressable';
 import {Text} from '@/src/components/ui/text';
+import {TrackerContext} from '@/src/contexts/TrackerContext';
 import {useNavigation} from '@react-navigation/native';
 import classNames from 'classnames';
-import React from 'react';
-import {useColorScheme} from 'react-native';
+import React, {useCallback, useContext} from 'react';
+import {BackHandler, useColorScheme} from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
 function SelectTripType() {
   const isDarkMode = useColorScheme() === 'dark';
   const navigation = useNavigation();
+  const {isTrackerActive} = useContext(TrackerContext);
 
   const handleStartTrip = type => {
     navigation.navigate('CollectPermission', {stripType: type});
   };
 
-  const handleBack = () => {
-    navigation.goBack();
-  };
+  const handleBack = useCallback(() => {
+    if (isTrackerActive) {
+      navigation.navigate('Dashboard');
+      return true;
+    } else {
+      navigation.goBack();
+      return true;
+    }
+  }, [navigation, isTrackerActive]);
+
+  React.useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBack,
+    );
+    return () => backHandler.remove();
+  }, [isTrackerActive, handleBack]);
 
   return (
     <Box className="flex flex-1">

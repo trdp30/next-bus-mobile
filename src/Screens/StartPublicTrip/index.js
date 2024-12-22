@@ -4,21 +4,15 @@ import {Button, ButtonText} from '@/src/components/ui/button';
 import {Pressable} from '@/src/components/ui/pressable';
 import {Spinner} from '@/src/components/ui/spinner';
 import {Text} from '@/src/components/ui/text';
+import {TrackerContext} from '@/src/contexts/TrackerContext';
 import {useGetPlacesQuery} from '@/src/store/services/placeApi';
 import {useGetVehiclesQuery} from '@/src/store/services/vehicleApi';
 import {useNavigation} from '@react-navigation/native';
 import classNames from 'classnames';
 import {produce} from 'immer';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useReducer,
-  useState,
-} from 'react';
-import {Alert, useColorScheme} from 'react-native';
+import React, {useCallback, useContext, useEffect, useReducer} from 'react';
+import {Alert, BackHandler, useColorScheme} from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import {TrackerContext} from '@/src/contexts/TrackerContext';
 
 const initialState = {
   vehicle: null,
@@ -26,6 +20,7 @@ const initialState = {
   trackerLogs: [],
   started_from: null,
   destination: null,
+  isPrivate: false,
 };
 
 const reducer = (state, action) => {
@@ -54,29 +49,35 @@ function StartPublicTrip() {
   const isDarkMode = useColorScheme() === 'dark';
 
   const {data: vehicleData, isLoading: vehicleLoading} = useGetVehiclesQuery();
+  const {isTrackerActive} = useContext(TrackerContext);
   const {data: placeData, isLoading: placeLoading} = useGetPlacesQuery();
   const [state, dispatch] = useReducer(reducer, initialState);
   const {handleCreateTracker, createTrackerRequest} =
     useContext(TrackerContext);
 
-  const onError = () => {
+  const navigateToPublicTrip = useCallback(() => {
+    navigation.navigate('PublicTrip');
+  }, [navigation]);
+
+  const onError = useCallback(() => {
     const error = createTrackerRequest?.error;
     Alert.alert(
       'Oops!, Something went wrong',
       error?.message || 'An error occurred while creating the tracker.',
     );
-  };
+  }, [createTrackerRequest]);
 
   const onSuccess = useCallback(() => {
-    Alert.alert('Success', 'Tracker created successfully.');
-    if (createTrackerRequest?.data?.existingTracker) {
-      console.log(
-        'createTrackerRequest?.data?.existingTracker',
-        createTrackerRequest?.data?.existingTracker,
-      );
-    }
-    console.log('createTrackerRequest', createTrackerRequest);
-  }, [createTrackerRequest]);
+    // Alert.alert('Success', 'Tracker created successfully.');
+    // if (createTrackerRequest?.data?.existingTracker) {
+    //   console.log(
+    //     'createTrackerRequest?.data?.existingTracker',
+    //     createTrackerRequest?.data?.existingTracker,
+    //   );
+    // }
+    // console.log('createTrackerRequest', createTrackerRequest);
+    // navigateToPublicTrip();
+  }, []);
 
   const handleSubmit = async () => {
     const {vehicle, started_from, destination} = state;
@@ -92,9 +93,23 @@ function StartPublicTrip() {
     handleCreateTracker(state);
   };
 
-  const handleBack = () => {
-    navigation.goBack();
-  };
+  const handleBack = useCallback(() => {
+    if (isTrackerActive) {
+      navigation.navigate('Dashboard');
+      return true;
+    } else {
+      navigation.goBack();
+      return true;
+    }
+  }, [navigation, isTrackerActive]);
+
+  React.useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBack,
+    );
+    return () => backHandler.remove();
+  }, [isTrackerActive, handleBack]);
 
   useEffect(() => {
     const {isError, isSuccess} = createTrackerRequest;
@@ -104,7 +119,13 @@ function StartPublicTrip() {
     if (isSuccess) {
       onSuccess();
     }
-  }, [createTrackerRequest, onSuccess]);
+  }, [createTrackerRequest, onSuccess, onError]);
+
+  useEffect(() => {
+    if (isTrackerActive) {
+      navigateToPublicTrip();
+    }
+  }, [navigateToPublicTrip, isTrackerActive]);
 
   return (
     <Box className="flex flex-1">

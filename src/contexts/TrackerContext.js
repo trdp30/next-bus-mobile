@@ -1,3 +1,17 @@
+import ActiveTrackerFloatingCard from '@/src/components/ActiveTrackerFloatingCard';
+import {useGetVehiclesQuery} from '@/src/store/services/vehicleApi';
+import {catchError} from '@/src/utils/catchError';
+import {
+  getIsoGetStartOfDay,
+  getStartOfDay,
+  parseDateTime,
+} from '@/src/utils/dateHelpers';
+import {
+  startProximityCheck,
+  stopProximityCheck,
+} from '@/src/utils/locationHelpers';
+import {roles} from '@/src/utils/roles';
+import {find, uniq} from 'lodash';
 import React, {
   useCallback,
   useContext,
@@ -10,21 +24,8 @@ import {
   useLazyFindTrackerQuery,
   useUpdateTrackerMutation,
 } from '../store/services/trackerApi';
+import ApplicationContext from './ApplicationContext';
 import {AuthContext} from './AuthContext';
-import {
-  getIsoGetStartOfDay,
-  getStartOfDay,
-  parseDateTime,
-} from '@/src/utils/dateHelpers';
-import {roles} from '@/src/utils/roles';
-import {catchError} from '@/src/utils/catchError';
-import {
-  startProximityCheck,
-  stopProximityCheck,
-} from '@/src/utils/locationHelpers';
-import {find, uniq} from 'lodash';
-import ActiveTrackerFloatingCard from '@/src/components/ActiveTrackerFloatingCard';
-import {useGetVehiclesQuery} from '@/src/store/services/vehicleApi';
 
 export const TrackerContext = React.createContext();
 
@@ -42,6 +43,7 @@ export const TrackerContext = React.createContext();
 */
 
 const TrackerProvider = ({children}) => {
+  const {showActiveTracker} = useContext(ApplicationContext);
   const {user, currentRole} = useContext(AuthContext);
   const [isLoading, toggleLoading] = useState(true);
   const [createTracker, createTrackerRequest] = useCreateTrackerMutation();
@@ -101,6 +103,7 @@ const TrackerProvider = ({children}) => {
         trackerLogs: [],
         destination: payload?.destination,
         active: true,
+        isPrivate: payload?.isPrivate,
       });
     },
     [createTracker, user],
@@ -196,6 +199,7 @@ const TrackerProvider = ({children}) => {
       fetchingExistingTracker: isLoading,
       vehicles,
       isTrackerActive: currentTracker?._id && currentTracker?.active,
+      tripType: currentTracker?.isPrivate ? 'private' : 'public',
     };
   }, [
     handleFetchTrackerForCurrentUser,
@@ -212,7 +216,11 @@ const TrackerProvider = ({children}) => {
   return (
     <TrackerContext.Provider value={value}>
       {children}
-      {currentTracker?._id ? <ActiveTrackerFloatingCard /> : <></>}
+      {currentTracker?._id && showActiveTracker ? (
+        <ActiveTrackerFloatingCard />
+      ) : (
+        <></>
+      )}
     </TrackerContext.Provider>
   );
 };
