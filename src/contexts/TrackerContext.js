@@ -19,6 +19,7 @@ import React, {
   useState,
 } from 'react';
 import ActiveTrackerFloatingCard from '../components/ActiveTrackerFloatingCard';
+import {useGetPlacesQuery} from '../store/services/placeApi';
 import {
   useCreateTrackerMutation,
   useLazyFindTrackerQuery,
@@ -47,8 +48,9 @@ const TrackerProvider = ({children}) => {
   const {user} = useContext(AuthContext);
   const [isLoading, toggleLoading] = useState(true);
   const [createTracker, createTrackerRequest] = useCreateTrackerMutation();
-  const [updateTracker, updateTrackerRequest] = useUpdateTrackerMutation();
+  const [updateTracker] = useUpdateTrackerMutation();
   const [lazyFindTracker, lazyFindTrackerResult] = useLazyFindTrackerQuery();
+  const {data: placeData} = useGetPlacesQuery(); //TODO: Need to only those place that are need to the tracker
 
   const vehicleIds = useMemo(() => {
     const data = lazyFindTrackerResult?.data;
@@ -59,15 +61,14 @@ const TrackerProvider = ({children}) => {
     return [];
   }, [lazyFindTrackerResult?.data]);
 
-  const {data: vehicles, isLoading: vehicleRequestLoading} =
-    useGetVehiclesQuery(
-      {
-        vehicleIds,
-      },
-      {
-        skip: !vehicleIds?.length,
-      },
-    );
+  const {data: vehicles} = useGetVehiclesQuery(
+    {
+      vehicleIds,
+    },
+    {
+      skip: !vehicleIds?.length,
+    },
+  );
 
   const currentTracker = useMemo(() => {
     const data =
@@ -82,7 +83,7 @@ const TrackerProvider = ({children}) => {
       user?.roles.includes(roles.driver)
     ) {
       if (Array.isArray(data) && data?.length) {
-        return find(data, tracker => {
+        const findData = find(data, tracker => {
           return (
             tracker?.date &&
             parseDateTime(tracker?.date) &&
@@ -91,21 +92,30 @@ const TrackerProvider = ({children}) => {
             tracker?.active
           );
         });
+        return findData?._id
+          ? {
+              ...findData,
+              vehicle: find(vehicles, v => v._id === findData?.vehicle),
+              started_from: find(
+                placeData,
+                p => p._id === findData?.started_from,
+              ),
+              destination: find(
+                placeData,
+                p => p._id === findData?.destination,
+              ),
+            }
+          : null;
       }
     }
   }, [
+    placeData,
+    vehicles,
     createTrackerRequest.data,
     user?.roles,
     lazyFindTrackerResult?.data,
     user?._id,
   ]);
-
-  const currentTrackerVehicle = useMemo(() => {
-    if (vehicles && Array.isArray(vehicles)) {
-      return vehicles?.find(v => v._id === currentTracker?.vehicle);
-    }
-    return null;
-  }, [vehicles, currentTracker]);
 
   const handleFetchTrackerForCurrentUser = useCallback(
     async payload => {
@@ -213,7 +223,12 @@ const TrackerProvider = ({children}) => {
           map(lazyFindTrackerResult?.data, tracker => {
             return {
               ...tracker,
-              vehicle: vehicles?.find(v => v._id === tracker?.vehicle),
+              vehicle: find(vehicles, v => v._id === tracker?.vehicle),
+              started_from: find(
+                placeData,
+                p => p._id === tracker?.started_from,
+              ),
+              destination: find(placeData, p => p._id === tracker?.destination),
               sortOrder: +parseDateTime(tracker?.createdAt),
             };
           }),
@@ -222,7 +237,7 @@ const TrackerProvider = ({children}) => {
       );
     }
     return [];
-  }, [lazyFindTrackerResult?.data, vehicles]);
+  }, [lazyFindTrackerResult?.data, vehicles, placeData]);
 
   const value = useMemo(() => {
     return {
@@ -233,7 +248,6 @@ const TrackerProvider = ({children}) => {
       createTrackerRequest,
       handleFetchTrackerByPayload,
       currentTracker,
-      currentTrackerVehicle,
       fetchingExistingTracker: isLoading,
       vehicles,
       isTrackerActive: currentTracker?._id && currentTracker?.active,
@@ -252,7 +266,6 @@ const TrackerProvider = ({children}) => {
     isLoading,
     vehicles,
     handleUpdateTrackerToInactive,
-    currentTrackerVehicle,
     allTrackersForToday,
   ]);
 

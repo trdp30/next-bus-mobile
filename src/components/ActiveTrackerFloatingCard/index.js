@@ -7,7 +7,7 @@ import {Animated, Easing} from 'react-native';
 import {Pressable} from '../ui/pressable';
 
 const ActiveTrackerFloatingCard = () => {
-  const {currentTracker, currentTrackerVehicle} = useContext(TrackerContext);
+  const {currentTracker} = useContext(TrackerContext);
   const navigation = useNavigation();
 
   const slideAnim = useRef(new Animated.Value(100)).current; // Initial position off-screen
@@ -35,10 +35,11 @@ const ActiveTrackerFloatingCard = () => {
               )}
             </Text>
             <Text className="text-sm text-gray-600">
-              Vehicle Name: {currentTrackerVehicle?.name}
+              Vehicle Name: {currentTracker?.vehicle?.name}
             </Text>
             <Text className="text-sm text-gray-600">
-              Registration Number: {currentTrackerVehicle?.registration_number}
+              Registration Number:{' '}
+              {currentTracker?.vehicle?.registration_number}
             </Text>
           </Box>
         </Box>

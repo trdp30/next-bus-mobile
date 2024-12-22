@@ -10,28 +10,19 @@ import React, {useContext, useEffect, useMemo} from 'react';
 import {BackHandler, ScrollView} from 'react-native';
 
 export const PublicTrip = () => {
-  const {
-    currentTracker,
-    handleUpdateTrackerToInactive,
-    allTrackersForToday,
-    currentTrackerVehicle,
-  } = useContext(TrackerContext);
+  const {currentTracker, handleUpdateTrackerToInactive, allTrackersForToday} =
+    useContext(TrackerContext);
+  const navigation = useNavigation();
+  const isFocused = useIsFocused();
+  const {setShowActiveTracker} = useContext(ApplicationContext);
 
   const lastActiveTracker = useMemo(() => {
     return allTrackersForToday?.length ? allTrackersForToday[0] : null;
   }, [allTrackersForToday]);
 
   const tracker = useMemo(() => {
-    const ct = currentTracker?._id && {
-      ...currentTracker,
-      vehicle: currentTrackerVehicle,
-    };
-    return ct || lastActiveTracker;
-  }, [lastActiveTracker, currentTracker, currentTrackerVehicle]);
-
-  const navigation = useNavigation();
-  const isFocused = useIsFocused();
-  const {setShowActiveTracker} = useContext(ApplicationContext);
+    return currentTracker || lastActiveTracker;
+  }, [lastActiveTracker, currentTracker]);
 
   useEffect(() => {
     if (isFocused) {
@@ -79,13 +70,13 @@ export const PublicTrip = () => {
           <Box>
             <Text className="text-md font-bold mt-2">Start Location</Text>
             <Text className="text-sm text-gray-600">
-              {tracker?.start_location}
+              {tracker?.started_from?.name}
             </Text>
           </Box>
           <Box>
             <Text className="text-md font-bold mt-2">Destination Location</Text>
             <Text className="text-sm text-gray-600">
-              {tracker?.destination_location}
+              {tracker?.destination?.name}
             </Text>
           </Box>
           {tracker?.active && (
@@ -126,7 +117,7 @@ export const PublicTrip = () => {
               <Box>
                 <Text className="text-md font-bold mt-2">Start Location</Text>
                 <Text className="text-sm text-gray-600">
-                  {trk?.start_location}
+                  {tracker?.started_from?.name}
                 </Text>
               </Box>
               <Box>
@@ -134,7 +125,7 @@ export const PublicTrip = () => {
                   Destination Location
                 </Text>
                 <Text className="text-sm text-gray-600">
-                  {trk?.destination_location}
+                  {trk?.destination?.name}
                 </Text>
               </Box>
               {trk?.active && (
