@@ -84,6 +84,7 @@ export const PermissionProvider = ({children}) => {
           error: locationPermission ? '' : 'Location permission denied.',
         },
       });
+      return locationPermission;
     } catch (error) {
       dispatch({
         type: 'LOCATION',
@@ -95,6 +96,7 @@ export const PermissionProvider = ({children}) => {
             'An error occurred while requesting location permission.',
         },
       });
+      return false;
     }
   };
 
@@ -108,6 +110,7 @@ export const PermissionProvider = ({children}) => {
           error: bgPermission ? '' : 'Background location permission denied.',
         },
       });
+      return bgPermission;
     } catch (error) {
       dispatch({
         type: 'BACKGROUND_LOCATION',
@@ -119,6 +122,7 @@ export const PermissionProvider = ({children}) => {
             'An error occurred while requesting background location permission.',
         },
       });
+      return false;
     }
   };
 
@@ -134,6 +138,7 @@ export const PermissionProvider = ({children}) => {
             : 'Notification permission denied.',
         },
       });
+      return notificationPermission;
     } catch (error) {
       dispatch({
         type: 'NOTIFICATION',
@@ -145,6 +150,7 @@ export const PermissionProvider = ({children}) => {
             'An error occurred while requesting notification permission.',
         },
       });
+      return false;
     }
   };
 
@@ -158,6 +164,7 @@ export const PermissionProvider = ({children}) => {
           error: settingEnabled ? '' : 'GPS setting need to be enable.',
         },
       });
+      return settingEnabled;
     } catch (error) {
       const message = {
         ERR00: 'GPS setting need to be enable.',
@@ -176,6 +183,7 @@ export const PermissionProvider = ({children}) => {
             'An error occurred while requesting to enable GPS setting.',
         },
       });
+      return false;
     }
   }, []);
 
@@ -183,11 +191,14 @@ export const PermissionProvider = ({children}) => {
     try {
       resetPermissions();
       toggleIsRequesting(true);
-      await getIsLocationEnabled();
-      await getLocationPermission();
-      await getBackgroundLocationPermission();
-      await getNotificationPermission();
+      const locationEnabled = await getIsLocationEnabled();
+      const locationGranted = await getLocationPermission();
+      const bgGranted = await getBackgroundLocationPermission();
+      const notificationGranted = await getNotificationPermission();
       toggleIsRequesting(false);
+      return (
+        locationEnabled && locationGranted && bgGranted && notificationGranted
+      );
     } catch (error) {
       // Todo: Log error to a logging service
       setRequestError(
@@ -196,6 +207,7 @@ export const PermissionProvider = ({children}) => {
           'An error occurred while requesting permissions.',
       );
       toggleIsRequesting(false);
+      return false;
     }
   }, [getIsLocationEnabled]);
 

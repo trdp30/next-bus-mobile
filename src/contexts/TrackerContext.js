@@ -19,6 +19,7 @@ import React, {
   useState,
 } from 'react';
 import ActiveTrackerFloatingCard from '../components/ActiveTrackerFloatingCard';
+import {PermissionModal} from '../components/PermissionModal';
 import {useGetPlacesQuery} from '../store/services/placeApi';
 import {
   useCreateTrackerMutation,
@@ -27,6 +28,7 @@ import {
 } from '../store/services/trackerApi';
 import ApplicationContext from './ApplicationContext';
 import {AuthContext} from './AuthContext';
+import {PermissionContext} from './PermissionContext';
 
 export const TrackerContext = React.createContext();
 
@@ -45,12 +47,15 @@ export const TrackerContext = React.createContext();
 
 const TrackerProvider = ({children}) => {
   const {showActiveTracker} = useContext(ApplicationContext);
+  const {isRequesting, hasMissingPermissions, startRequestingPermission} =
+    useContext(PermissionContext);
   const {user} = useContext(AuthContext);
   const [isLoading, toggleLoading] = useState(true);
   const [createTracker, createTrackerRequest] = useCreateTrackerMutation();
   const [updateTracker] = useUpdateTrackerMutation();
   const [lazyFindTracker, lazyFindTrackerResult] = useLazyFindTrackerQuery();
   const {data: placeData} = useGetPlacesQuery(); //TODO: Need to only those place that are need to the tracker
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
 
   const vehicleIds = useMemo(() => {
     const data = lazyFindTrackerResult?.data;
@@ -178,6 +183,21 @@ const TrackerProvider = ({children}) => {
     });
   }, [updateTracker, currentTracker]);
 
+  const startCheckingProximity = useCallback(
+    async targetLocation => {
+      try {
+        const result = await startProximityCheck(targetLocation);
+        if (result) {
+          handleUpdateTrackerToInactive();
+        }
+        // where the result is true we have to make the tracker inactive
+      } catch (error) {
+        setShowPermissionModal(true);
+      }
+    },
+    [handleUpdateTrackerToInactive],
+  );
+
   useEffect(() => {
     if (
       user?._id &&
@@ -194,27 +214,24 @@ const TrackerProvider = ({children}) => {
     }
   }, [handleFetchTrackerForCurrentUser, user, user?.roles]);
 
-  const startCheckingProximity = useCallback(
-    async targetLocation => {
-      try {
-        const result = await startProximityCheck(targetLocation);
-        if (result) {
-          handleUpdateTrackerToInactive();
-        }
-        // where the result is true we have to make the tracker inactive
-      } catch (error) {
-        console.error('Error checking proximity:', error);
-      }
-    },
-    [handleUpdateTrackerToInactive],
-  );
-
   useEffect(() => {
-    if (currentTracker?.destination?.location?.latitude) {
+    if (
+      currentTracker?.active &&
+      currentTracker?.destination?.location?.latitude &&
+      !isRequesting &&
+      !hasMissingPermissions
+    ) {
+      setShowPermissionModal(false);
       startCheckingProximity(currentTracker?.destination?.location);
     }
     return () => stopProximityCheck();
-  }, [currentTracker, startCheckingProximity]);
+  }, [
+    currentTracker,
+    startRequestingPermission,
+    startCheckingProximity,
+    hasMissingPermissions,
+    isRequesting,
+  ]);
 
   const allTrackersForToday = useMemo(() => {
     if (lazyFindTrackerResult?.data?.length) {
@@ -277,6 +294,7 @@ const TrackerProvider = ({children}) => {
       ) : (
         <></>
       )}
+      {showPermissionModal ? <PermissionModal /> : <></>}
     </TrackerContext.Provider>
   );
 };
