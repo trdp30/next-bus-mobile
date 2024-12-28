@@ -1,5 +1,6 @@
 import {produce} from 'immer';
 import React, {useCallback, useMemo, useReducer, useState} from 'react';
+import {PermissionModal} from '../components/PermissionModal';
 import {
   checkIsLocationEnabled,
   requestBackgroundLocationPermission,
@@ -68,7 +69,7 @@ export const PermissionProvider = ({children}) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isRequesting, toggleIsRequesting] = useState(false);
   const [requestError, setRequestError] = useState('');
-
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
   const resetPermissions = () => {
     dispatch({type: 'RESET'});
   };
@@ -126,7 +127,7 @@ export const PermissionProvider = ({children}) => {
     }
   };
 
-  const getNotificationPermission = async () => {
+  const getNotificationPermission = useCallback(async () => {
     try {
       const notificationPermission = await requestNotificationPermission();
       dispatch({
@@ -152,7 +153,7 @@ export const PermissionProvider = ({children}) => {
       });
       return false;
     }
-  };
+  }, []);
 
   const getIsLocationEnabled = useCallback(async () => {
     try {
@@ -209,7 +210,7 @@ export const PermissionProvider = ({children}) => {
       toggleIsRequesting(false);
       return false;
     }
-  }, [getIsLocationEnabled]);
+  }, [getIsLocationEnabled, getNotificationPermission]);
 
   const hasMissingPermissions = useMemo(() => {
     if (state.notification.error) {
@@ -237,6 +238,9 @@ export const PermissionProvider = ({children}) => {
       isRequesting,
       requestError,
       hasMissingPermissions,
+      getNotificationPermission,
+      showPermissionModal,
+      setShowPermissionModal,
     };
   }, [
     state,
@@ -244,11 +248,15 @@ export const PermissionProvider = ({children}) => {
     isRequesting,
     requestError,
     hasMissingPermissions,
+    getNotificationPermission,
+    showPermissionModal,
+    setShowPermissionModal,
   ]);
 
   return (
     <PermissionContext.Provider value={value}>
       {children}
+      {showPermissionModal ? <PermissionModal /> : <></>}
     </PermissionContext.Provider>
   );
 };

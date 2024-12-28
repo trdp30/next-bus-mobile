@@ -80,6 +80,7 @@ export const startProximityCheck = targetLocation => {
   return new Promise((resolve, reject) => {
     const checkProximity = async () => {
       try {
+        console.log('Checking proximity');
         if (targetLocation) {
           const isNearby = await isWithinRadius(targetLocation);
           if (isNearby) {
@@ -95,7 +96,8 @@ export const startProximityCheck = targetLocation => {
       }
     };
 
-    intervalId = setInterval(checkProximity, Config.POLLING_INTERVAL); // Check every 5 seconds
+    // intervalId = setInterval(checkProximity, Config.POLLING_INTERVAL); // Check every 5 seconds
+    intervalId = setInterval(checkProximity, 3000); // Check every 5 seconds
   });
 };
 

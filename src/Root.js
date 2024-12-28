@@ -5,6 +5,7 @@ import {StatusBar} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Provider} from 'react-redux';
 import AuthProvider from './contexts/AuthContext';
+import {NotificationProvider} from './contexts/NotificationContext';
 import {PermissionProvider} from './contexts/PermissionContext';
 import BottomTabNavigation from './Navigation/BottomTabNavigation';
 import {store} from './store';
@@ -23,11 +24,13 @@ function Root() {
         <Provider store={store}>
           <PermissionProvider>
             <AuthProvider>
-              <StatusBar
-                barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-                backgroundColor={backgroundStyle.backgroundColor}
-              />
-              <BottomTabNavigation />
+              <NotificationProvider>
+                <StatusBar
+                  barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+                  backgroundColor={backgroundStyle.backgroundColor}
+                />
+                <BottomTabNavigation />
+              </NotificationProvider>
             </AuthProvider>
           </PermissionProvider>
         </Provider>

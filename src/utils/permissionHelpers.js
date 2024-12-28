@@ -1,3 +1,4 @@
+import notifee from '@notifee/react-native';
 import {PermissionsAndroid} from 'react-native';
 import {
   isLocationEnabled,
@@ -14,7 +15,11 @@ export const requestBackgroundLocationPermission = async () => {
 
 export const requestNotificationPermission = async () => {
   const result = await requestNotifications();
-  return result?.status === RESULTS.GRANTED;
+  const notifeePermission = await notifee.requestPermission();
+  return (
+    result?.status === RESULTS.GRANTED &&
+    notifeePermission?.authorizationStatus > 0
+  );
 };
 
 export const requestFineLocationPermission = async () => {

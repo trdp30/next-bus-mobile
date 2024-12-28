@@ -19,7 +19,6 @@ import React, {
   useState,
 } from 'react';
 import ActiveTrackerFloatingCard from '../components/ActiveTrackerFloatingCard';
-import {PermissionModal} from '../components/PermissionModal';
 import {useGetPlacesQuery} from '../store/services/placeApi';
 import {
   useCreateTrackerMutation,
@@ -28,6 +27,7 @@ import {
 } from '../store/services/trackerApi';
 import ApplicationContext from './ApplicationContext';
 import {AuthContext} from './AuthContext';
+import {NotificationContext} from './NotificationContext';
 import {PermissionContext} from './PermissionContext';
 
 export const TrackerContext = React.createContext();
@@ -47,15 +47,20 @@ export const TrackerContext = React.createContext();
 
 const TrackerProvider = ({children}) => {
   const {showActiveTracker} = useContext(ApplicationContext);
-  const {isRequesting, hasMissingPermissions, startRequestingPermission} =
-    useContext(PermissionContext);
+  const {
+    isRequesting,
+    hasMissingPermissions,
+    startRequestingPermission,
+    setShowPermissionModal,
+  } = useContext(PermissionContext);
   const {user} = useContext(AuthContext);
   const [isLoading, toggleLoading] = useState(true);
   const [createTracker, createTrackerRequest] = useCreateTrackerMutation();
   const [updateTracker] = useUpdateTrackerMutation();
   const [lazyFindTracker, lazyFindTrackerResult] = useLazyFindTrackerQuery();
   const {data: placeData} = useGetPlacesQuery(); //TODO: Need to only those place that are need to the tracker
-  const [showPermissionModal, setShowPermissionModal] = useState(false);
+  const {displayNotification, clearNotifications, clearNotificationsByChannel} =
+    useContext(NotificationContext);
 
   const vehicleIds = useMemo(() => {
     const data = lazyFindTrackerResult?.data;
@@ -122,16 +127,13 @@ const TrackerProvider = ({children}) => {
     user?._id,
   ]);
 
-  const handleFetchTrackerForCurrentUser = useCallback(
-    async payload => {
-      return lazyFindTracker({
-        driver: user?._id,
-        date: getIsoGetStartOfDay(),
-        // active: true,
-      });
-    },
-    [lazyFindTracker, user],
-  );
+  const handleFetchTrackerForCurrentUser = useCallback(async () => {
+    return lazyFindTracker({
+      driver: user?._id,
+      date: getIsoGetStartOfDay(),
+      // active: true,
+    });
+  }, [lazyFindTracker, user]);
 
   const handleFetchTrackerByPayload = useCallback(
     async payload => {
@@ -195,7 +197,7 @@ const TrackerProvider = ({children}) => {
         setShowPermissionModal(true);
       }
     },
-    [handleUpdateTrackerToInactive],
+    [handleUpdateTrackerToInactive, setShowPermissionModal],
   );
 
   useEffect(() => {
@@ -223,6 +225,14 @@ const TrackerProvider = ({children}) => {
     ) {
       setShowPermissionModal(false);
       startCheckingProximity(currentTracker?.destination?.location);
+      clearNotifications('tracker-active').then(() => {
+        displayNotification({
+          title: 'Trip Activated',
+          body: 'The tracker is now active',
+          channelId: 'tracker',
+          notificationId: 'tracker-active',
+        });
+      });
     }
     return () => stopProximityCheck();
   }, [
@@ -231,6 +241,31 @@ const TrackerProvider = ({children}) => {
     startCheckingProximity,
     hasMissingPermissions,
     isRequesting,
+    displayNotification,
+    clearNotifications,
+    setShowPermissionModal,
+  ]);
+
+  useEffect(() => {
+    if (currentTracker?._id && !currentTracker?.active) {
+      // Todo need to clear the channel as well
+      clearNotificationsByChannel('tracker').then(() => {
+        clearNotifications('tracker-active').then(() => {
+          displayNotification({
+            title: 'Tracker Notification',
+            body: 'The tracker is now inactive',
+            channelId: 'tracker',
+            notificationId: 'tracker-active',
+          });
+        });
+      });
+      stopProximityCheck();
+    }
+  }, [
+    clearNotifications,
+    currentTracker,
+    displayNotification,
+    clearNotificationsByChannel,
   ]);
 
   const allTrackersForToday = useMemo(() => {
@@ -294,7 +329,6 @@ const TrackerProvider = ({children}) => {
       ) : (
         <></>
       )}
-      {showPermissionModal ? <PermissionModal /> : <></>}
     </TrackerContext.Provider>
   );
 };

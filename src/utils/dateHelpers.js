@@ -17,3 +17,7 @@ export const getStartOfDay = date => {
 export const getIsoGetStartOfDay = date => {
   return getStartOfDay(date).toUTC().toISO();
 };
+
+export const getCurrentDateTime = () => {
+  return DateTime.now();
+};
