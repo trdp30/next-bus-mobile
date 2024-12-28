@@ -16,7 +16,7 @@ import {
   selectUserDataLoaded,
 } from '../store/selectors/session.selector';
 import {authenticated, unauthenticated} from '../store/slices/session';
-import {catchError} from '../utils/catchError';
+import {catchError, sentrySetUser} from '../utils/catchError';
 import {
   googleSignOut,
   initializeGoogleSignIn,
@@ -136,6 +136,12 @@ function AuthProvider(props) {
         .catch(error => console.error('Error while signinOut', error))
     );
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isAuthenticated && currentUser?._id) {
+      sentrySetUser(currentUser);
+    }
+  }, [currentUser, isAuthenticated]);
 
   const value = useMemo(() => {
     return {

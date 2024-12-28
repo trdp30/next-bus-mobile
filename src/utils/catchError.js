@@ -1,23 +1,25 @@
+import * as Sentry from '@sentry/react-native';
 import {Alert} from 'react-native';
 
 export const catchError = props => {
+  let er = '';
   if (props?.error?.status) {
-    Alert.alert(
-      'Opps, Something went wrong',
-      `Status Code: ${String(props?.error?.status)}.\n${
-        props?.error?.error
-      }\nRequest Url: ${props?.meta?.request?.url}`,
-    );
+    er = `Status Code: ${String(props?.error?.status)}.\n${
+      props?.error?.error
+    }\nRequest Url: ${props?.meta?.request?.url}`;
+    Alert.alert('Opps, Something went wrong', er);
   } else if (props?.message) {
-    return Alert.alert('Opps, Something went wrong', props.message);
+    er = props.message;
+    Alert.alert('Opps, Something went wrong', props.message);
   } else {
-    return Alert.alert('Opps, Something went wrong', props);
+    er = props;
+    Alert.alert('Opps, Something went wrong', props);
   }
+  Sentry.captureMessage(er);
 };
 
 export const sentrySetUser = user => {
-  // Sentry.setUser({
-  //   id: (user?.user_id && Number(user?.user_id)),
-  //   tenant_id: user?.tenant_id && Number(user?.tenant_id),
-  // });
+  Sentry.setUser({
+    id: user?._id,
+  });
 };
