@@ -72,7 +72,6 @@ export const NotificationProvider = ({children}) => {
     try {
       if (!notificationId) {
         await notifee.cancelAllNotifications();
-        return;
       } else {
         await notifee.cancelNotification(notificationId);
       }
@@ -90,7 +89,7 @@ export const NotificationProvider = ({children}) => {
   }, []);
 
   const displayNotification = useCallback(
-    async ({title, body, channelId, notificationId}) => {
+    async ({title, body, channelId, notificationId, asForegroundService}) => {
       try {
         // Create a channel (required for Android)
         const newChannel = await notifee.createChannel({
@@ -107,6 +106,7 @@ export const NotificationProvider = ({children}) => {
           body,
           android: {
             channelId: newChannel,
+            asForegroundService: asForegroundService,
           },
         });
 

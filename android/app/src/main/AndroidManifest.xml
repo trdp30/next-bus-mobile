@@ -30,5 +30,6 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+      <service android:name="app.notifee.core.ForegroundService" android:foregroundServiceType="location" tools:replace="android:foregroundServiceType" xmlns:tools="http://schemas.android.com/tools"/>
     </application>
 </manifest>

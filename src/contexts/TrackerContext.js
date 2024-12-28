@@ -25,6 +25,10 @@ import {
   useLazyFindTrackerQuery,
   useUpdateTrackerMutation,
 } from '../store/services/trackerApi';
+import {
+  starForegroundService,
+  stopForegroundService,
+} from '../utils/foregroundService';
 import ApplicationContext from './ApplicationContext';
 import {AuthContext} from './AuthContext';
 import {NotificationContext} from './NotificationContext';
@@ -203,20 +207,22 @@ const TrackerProvider = ({children}) => {
   const toggleTrackerNotification = useCallback(
     show => {
       if (show) {
-        clearNotifications('tracker-active').then(() => {
-          clearNotificationsByChannel('tracker').then(() => {
+        clearNotifications('tracker-active')
+          .then(() => clearNotificationsByChannel('tracker'))
+          .then(() => {
+            starForegroundService();
             displayNotification({
               title: 'Trip Activated',
               body: 'The tracker is now active',
               channelId: 'tracker',
               notificationId: 'tracker-active',
+              asForegroundService: true,
             });
           });
-        });
       } else {
-        clearNotifications('tracker-active').then(() => {
-          clearNotificationsByChannel('tracker');
-        });
+        clearNotifications('tracker-active')
+          .then(() => clearNotificationsByChannel('tracker'))
+          .then(() => stopForegroundService());
       }
     },
     [clearNotifications, clearNotificationsByChannel, displayNotification],
