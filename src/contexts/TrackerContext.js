@@ -200,6 +200,28 @@ const TrackerProvider = ({children}) => {
     [handleUpdateTrackerToInactive, setShowPermissionModal],
   );
 
+  const toggleTrackerNotification = useCallback(
+    show => {
+      if (show) {
+        clearNotifications('tracker-active').then(() => {
+          clearNotificationsByChannel('tracker').then(() => {
+            displayNotification({
+              title: 'Trip Activated',
+              body: 'The tracker is now active',
+              channelId: 'tracker',
+              notificationId: 'tracker-active',
+            });
+          });
+        });
+      } else {
+        clearNotifications('tracker-active').then(() => {
+          clearNotificationsByChannel('tracker');
+        });
+      }
+    },
+    [clearNotifications, clearNotificationsByChannel, displayNotification],
+  );
+
   useEffect(() => {
     if (
       user?._id &&
@@ -225,14 +247,7 @@ const TrackerProvider = ({children}) => {
     ) {
       setShowPermissionModal(false);
       startCheckingProximity(currentTracker?.destination?.location);
-      clearNotifications('tracker-active').then(() => {
-        displayNotification({
-          title: 'Trip Activated',
-          body: 'The tracker is now active',
-          channelId: 'tracker',
-          notificationId: 'tracker-active',
-        });
-      });
+      toggleTrackerNotification(true);
     }
     return () => stopProximityCheck();
   }, [
@@ -241,32 +256,20 @@ const TrackerProvider = ({children}) => {
     startCheckingProximity,
     hasMissingPermissions,
     isRequesting,
-    displayNotification,
-    clearNotifications,
+    toggleTrackerNotification,
     setShowPermissionModal,
   ]);
 
   useEffect(() => {
     if (currentTracker?._id && !currentTracker?.active) {
       // Todo need to clear the channel as well
-      clearNotificationsByChannel('tracker').then(() => {
-        clearNotifications('tracker-active').then(() => {
-          displayNotification({
-            title: 'Tracker Notification',
-            body: 'The tracker is now inactive',
-            channelId: 'tracker',
-            notificationId: 'tracker-active',
-          });
-        });
-      });
+      toggleTrackerNotification(false);
       stopProximityCheck();
     }
-  }, [
-    clearNotifications,
-    currentTracker,
-    displayNotification,
-    clearNotificationsByChannel,
-  ]);
+    if (!currentTracker?._id) {
+      toggleTrackerNotification(false);
+    }
+  }, [currentTracker, toggleTrackerNotification]);
 
   const allTrackersForToday = useMemo(() => {
     if (lazyFindTrackerResult?.data?.length) {

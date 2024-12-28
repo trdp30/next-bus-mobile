@@ -3,8 +3,7 @@ import {Text} from '@/src/components/ui/text';
 import {TrackerContext} from '@/src/contexts/TrackerContext';
 import {useNavigation} from '@react-navigation/native';
 import React, {useContext, useEffect, useRef} from 'react';
-import {Animated, Easing} from 'react-native';
-import {Pressable} from '../ui/pressable';
+import {Animated, Easing, Pressable} from 'react-native';
 
 const ActiveTrackerFloatingCard = () => {
   const {currentTracker} = useContext(TrackerContext);

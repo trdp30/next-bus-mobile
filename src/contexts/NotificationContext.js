@@ -1,4 +1,5 @@
 import notifee, {EventType} from '@notifee/react-native';
+import * as Sentry from '@sentry/react-native';
 import {startCase} from 'lodash';
 import React, {
   createContext,
@@ -15,7 +16,8 @@ export const NotificationContext = createContext();
 
 export const NotificationProvider = ({children}) => {
   const {isAuthenticated} = useContext(AuthContext);
-  const {getNotificationPermission} = useContext(PermissionContext);
+  const {getNotificationPermission, setShowPermissionModal} =
+    useContext(PermissionContext);
 
   const initialize = useCallback(async () => {
     return await getNotificationPermission();
@@ -35,13 +37,34 @@ export const NotificationProvider = ({children}) => {
             case EventType.PRESS:
               console.log('User pressed notification', detail.notification);
               break;
+            case EventType.APP_BLOCKED:
+              Sentry.captureMessage(
+                'User toggled app notification permission: ' +
+                  String(detail.blocked),
+              );
+              setShowPermissionModal(true);
+              break;
+            case EventType.CHANNEL_BLOCKED:
+              Sentry.captureMessage(
+                `User toggled app notification channel block. Channel Id: ${
+                  detail.channel.id
+                }, value: ${String(detail.blocked)}`,
+              );
+              break;
+            case EventType.CHANNEL_GROUP_BLOCKED:
+              Sentry.captureMessage(
+                `User toggled app notification channel group block. Channel Group Id: ${
+                  detail.channel.id
+                }, value: ${String(detail.blocked)}`,
+              );
+              break;
           }
         });
       });
     }
 
     return () => unsubscribe && unsubscribe();
-  }, [initialize, isAuthenticated]);
+  }, [initialize, isAuthenticated, setShowPermissionModal]);
 
   // Clear all notifications or by channel id
   const clearNotifications = useCallback(async notificationId => {
@@ -54,7 +77,7 @@ export const NotificationProvider = ({children}) => {
         await notifee.cancelNotification(notificationId);
       }
     } catch (error) {
-      console.error('Failed to clear notifications', error);
+      Sentry.captureException(error);
     }
   }, []);
 
@@ -62,7 +85,7 @@ export const NotificationProvider = ({children}) => {
     try {
       await notifee.deleteChannel('channelId');
     } catch (error) {
-      console.error('Failed to clear notifications by channel', error);
+      Sentry.captureException(error);
     }
   }, []);
 
@@ -89,8 +112,7 @@ export const NotificationProvider = ({children}) => {
 
         return notification;
       } catch (error) {
-        debugger;
-        console.error('Failed to display notification', error);
+        Sentry.captureException(error);
       }
     },
     [clearNotifications],

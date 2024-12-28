@@ -15,7 +15,7 @@ export const catchError = props => {
     er = props;
     Alert.alert('Opps, Something went wrong', props);
   }
-  Sentry.captureMessage(er);
+  Sentry.captureException(er);
 };
 
 export const sentrySetUser = user => {
