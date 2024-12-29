@@ -1,4 +1,4 @@
-import notifee, {EventType} from '@notifee/react-native';
+import notifee from '@notifee/react-native';
 import * as Sentry from '@sentry/react-native';
 import {startCase} from 'lodash';
 import React, {
@@ -26,41 +26,7 @@ export const NotificationProvider = ({children}) => {
   useEffect(() => {
     let unsubscribe;
     if (isAuthenticated) {
-      // Request permissions on mount
-      initialize().then(() => {
-        // Listen to notification events
-        unsubscribe = notifee.onForegroundEvent(({type, detail}) => {
-          switch (type) {
-            case EventType.DISMISSED:
-              console.log('User dismissed notification', detail.notification);
-              break;
-            case EventType.PRESS:
-              console.log('User pressed notification', detail.notification);
-              break;
-            case EventType.APP_BLOCKED:
-              Sentry.captureMessage(
-                'User toggled app notification permission: ' +
-                  String(detail.blocked),
-              );
-              setShowPermissionModal(true);
-              break;
-            case EventType.CHANNEL_BLOCKED:
-              Sentry.captureMessage(
-                `User toggled app notification channel block. Channel Id: ${
-                  detail.channel.id
-                }, value: ${String(detail.blocked)}`,
-              );
-              break;
-            case EventType.CHANNEL_GROUP_BLOCKED:
-              Sentry.captureMessage(
-                `User toggled app notification channel group block. Channel Group Id: ${
-                  detail.channel.id
-                }, value: ${String(detail.blocked)}`,
-              );
-              break;
-          }
-        });
-      });
+      initialize();
     }
 
     return () => unsubscribe && unsubscribe();
