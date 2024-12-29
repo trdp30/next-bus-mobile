@@ -73,6 +73,7 @@ export const NotificationProvider = ({children}) => {
           android: {
             channelId: newChannel,
             asForegroundService: asForegroundService,
+            sound: 'hollow',
           },
         });
 
