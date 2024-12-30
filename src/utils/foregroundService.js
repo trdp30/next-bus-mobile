@@ -2,14 +2,14 @@ import notifee, {EventType} from '@notifee/react-native';
 import * as Sentry from '@sentry/react-native';
 
 let shouldRunForegroundService = true;
-let foregroundEventListenerSubscription;
+let unsubscribeForegroundEventListener;
 
-const unsubscribeForegroundEventListener = () => {
+const triggerUnsubscribeForegroundEventListener = () => {
   if (
-    foregroundEventListenerSubscription &&
-    typeof foregroundEventListenerSubscription === 'function'
+    unsubscribeForegroundEventListener &&
+    typeof unsubscribeForegroundEventListener === 'function'
   ) {
-    foregroundEventListenerSubscription();
+    unsubscribeForegroundEventListener();
   }
 };
 
@@ -17,8 +17,8 @@ export const initiateForegroundService = async () => {
   console.log('Initiating Foreground service...');
   notifee.registerForegroundService(notification => {
     return new Promise(async () => {
-      unsubscribeForegroundEventListener();
-      foregroundEventListenerSubscription = notifee.onForegroundEvent(
+      triggerUnsubscribeForegroundEventListener();
+      unsubscribeForegroundEventListener = notifee.onForegroundEvent(
         async ({type, detail}) => {
           switch (type) {
             case EventType.DISMISSED:

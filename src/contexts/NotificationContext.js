@@ -55,7 +55,14 @@ export const NotificationProvider = ({children}) => {
   }, []);
 
   const displayNotification = useCallback(
-    async ({title, body, channelId, notificationId, asForegroundService}) => {
+    async ({
+      title,
+      body,
+      channelId,
+      notificationId,
+      asForegroundService,
+      pressAction,
+    }) => {
       try {
         // Create a channel (required for Android)
         const newChannel = await notifee.createChannel({
@@ -73,7 +80,10 @@ export const NotificationProvider = ({children}) => {
           android: {
             channelId: newChannel,
             asForegroundService: asForegroundService,
-            sound: 'hollow',
+            // sound: 'hollow',
+            pressAction: pressAction || {
+              id: 'default',
+            },
           },
         });
 

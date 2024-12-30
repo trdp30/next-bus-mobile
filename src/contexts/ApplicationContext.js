@@ -15,6 +15,31 @@ export const ApplicationProvider = ({children}) => {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState('inactive'); //| 'active' | 'background' | 'inactive' | 'unknown' | 'extension';
 
+  // const getInitialNotification = useCallback(async () => {
+  //   try {
+  //     const initialNotification = await notifee.getInitialNotification();
+
+  //     console.log('initialNotification', initialNotification);
+
+  //     if (initialNotification) {
+  //       console.log(
+  //         'Notification caused application to open',
+  //         initialNotification.notification,
+  //       );
+  //       console.log(
+  //         'Press action used to open the app',
+  //         initialNotification.pressAction,
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }, []);
+
+  // useEffect(() => {
+  //   getInitialNotification();
+  // }, [getInitialNotification]);
+
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
       appState.current = nextAppState;

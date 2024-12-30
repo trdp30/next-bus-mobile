@@ -3,7 +3,17 @@ import * as Sentry from '@sentry/react-native';
 
 export let unsubscribeBackgroundEventListener;
 
+const triggerUnsubscribeBackgroundEventListener = () => {
+  if (
+    unsubscribeBackgroundEventListener &&
+    typeof unsubscribeBackgroundEventListener === 'function'
+  ) {
+    unsubscribeBackgroundEventListener();
+  }
+};
+
 export const initiateBackgroundService = () => {
+  triggerUnsubscribeBackgroundEventListener();
   unsubscribeBackgroundEventListener = notifee.onBackgroundEvent(
     async ({type, detail}) => {
       console.group('Background Event');
