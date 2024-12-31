@@ -1,14 +1,14 @@
 import LogoutAlertDialog from '@/src/components/LogoutAlertDialog';
 import {Button, ButtonText} from '@/src/components/ui/button';
-import {Text} from '@/src/components/ui/text';
 import {Divider} from '@/src/components/ui/divider';
 import {Heading} from '@/src/components/ui/heading';
+import {Text} from '@/src/components/ui/text';
 import {VStack} from '@/src/components/ui/vstack';
 import React from 'react';
 import {ScrollView} from 'react-native';
+import Config from 'react-native-config';
 import ProfileSection from './ProfileSection';
 import SupportSection from './SupportSection';
-import Config from 'react-native-config';
 
 export const Settings = ({isActive}) => {
   const [openLogoutAlertDialog, setOpenLogoutAlertDialog] =

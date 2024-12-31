@@ -26,7 +26,6 @@ async function checkBatteryOptimization() {
 }
 
 export const initiateForegroundService = async () => {
-  console.log('Initiating Foreground service...');
   notifee.registerForegroundService(notification => {
     return new Promise(async () => {
       try {
@@ -35,9 +34,11 @@ export const initiateForegroundService = async () => {
           async ({type, detail}) => {
             switch (type) {
               case EventType.DISMISSED:
+                // Todo: Handle the notification dismissal
                 console.log('User dismissed notification', detail.notification);
                 break;
               case EventType.PRESS:
+                // Todo: Handle the notification press
                 console.log('User pressed notification', detail.notification);
                 break;
               case EventType.APP_BLOCKED:
@@ -45,6 +46,7 @@ export const initiateForegroundService = async () => {
                   'User toggled app notification permission: ' +
                     String(detail.blocked),
                 );
+                // Todo: Handle the app block
                 // if (setShowPermissionModal) {
                 //   setShowPermissionModal(true);
                 // }
@@ -72,17 +74,11 @@ export const initiateForegroundService = async () => {
           },
         );
 
-        console.log('Foreground service started...', new Date().getTime());
         let interval;
         let retryCount = 0;
         const loop = async () => {
           try {
             if (shouldRunForegroundService) {
-              // Do your background task here
-              console.log(
-                'Foreground service running...',
-                new Date().getTime(),
-              );
               await detectAndPostCurrentLocation();
               retryCount = 0;
               interval = setTimeout(loop, Config.POLLING_INTERVAL);
@@ -95,29 +91,35 @@ export const initiateForegroundService = async () => {
             if (retryCount < 3) {
               retryCount++;
               // Todo: Handle The error
-              console.log('Retrying Foreground service Loop...');
+              Sentry.captureMessage(
+                'Error in Foreground service Loop. Retrying...',
+              );
+              Sentry.captureException(error);
               interval = setTimeout(loop, 15000);
             } else {
-              // Todo: Handle The error
+              // Todo: Let user know that the app is not working as expected
               console.log('Error in Foreground service Loop:', error);
+              stopForegroundService();
+              Sentry.captureException(error);
             }
           }
         };
         loop();
       } catch (error) {
         console.log('Error in Foreground service:', error);
+        // Todo: Let user know that the app is not working as expected
+        stopForegroundService();
+        Sentry.captureException(error);
       }
     });
   });
 };
 
 export const starForegroundService = () => {
-  console.log('Start of Foreground initiated');
   shouldRunForegroundService = true;
 };
 
 export const stopForegroundService = async () => {
-  console.log('Stopping Foreground service...');
   shouldRunForegroundService = false;
   return notifee.stopForegroundService();
 };

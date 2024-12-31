@@ -7,19 +7,24 @@
 
 import * as Sentry from '@sentry/react-native';
 import React from 'react';
+import Config from 'react-native-config';
 import './global.css';
 import Root from './src/Root';
 
 Sentry.init({
   dsn: 'https://bdbce58178d45d25b68afecefb025ce8@o4508543590072320.ingest.us.sentry.io/4508543601475584',
-  enabled: __DEV__ ? false : true,
-
-  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
-  // enableSpotlight: __DEV__,
+  enabled: true,
+  enableNative: true,
+  release: Config.VERSION,
+  attachScreenshot: true,
 });
 
 function App(): React.JSX.Element {
-  return <Root />;
+  return (
+    <Sentry.ErrorBoundary>
+      <Root />
+    </Sentry.ErrorBoundary>
+  );
 }
 
 export default App;

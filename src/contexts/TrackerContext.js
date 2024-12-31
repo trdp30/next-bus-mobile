@@ -25,11 +25,16 @@ import {
   useLazyFindTrackerQuery,
   useUpdateTrackerMutation,
 } from '../store/services/trackerApi';
+import {mergeTrackerDataToBeStored} from '../utils/commonHelpers';
 import {
   starForegroundService,
   stopForegroundService,
 } from '../utils/foregroundService';
-import {localStorageSetItem, TRACKER_DETAILS} from '../utils/storageHelper';
+import {
+  localStorageSetItem,
+  removeLocalStorageItem,
+  TRACKER_DETAILS,
+} from '../utils/storageHelper';
 import ApplicationContext from './ApplicationContext';
 import {AuthContext} from './AuthContext';
 import {NotificationContext} from './NotificationContext';
@@ -261,7 +266,13 @@ const TrackerProvider = ({children}) => {
     ) {
       setShowPermissionModal(false);
       startCheckingProximity(currentTracker?.destination?.location);
-      localStorageSetItem(TRACKER_DETAILS, currentTracker);
+      localStorageSetItem(
+        TRACKER_DETAILS,
+        mergeTrackerDataToBeStored({
+          response: currentTracker,
+          tracker: currentTracker,
+        }),
+      );
     }
     return () => stopProximityCheck();
   }, [
@@ -279,8 +290,11 @@ const TrackerProvider = ({children}) => {
       // Todo need to clear the channel as well
       toggleTrackerNotification(false);
       stopProximityCheck();
+      removeLocalStorageItem(TRACKER_DETAILS);
     } else if (!currentTracker?._id) {
       toggleTrackerNotification(false);
+      stopProximityCheck();
+      removeLocalStorageItem(TRACKER_DETAILS);
     }
   }, [currentTracker, toggleTrackerNotification]);
 

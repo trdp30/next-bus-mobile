@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react-native';
 import {Alert} from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 
 export const catchError = props => {
   let er = '';
@@ -15,11 +16,24 @@ export const catchError = props => {
     er = props;
     Alert.alert('Opps, Something went wrong', props);
   }
+  Sentry.captureException(props);
   Sentry.captureException(er);
 };
 
-export const sentrySetUser = user => {
+export const sentrySetUser = async user => {
+  const deviceId = await DeviceInfo.getDeviceId();
+  const deviceName = await DeviceInfo.getDeviceName();
+  const apiLevel = await DeviceInfo.getApiLevel();
+
+  Sentry.getGlobalScope().setExtras({
+    deviceId,
+    deviceName,
+    apiLevel,
+  });
+
   Sentry.setUser({
     id: user?._id,
+    email: user?.email,
+    username: user?.email,
   });
 };

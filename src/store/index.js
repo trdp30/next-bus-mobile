@@ -1,5 +1,6 @@
 import {configureStore} from '@reduxjs/toolkit';
 import {setupListeners} from '@reduxjs/toolkit/query';
+import * as Sentry from '@sentry/react-native';
 import createSagaMiddleware from 'redux-saga';
 import rootSaga from './sagas/index.saga';
 import {placeApi} from './services/placeApi';
@@ -7,6 +8,8 @@ import {trackerApi} from './services/trackerApi';
 import {userApi} from './services/userApi';
 import {vehicleApi} from './services/vehicleApi';
 import {sessionSlice} from './slices/session';
+
+const sentryReduxEnhancer = Sentry.createReduxEnhancer();
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -26,6 +29,9 @@ export const store = configureStore({
       .concat(placeApi.middleware)
       .concat(vehicleApi.middleware)
       .concat(trackerApi.middleware),
+  enhancers: getDefaultEnhancers => {
+    return getDefaultEnhancers().concat(sentryReduxEnhancer);
+  },
 });
 
 sagaMiddleware.run(rootSaga);
