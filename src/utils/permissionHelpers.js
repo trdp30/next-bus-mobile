@@ -36,6 +36,13 @@ export const requestCoarseLocationPermission = async () => {
   return granted === PermissionsAndroid.RESULTS.GRANTED;
 };
 
+export const requestForegroundLocationPermission = async () => {
+  const granted = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.FOREGROUND_SERVICE_LOCATION,
+  );
+  return granted === PermissionsAndroid.RESULTS.GRANTED;
+};
+
 export const checkIsLocationEnabled = async () => {
   const result = await isLocationEnabled();
   if (result) {

@@ -78,6 +78,7 @@ let intervalId;
 
 export const startProximityCheck = targetLocation => {
   return new Promise((resolve, reject) => {
+    console.log('Starting proximity check');
     const checkProximity = async () => {
       try {
         console.log('Checking proximity');
@@ -95,13 +96,13 @@ export const startProximityCheck = targetLocation => {
         reject(error);
       }
     };
-
     // intervalId = setInterval(checkProximity, Config.POLLING_INTERVAL); // Check every 5 seconds
     intervalId = setInterval(checkProximity, 3000); // Check every 5 seconds
   });
 };
 
 export const stopProximityCheck = () => {
+  console.log('Stopping proximity check');
   if (intervalId) {
     clearInterval(intervalId);
   }

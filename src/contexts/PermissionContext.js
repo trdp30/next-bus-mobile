@@ -78,6 +78,7 @@ export const PermissionProvider = ({children}) => {
     try {
       const locationPermission = await requestFineLocationPermission();
       await requestCoarseLocationPermission();
+      // await requestForegroundLocationPermission();
       dispatch({
         type: 'LOCATION',
         payload: {

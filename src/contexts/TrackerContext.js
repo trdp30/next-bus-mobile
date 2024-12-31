@@ -29,6 +29,7 @@ import {
   starForegroundService,
   stopForegroundService,
 } from '../utils/foregroundService';
+import {localStorageSetItem, TRACKER_DETAILS} from '../utils/storageHelper';
 import ApplicationContext from './ApplicationContext';
 import {AuthContext} from './AuthContext';
 import {NotificationContext} from './NotificationContext';
@@ -198,6 +199,7 @@ const TrackerProvider = ({children}) => {
         }
         // where the result is true we have to make the tracker inactive
       } catch (error) {
+        console.log('Error in startCheckingProximity:', error);
         setShowPermissionModal(true);
       }
     },
@@ -207,7 +209,8 @@ const TrackerProvider = ({children}) => {
   const toggleTrackerNotification = useCallback(
     show => {
       if (show) {
-        clearNotifications('tracker-active')
+        startRequestingPermission()
+          .then(() => clearNotifications('tracker-active'))
           .then(() => clearNotificationsByChannel('tracker'))
           .then(() => {
             starForegroundService();
@@ -225,7 +228,12 @@ const TrackerProvider = ({children}) => {
           .then(() => stopForegroundService());
       }
     },
-    [clearNotifications, clearNotificationsByChannel, displayNotification],
+    [
+      clearNotifications,
+      clearNotificationsByChannel,
+      displayNotification,
+      startRequestingPermission,
+    ],
   );
 
   useEffect(() => {
@@ -253,26 +261,25 @@ const TrackerProvider = ({children}) => {
     ) {
       setShowPermissionModal(false);
       startCheckingProximity(currentTracker?.destination?.location);
-      toggleTrackerNotification(true);
+      localStorageSetItem(TRACKER_DETAILS, currentTracker);
     }
     return () => stopProximityCheck();
   }, [
     currentTracker,
-    startRequestingPermission,
-    startCheckingProximity,
     hasMissingPermissions,
     isRequesting,
-    toggleTrackerNotification,
     setShowPermissionModal,
+    startCheckingProximity,
   ]);
 
   useEffect(() => {
-    if (currentTracker?._id && !currentTracker?.active) {
+    if (currentTracker?._id && currentTracker?.active) {
+      toggleTrackerNotification(true);
+    } else if (currentTracker?._id && !currentTracker?.active) {
       // Todo need to clear the channel as well
       toggleTrackerNotification(false);
       stopProximityCheck();
-    }
-    if (!currentTracker?._id) {
+    } else if (!currentTracker?._id) {
       toggleTrackerNotification(false);
     }
   }, [currentTracker, toggleTrackerNotification]);
