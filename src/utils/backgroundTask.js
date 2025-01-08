@@ -16,7 +16,7 @@ export const detectAndPostCurrentLocation = async () => {
     );
     if (storedCurrentTrackerDetails) {
       const currentTracker = JSON.parse(storedCurrentTrackerDetails);
-      console.log('currentTracker:', currentTracker);
+      console.log('bg task running..');
       if (currentTracker?._id && currentTracker?.active) {
         const currentLocation = await getCurrentPosition();
         const formattedLocation = formatLocation(currentLocation);

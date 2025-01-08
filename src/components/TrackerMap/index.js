@@ -6,12 +6,12 @@
  */
 
 import {formatLocation, getCurrentPosition} from '@/src/utils/locationHelpers';
-import {last} from 'lodash';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import TravelerImage from '../../assets/traveler_xs.png';
 import {Box} from '../ui/box';
+import {Button, ButtonText} from '../ui/button';
 import {Text} from '../ui/text';
 
 /*
@@ -21,6 +21,7 @@ import {Text} from '../ui/text';
 
 function TrackerMap({
   currentTracker,
+  handleUpdateTrackerToInactive,
   // isTrackerActive,
   // selectedMonitoringVehicles,
 }) {
@@ -59,11 +60,17 @@ function TrackerMap({
   // console.log('monitoringTrackersForToday', monitoringTrackersForToday);
 
   // const mapRef = useRef(null);
-  const myTrackerLocation = useMemo(() => {
-    if (currentTracker?.trackerLogs?.length) {
-      return last(currentTracker.trackerLogs)?.location;
-    }
-  }, [currentTracker]);
+  // const myTrackerLocation = useMemo(() => {
+  //   if (currentTracker?.trackerLogs?.length) {
+  //     return last(currentTracker.trackerLogs)?.location;
+  //   }
+  // }, [currentTracker]);
+
+  const handleOnUserLocationChange = event => {
+    // const {latitude, longitude} = event.nativeEvent.coordinate;
+    setMyLocation(formatLocation(event?.nativeEvent?.coordinate));
+    // console.log('handleOnUserLocationChange', latitude, longitude
+  };
 
   useEffect(() => {
     getCurrentPosition().then(position => {
@@ -79,36 +86,37 @@ function TrackerMap({
   return (
     <Box className="flex flex-1">
       {myLocation?.latitude && myLocation?.longitude ? (
-        <MapView
-          region={{
-            latitude: myLocation?.latitude,
-            longitude: myLocation?.longitude,
-            latitudeDelta: 0.0422,
-            longitudeDelta: 0,
-          }}
-          showsUserLocation={true}
-          followsUserLocation={true}
-          showsBuildings={false}
-          showsCompass={true}
-          showsTraffic={true}
-          showsIndoors={false}
-          loadingEnabled={true}
-          zoomControlEnabled={true}
-          moveOnMarkerPress={true}
-          userInterfaceStyle="light"
-          // onUserLocationChange={handleOnUserLocationChange}
-          style={styles.map}
-          // userLocationUpdateInterval={30000}
-          initialRegion={{
-            latitude: myLocation?.latitude,
-            longitude: myLocation?.longitude,
-            latitudeDelta: 0.0422,
-            longitudeDelta: 0,
-          }}
-          provider={PROVIDER_GOOGLE}
-          // ref={mapRef}
-        >
-          {/* {map(monitoringTrackersForToday, monitoringTracker => (
+        <Box className="flex flex-1 flex-col">
+          <MapView
+            region={{
+              latitude: myLocation?.latitude,
+              longitude: myLocation?.longitude,
+              latitudeDelta: 0.0422,
+              longitudeDelta: 0,
+            }}
+            showsUserLocation={true}
+            followsUserLocation={true}
+            showsBuildings={false}
+            showsCompass={true}
+            showsTraffic={true}
+            showsIndoors={false}
+            loadingEnabled={true}
+            zoomControlEnabled={true}
+            moveOnMarkerPress={true}
+            userInterfaceStyle="light"
+            onUserLocationChange={handleOnUserLocationChange}
+            style={styles.map}
+            // userLocationUpdateInterval={30000}
+            // initialRegion={{
+            //   latitude: myLocation?.latitude,
+            //   longitude: myLocation?.longitude,
+            //   latitudeDelta: 0.0422,
+            //   longitudeDelta: 0,
+            // }}
+            provider={PROVIDER_GOOGLE}
+            // ref={mapRef}
+          >
+            {/* {map(monitoringTrackersForToday, monitoringTracker => (
             <Marker
               key={monitoringTracker?.latitude}
               coordinate={{
@@ -120,19 +128,31 @@ function TrackerMap({
               rotation={monitoringTracker?.heading}
             />
           ))} */}
-          <Marker
-            coordinate={{
-              latitude: myTrackerLocation?.latitude,
-              longitude: myTrackerLocation?.longitude,
-            }}
-            title="My Position"
-            image={TravelerImage}
-            rotation={myTrackerLocation?.heading}
-          />
-        </MapView>
+            {myLocation?.latitude && myLocation?.longitude ? (
+              <Marker
+                coordinate={{
+                  latitude: myLocation?.latitude,
+                  longitude: myLocation?.longitude,
+                }}
+                title="My Position"
+                image={TravelerImage}
+                rotation={myLocation?.heading}
+              />
+            ) : (
+              <></>
+            )}
+          </MapView>
+        </Box>
       ) : (
         <Box className="flex flex-1 justify-center items-center">
           <Text>Loading current location</Text>
+        </Box>
+      )}
+      {currentTracker?.active && (
+        <Box className="">
+          <Button onPress={handleUpdateTrackerToInactive}>
+            <ButtonText className="py-2">End Trip</ButtonText>
+          </Button>
         </Box>
       )}
     </Box>
