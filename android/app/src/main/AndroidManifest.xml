@@ -31,5 +31,6 @@
         </intent-filter>
       </activity>
       <service android:name="app.notifee.core.ForegroundService" android:foregroundServiceType="location" tools:replace="android:foregroundServiceType" xmlns:tools="http://schemas.android.com/tools"/>
+      <meta-data android:name="com.google.android.geo.API_KEY" android:value="@string/GOOGLE_MAPS_API_KEY" />
     </application>
 </manifest>
