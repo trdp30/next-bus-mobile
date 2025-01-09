@@ -11,7 +11,6 @@ import {StyleSheet} from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import TravelerImage from '../../assets/traveler_xs.png';
 import {Box} from '../ui/box';
-import {Button, ButtonText} from '../ui/button';
 import {Text} from '../ui/text';
 
 /*
@@ -88,12 +87,12 @@ function TrackerMap({
       {myLocation?.latitude && myLocation?.longitude ? (
         <Box className="flex flex-1 flex-col">
           <MapView
-            region={{
-              latitude: myLocation?.latitude,
-              longitude: myLocation?.longitude,
-              latitudeDelta: 0.0422,
-              longitudeDelta: 0,
-            }}
+            // region={{
+            //   latitude: myLocation?.latitude,
+            //   longitude: myLocation?.longitude,
+            //   latitudeDelta: 0.0422,
+            //   longitudeDelta: 0,
+            // }}
             showsUserLocation={true}
             followsUserLocation={true}
             showsBuildings={false}
@@ -107,12 +106,12 @@ function TrackerMap({
             onUserLocationChange={handleOnUserLocationChange}
             style={styles.map}
             // userLocationUpdateInterval={30000}
-            // initialRegion={{
-            //   latitude: myLocation?.latitude,
-            //   longitude: myLocation?.longitude,
-            //   latitudeDelta: 0.0422,
-            //   longitudeDelta: 0,
-            // }}
+            initialRegion={{
+              latitude: myLocation?.latitude,
+              longitude: myLocation?.longitude,
+              latitudeDelta: 0.0422,
+              longitudeDelta: 0,
+            }}
             provider={PROVIDER_GOOGLE}
             // ref={mapRef}
           >
@@ -146,13 +145,6 @@ function TrackerMap({
       ) : (
         <Box className="flex flex-1 justify-center items-center">
           <Text>Loading current location</Text>
-        </Box>
-      )}
-      {currentTracker?.active && (
-        <Box className="">
-          <Button onPress={handleUpdateTrackerToInactive}>
-            <ButtonText className="py-2">End Trip</ButtonText>
-          </Button>
         </Box>
       )}
     </Box>

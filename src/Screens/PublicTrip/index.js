@@ -5,10 +5,17 @@ import {Text} from '@/src/components/ui/text';
 import ApplicationContext from '@/src/contexts/ApplicationContext';
 import {TrackerContext} from '@/src/contexts/TrackerContext';
 import {parseDateTime} from '@/src/utils/dateHelpers';
+import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {map} from 'lodash';
-import React, {useContext, useEffect, useMemo} from 'react';
-import {BackHandler, ScrollView} from 'react-native';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
+import {BackHandler, ScrollView, StyleSheet} from 'react-native';
 
 export const PublicTrip = () => {
   const {
@@ -20,6 +27,8 @@ export const PublicTrip = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const {setShowActiveTracker} = useContext(ApplicationContext);
+  const bottomSheetRef = useRef(null);
+  const snapPoints = useMemo(() => ['10%', '25%', '50%', '90%'], []);
 
   const lastActiveTracker = useMemo(() => {
     return allTrackersForToday?.length ? allTrackersForToday[0] : null;
@@ -28,6 +37,10 @@ export const PublicTrip = () => {
   const tracker = useMemo(() => {
     return currentTracker || lastActiveTracker;
   }, [lastActiveTracker, currentTracker]);
+
+  const handleSheetChanges = useCallback(index => {
+    console.log('handleSheetChanges', index);
+  }, []);
 
   useEffect(() => {
     if (isFocused) {
@@ -49,11 +62,29 @@ export const PublicTrip = () => {
 
   if (tracker?.active) {
     return (
-      <TrackerMap
-        currentTracker={tracker}
-        isTrackerActive={isTrackerActive}
-        handleUpdateTrackerToInactive={handleUpdateTrackerToInactive}
-      />
+      <Box className="flex flex-1 flex-col">
+        <Box className="flex flex-1 max-h-[92%]">
+          <TrackerMap
+            currentTracker={tracker}
+            isTrackerActive={isTrackerActive}
+            handleUpdateTrackerToInactive={handleUpdateTrackerToInactive}
+          />
+        </Box>
+        {currentTracker?.active && (
+          <BottomSheet
+            ref={bottomSheetRef}
+            onChange={handleSheetChanges}
+            snapPoints={snapPoints}>
+            <BottomSheetView style={styles.contentContainer}>
+              <Box className="px-4">
+                <Button onPress={handleUpdateTrackerToInactive}>
+                  <ButtonText className="py-2">End Trip</ButtonText>
+                </Button>
+              </Box>
+            </BottomSheetView>
+          </BottomSheet>
+        )}
+      </Box>
     );
   } else {
     return (
@@ -112,3 +143,10 @@ export const PublicTrip = () => {
     );
   }
 };
+
+const styles = StyleSheet.create({
+  contentContainer: {
+    flex: 1,
+    flexDirection: 'column',
+  },
+});

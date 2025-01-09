@@ -1692,6 +1692,27 @@ PODS:
     - Firebase/Auth (= 11.5.0)
     - React-Core
     - RNFBApp
+  - RNGestureHandler (2.21.2):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNGoogleSignin (13.1.0):
     - DoubleConversion
     - glog
@@ -1740,7 +1761,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated (3.16.3):
+  - RNReanimated (3.16.6):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1760,10 +1781,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated (= 3.16.3)
-    - RNReanimated/worklets (= 3.16.3)
+    - RNReanimated/reanimated (= 3.16.6)
+    - RNReanimated/worklets (= 3.16.6)
     - Yoga
-  - RNReanimated/reanimated (3.16.3):
+  - RNReanimated/reanimated (3.16.6):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1783,9 +1804,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated/apple (= 3.16.3)
+    - RNReanimated/reanimated/apple (= 3.16.6)
     - Yoga
-  - RNReanimated/reanimated/apple (3.16.3):
+  - RNReanimated/reanimated/apple (3.16.6):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1806,7 +1827,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated/worklets (3.16.3):
+  - RNReanimated/worklets (3.16.6):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2036,6 +2057,7 @@ DEPENDENCIES:
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
+  - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - RNPermissions (from `../node_modules/react-native-permissions`)
@@ -2206,6 +2228,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBAuth:
     :path: "../node_modules/@react-native-firebase/auth"
+  RNGestureHandler:
+    :path: "../node_modules/react-native-gesture-handler"
   RNGoogleSignin:
     :path: "../node_modules/@react-native-google-signin/google-signin"
   RNNotifee:
@@ -2309,10 +2333,11 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 3f2e5fcca3637f75c6d30ba287293c2f97206781
   RNFBApp: 1de631bffe154f4f8b56f8dbfb13d6305d658e97
   RNFBAuth: aa53108a283606c560e4380d75d093c35a13d8dd
+  RNGestureHandler: 15ee1ab573a954c92641877ca946e2680f2e58da
   RNGoogleSignin: 27c2199f487ee08cc692d8d2c035bc9c154ddc22
   RNNotifee: 4a6ee5c7deaf00e005050052d73ee6315dff7ec9
   RNPermissions: 3b20f48ffaa1da81fb38410524c12966566f9877
-  RNReanimated: 09762f5e57737cfb986e7a046c795adcf5bae431
+  RNReanimated: 77a04017cdf54b9da500ccefde56d9d15b8ddff6
   RNScreens: 9ec20e849e0df1376c072235ff123f59cdf71287
   RNSentry: f144b7dbeec86aa0f9e62fdc47c0a7f2e5f8b1e2
   RNSVG: feeb4eb546e718d6c6fb70d10fd31e0c5c2d0d90
