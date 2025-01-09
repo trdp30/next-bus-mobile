@@ -1,4 +1,5 @@
 import TrackerMap from '@/src/components/TrackerMap';
+import TrackerOptions from '@/src/components/TrackerOptions';
 import {Box} from '@/src/components/ui/box';
 import {Button, ButtonText} from '@/src/components/ui/button';
 import {Text} from '@/src/components/ui/text';
@@ -76,11 +77,7 @@ export const PublicTrip = () => {
             onChange={handleSheetChanges}
             snapPoints={snapPoints}>
             <BottomSheetView style={styles.contentContainer}>
-              <Box className="px-4">
-                <Button onPress={handleUpdateTrackerToInactive}>
-                  <ButtonText className="py-2">End Trip</ButtonText>
-                </Button>
-              </Box>
+              <TrackerOptions />
             </BottomSheetView>
           </BottomSheet>
         )}
