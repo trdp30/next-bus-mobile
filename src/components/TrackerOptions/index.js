@@ -1,28 +1,39 @@
+import {MonitoringTrackerContext} from '@/src/contexts/MonitoringTrackerContext';
 import {TrackerContext} from '@/src/contexts/TrackerContext';
 import {useGetVehiclesQuery} from '@/src/store/services/vehicleApi';
 import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
-import {find, findIndex} from 'lodash';
-import React, {useContext} from 'react';
+import {filter, find, findIndex, uniq} from 'lodash';
+import React, {useContext, useMemo} from 'react';
 import {Box} from '../ui/box';
 import {Button, ButtonText} from '../ui/button';
 import {Text} from '../ui/text';
 import VehicleListItem from './VehicleListItem';
 
 const TrackerOptions = () => {
-  const {handleUpdateTrackerToInactive} = useContext(TrackerContext);
+  const {handleUpdateTrackerToInactive, currentTracker} =
+    useContext(TrackerContext);
+  const {selectedVehicles, setSelectedVehicles, monitoringTrackers} =
+    useContext(MonitoringTrackerContext);
   const {data: vehicles} = useGetVehiclesQuery();
-  const [selectedVehicles, setSelectedVehicles] = React.useState([]);
 
   const handleSelectVehicle = vehicleId => {
     setSelectedVehicles(prev => {
       const index = findIndex(prev, v => v._id === vehicleId);
       if (index === -1) {
-        return prev.concat(find(vehicles, ['_id', vehicleId]));
+        const value = prev.concat(find(vehicles, ['_id', vehicleId]));
+        return uniq(value);
       } else {
-        return prev.filter(v => v._id !== vehicleId);
+        const value = prev.filter(v => v._id !== vehicleId);
+        return uniq(value);
       }
     });
   };
+
+  const filteredVehicles = useMemo(() => {
+    return filter(vehicles, vehicle => {
+      return currentTracker?.vehicle?._id !== vehicle._id;
+    });
+  }, [vehicles, currentTracker]);
 
   return (
     <Box className="mb-8">
@@ -33,12 +44,13 @@ const TrackerOptions = () => {
             Select vehicles that you want to monitor:
           </Text>
           <Box className="gap-y-4 py-4">
-            {vehicles?.map(vehicle => (
+            {filteredVehicles?.map(vehicle => (
               <VehicleListItem
                 key={vehicle?._id}
                 vehicle={vehicle}
                 handleSelectVehicle={handleSelectVehicle}
                 selectedVehicles={selectedVehicles}
+                monitoringTrackers={monitoringTrackers}
               />
             ))}
           </Box>

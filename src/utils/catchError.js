@@ -12,6 +12,9 @@ export const catchError = props => {
   } else if (props?.message) {
     er = props.message;
     Alert.alert('Opps, Something went wrong', props.message);
+  } else if (props?.error && typeof props.error === 'string') {
+    er = props.error;
+    Alert.alert('Opps, Something went wrong', props.error);
   } else {
     er = props;
     Alert.alert('Opps, Something went wrong', props);

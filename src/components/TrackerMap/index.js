@@ -5,8 +5,10 @@
  * @format
  */
 
+import {MonitoringTrackerContext} from '@/src/contexts/MonitoringTrackerContext';
 import {formatLocation, getCurrentPosition} from '@/src/utils/locationHelpers';
-import React, {useEffect, useState} from 'react';
+import {map} from 'lodash';
+import React, {Fragment, useContext, useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import TravelerImage from '../../assets/traveler_xs.png';
@@ -18,57 +20,12 @@ import {Text} from '../ui/text';
   https://www.npmjs.com/package/@react-native-community/netinfo
 */
 
-function TrackerMap({
-  currentTracker,
-  handleUpdateTrackerToInactive,
-  // isTrackerActive,
-  // selectedMonitoringVehicles,
-}) {
+function TrackerMap({currentTracker}) {
   const [myLocation, setMyLocation] = useState(null);
-  // const {data: vehicles} = useGetVehiclesQuery(
-  //   {
-  //     vehicleIds: ['6726da1c785c3d7c32997cfb'],
-  //     // vehicleIds: map(selectedMonitoringVehicles, '_id'),
-  //   },
-  //   {
-  //     skip: !selectedMonitoringVehicles?.length,
-  //   },
-  // );
-  // const {data: monitoringTrackers} = useGetTrackersQuery(
-  //   {
-  //     date: getIsoGetStartOfDay(),
-  //     // vehicle: map(selectedMonitoringVehicles, '_id') || null,
-  //     vehicle: ['6726da1c785c3d7c32997cfb'],
-  //   },
-  //   {
-  //     pollingInterval: Config.POLLING_INTERVAL,
-  //     skipPollingIfUnfocused: true,
-  //   },
-  // );
-
-  // const monitoringTrackersForToday = useMemo(() => {
-  // return map(monitoringTrackers, tracker => {
-  //   return {
-  //     ...tracker,
-  //     trackerLog: last(tracker.trackerLogs)?.location,
-  //     vehicle: vehicles.find(vehicle => vehicle._id === tracker.vehicle),
-  //   };
-  // });
-  // }, [monitoringTrackers, vehicles]);
-
-  // console.log('monitoringTrackersForToday', monitoringTrackersForToday);
-
-  // const mapRef = useRef(null);
-  // const myTrackerLocation = useMemo(() => {
-  //   if (currentTracker?.trackerLogs?.length) {
-  //     return last(currentTracker.trackerLogs)?.location;
-  //   }
-  // }, [currentTracker]);
+  const {monitoringTrackerLocations} = useContext(MonitoringTrackerContext);
 
   const handleOnUserLocationChange = event => {
-    // const {latitude, longitude} = event.nativeEvent.coordinate;
     setMyLocation(formatLocation(event?.nativeEvent?.coordinate));
-    // console.log('handleOnUserLocationChange', latitude, longitude
   };
 
   useEffect(() => {
@@ -87,12 +44,6 @@ function TrackerMap({
       {myLocation?.latitude && myLocation?.longitude ? (
         <Box className="flex flex-1 flex-col">
           <MapView
-            // region={{
-            //   latitude: myLocation?.latitude,
-            //   longitude: myLocation?.longitude,
-            //   latitudeDelta: 0.0422,
-            //   longitudeDelta: 0,
-            // }}
             showsUserLocation={true}
             followsUserLocation={true}
             showsBuildings={false}
@@ -105,35 +56,39 @@ function TrackerMap({
             userInterfaceStyle="light"
             onUserLocationChange={handleOnUserLocationChange}
             style={styles.map}
-            // userLocationUpdateInterval={30000}
             initialRegion={{
               latitude: myLocation?.latitude,
               longitude: myLocation?.longitude,
               latitudeDelta: 0.0422,
               longitudeDelta: 0,
             }}
-            provider={PROVIDER_GOOGLE}
-            // ref={mapRef}
-          >
-            {/* {map(monitoringTrackersForToday, monitoringTracker => (
-            <Marker
-              key={monitoringTracker?.latitude}
-              coordinate={{
-                latitude: monitoringTracker?.latitude,
-                longitude: monitoringTracker?.longitude,
-              }}
-              title="Tracker Position"
-              image={TravelerImage}
-              rotation={monitoringTracker?.heading}
-            />
-          ))} */}
+            provider={PROVIDER_GOOGLE}>
+            {map(monitoringTrackerLocations, monitoringTracker => (
+              <Fragment key={monitoringTracker?._id}>
+                {monitoringTracker?.location?.latitude &&
+                monitoringTracker?.location?.longitude ? (
+                  <Marker
+                    key={monitoringTracker?._id}
+                    coordinate={{
+                      latitude: monitoringTracker?.location?.latitude,
+                      longitude: monitoringTracker?.location?.longitude,
+                    }}
+                    title={`${monitoringTracker?.vehicle?.name}, ${monitoringTracker?.vehicle?.registration_number}`}
+                    image={TravelerImage}
+                    rotation={monitoringTracker?.location?.heading}
+                  />
+                ) : (
+                  <></>
+                )}
+              </Fragment>
+            ))}
             {myLocation?.latitude && myLocation?.longitude ? (
               <Marker
                 coordinate={{
                   latitude: myLocation?.latitude,
                   longitude: myLocation?.longitude,
                 }}
-                title="My Position"
+                title={'My Position'}
                 image={TravelerImage}
                 rotation={myLocation?.heading}
               />
