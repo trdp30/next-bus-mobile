@@ -14,7 +14,7 @@ export const requestBackgroundLocationPermission = async () => {
 };
 
 export const requestNotificationPermission = async () => {
-  const result = await requestNotifications();
+  const result = await requestNotifications(['alert', 'sound', 'badge']);
   const notifeePermission = await notifee.requestPermission();
   return (
     result?.status === RESULTS.GRANTED &&
