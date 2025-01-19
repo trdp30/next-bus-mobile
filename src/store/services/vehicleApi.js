@@ -45,4 +45,4 @@ export const vehicleApi = createApi({
   }),
 });
 
-export const {useGetVehiclesQuery} = vehicleApi;
+export const {useGetVehiclesQuery, useCreateVehicleMutation} = vehicleApi;

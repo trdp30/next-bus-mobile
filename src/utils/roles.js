@@ -12,7 +12,7 @@ export const roleList = [
   // {value: roles.passenger, label: 'Passenger'},
   {value: roles.driver, label: 'Driver'},
   {value: roles.owner, label: 'Owner'},
-  {value: roles.areaManager, label: 'Service Manager'},
+  // {value: roles.areaManager, label: 'Service Manager'},
 ];
 
 export const getCurrentRole = user => {

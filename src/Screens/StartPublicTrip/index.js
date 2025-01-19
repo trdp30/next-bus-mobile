@@ -4,6 +4,7 @@ import {Button, ButtonText} from '@/src/components/ui/button';
 import {Pressable} from '@/src/components/ui/pressable';
 import {Spinner} from '@/src/components/ui/spinner';
 import {Text} from '@/src/components/ui/text';
+import {AuthContext} from '@/src/contexts/AuthContext';
 import {TrackerContext} from '@/src/contexts/TrackerContext';
 import {useGetPlacesQuery} from '@/src/store/services/placeApi';
 import {useGetVehiclesQuery} from '@/src/store/services/vehicleApi';
@@ -47,8 +48,11 @@ const reducer = (state, action) => {
 function StartPublicTrip() {
   const navigation = useNavigation();
   const isDarkMode = useColorScheme() === 'dark';
+  const {user} = useContext(AuthContext);
 
-  const {data: vehicleData, isLoading: vehicleLoading} = useGetVehiclesQuery();
+  const {data: vehicleData, isLoading: vehicleLoading} = useGetVehiclesQuery({
+    currentUser: user?._id,
+  });
   const {isTrackerActive} = useContext(TrackerContext);
   const {data: placeData, isLoading: placeLoading} = useGetPlacesQuery();
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -127,6 +131,28 @@ function StartPublicTrip() {
     }
   }, [navigateToPublicTrip, isTrackerActive]);
 
+  useEffect(() => {
+    if (!vehicleLoading) {
+      if (vehicleData?.length === 1) {
+        dispatch({type: 'SET_VEHICLE', payload: vehicleData[0]});
+      } else if (!vehicleData?.length) {
+        Alert.alert('No vehicle found', 'Please add vehicle first.', [
+          {
+            text: 'Ok',
+            onPress: () => navigation.navigate('AddVehicle'),
+            isPreferred: true,
+            style: 'default',
+          },
+          {
+            text: 'Cancel',
+            isPreferred: false,
+            style: 'cancel',
+          },
+        ]);
+      }
+    }
+  }, [vehicleLoading, vehicleData, navigation]);
+
   return (
     <Box className="flex flex-1">
       <Box className="absolute z-20 w-full px-4 pt-4 top-0">
@@ -166,6 +192,17 @@ function StartPublicTrip() {
                 <Dropdown
                   isDisabled={createTrackerRequest?.isLoading}
                   options={vehicleData}
+                  isLoading={vehicleLoading}
+                  emptyOptionContent={
+                    <Box>
+                      <Text className="text-gray-500">
+                        No vehicle found. Add a vehicle first.
+                      </Text>
+                      <Button onPress={() => navigation.navigate('AddVehicle')}>
+                        <ButtonText>Add Vehicle</ButtonText>
+                      </Button>
+                    </Box>
+                  }
                   placeholder="Select Vehicle"
                   onSelectedChange={e =>
                     dispatch({type: 'SET_VEHICLE', payload: e})

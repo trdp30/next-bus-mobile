@@ -2,24 +2,25 @@ import * as Sentry from '@sentry/react-native';
 import {Alert} from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 
-export const catchError = props => {
+export const catchError = (error, skipToast) => {
   let er = '';
-  if (props?.error?.status) {
-    er = `Status Code: ${String(props?.error?.status)}.\n${
-      props?.error?.error
-    }\nRequest Url: ${props?.meta?.request?.url}`;
-    Alert.alert('Opps, Something went wrong', er);
-  } else if (props?.message) {
-    er = props.message;
-    Alert.alert('Opps, Something went wrong', props.message);
-  } else if (props?.error && typeof props.error === 'string') {
-    er = props.error;
-    Alert.alert('Opps, Something went wrong', props.error);
+  if (error?.data?.message) {
+    er = error.data.message;
+  } else if (error?.error?.status) {
+    er = `Status Code: ${String(error?.error?.status)}.\n${
+      error?.error?.error
+    }\nRequest Url: ${error?.meta?.request?.url}`;
+  } else if (error?.message) {
+    er = error.message;
+  } else if (error?.error && typeof error.error === 'string') {
+    er = error.error;
   } else {
-    er = props;
-    Alert.alert('Opps, Something went wrong', props);
+    er = error;
   }
-  Sentry.captureException(props);
+  if (!skipToast) {
+    Alert.alert('Opps, Something went wrong', er);
+  }
+  Sentry.captureException(error);
   Sentry.captureException(er);
 };
 

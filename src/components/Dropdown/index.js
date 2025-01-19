@@ -12,7 +12,10 @@ import {
 } from '@/src/components/ui/select';
 import {map} from 'lodash';
 import React from 'react';
+import {Pressable} from 'react-native';
+import {Box} from '../ui/box';
 import {ChevronDownIcon} from '../ui/icon';
+import {Text} from '../ui/text';
 
 export const Dropdown = ({
   isDisabled,
@@ -20,6 +23,8 @@ export const Dropdown = ({
   selected,
   onSelectedChange,
   placeholder,
+  emptyOptionContent,
+  isLoading,
 }) => {
   return (
     <Select onValueChange={onSelectedChange} isDisabled={isDisabled}>
@@ -40,6 +45,16 @@ export const Dropdown = ({
               value={option._id}
             />
           ))}
+          <Pressable onPress={() => onSelectedChange('')}>
+            <Box className="py-8">
+              {isLoading && <Text>Loading</Text>}
+              {!isLoading && !options.length ? (
+                <>{emptyOptionContent}</>
+              ) : (
+                <></>
+              )}
+            </Box>
+          </Pressable>
         </SelectContent>
       </SelectPortal>
     </Select>

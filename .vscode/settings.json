@@ -1,3 +1,8 @@
 {
-  "cSpell.words": ["Gluestack", "notifee"]
+  "cSpell.words": ["Gluestack", "notifee"],
+  "editor.foldingImportsByDefault": false,
+  "editor.codeActionsOnSave": {
+    "source.addMissingImports.ts": "always",
+    "source.organizeImports": "always"
+  }
 }
