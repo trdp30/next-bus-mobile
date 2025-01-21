@@ -1,70 +1,55 @@
 import classNames from 'classnames';
-import {first, get} from 'lodash';
+import {find, get} from 'lodash';
 import React, {useMemo} from 'react';
 import {Box} from '../ui/box';
 import {Button, ButtonText} from '../ui/button';
 import {Text} from '../ui/text';
 
 const trackerStatus = {
-  running: {
+  Running: {
     color: 'text-green-500',
   },
-  stopped: {
+  Stopped: {
     color: 'text-red-500',
   },
-  notStarted: {
+  'Not Started': {
     color: 'text-gray-500',
   },
 };
 
 const VehicleListItem = ({
-  vehicle,
+  tracker,
   handleSelectVehicle,
   selectedVehicles,
-  monitoringTrackers,
+  vehicles,
 }) => {
   const isSelected = useMemo(() => {
-    return selectedVehicles?.find(v => v._id === vehicle._id);
-  }, [selectedVehicles, vehicle]);
+    return !!find(selectedVehicles, ['_id', tracker.vehicle]);
+  }, [selectedVehicles, tracker?.vehicle]);
 
-  const vehicleTracker = useMemo(() => {
-    const tracker = get(monitoringTrackers, vehicle._id);
-    return first(tracker);
-  }, [vehicle, monitoringTrackers]);
+  const vehicle = useMemo(() => {
+    return find(vehicles, ['_id', tracker.vehicle]);
+  }, [vehicles, tracker?.vehicle]);
 
   const status = useMemo(() => {
-    if (vehicleTracker?._id) {
-      return vehicleTracker.active ? 'running' : 'stopped';
+    if (tracker?._id) {
+      return tracker.active ? 'Running' : 'Stopped';
     }
-    return 'notStarted';
-  }, [vehicleTracker]);
+    return 'Not Started';
+  }, [tracker.active, tracker?._id]);
 
   return (
-    <Box key={vehicle._id} className="flex-row items-center px-4">
+    <Box key={tracker._id} className="flex-row items-center px-4">
       <Box>
         <Text className="font-bold">{vehicle.name}</Text>
         <Text>{vehicle.registration_number}</Text>
-        {isSelected && (
-          <>
-            {vehicleTracker?._id ? (
-              <Text
-                className={classNames(
-                  get(trackerStatus, status)?.color,
-                  'font-bold text-sm',
-                )}>
-                {vehicleTracker?.active ? 'Running' : 'Stopped'}
-              </Text>
-            ) : (
-              <Text
-                className={classNames(
-                  get(trackerStatus, status),
-                  'font-bold text-sm',
-                )}>
-                Not started yet
-              </Text>
-            )}
-          </>
-        )}
+        <Text
+          className={classNames(
+            get(trackerStatus, status)?.color,
+            'font-bold text-sm',
+          )}>
+          {status}
+        </Text>
       </Box>
       <Button
         onPress={() => handleSelectVehicle(vehicle._id)}
