@@ -2,9 +2,9 @@ import {MonitoringTrackerContext} from '@/src/contexts/MonitoringTrackerContext'
 import {TrackerContext} from '@/src/contexts/TrackerContext';
 import {useGetTrackersQuery} from '@/src/store/services/trackerApi';
 import {useGetVehiclesQuery} from '@/src/store/services/vehicleApi';
-import {getIsoGetStartOfDay} from '@/src/utils/dateHelpers';
+import {getIsoGetStartOfDay, parseDateTime} from '@/src/utils/dateHelpers';
 import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
-import {filter, find, findIndex, uniq} from 'lodash';
+import {filter, find, findIndex, map, sortBy, unionBy, uniq} from 'lodash';
 import React, {useContext, useMemo} from 'react';
 import {Box} from '../ui/box';
 import {Button, ButtonText} from '../ui/button';
@@ -45,7 +45,16 @@ const TrackerOptions = () => {
   };
 
   const filteredTrackers = useMemo(() => {
-    return filter(allTracker, tracker => {
+    const parsedTrackers = map(allTracker, tracker => {
+      return {
+        ...tracker,
+        active: tracker.active,
+        sortOrder: +parseDateTime(tracker.created_by),
+      };
+    });
+    const sortedTrackers = sortBy(parsedTrackers, 'sortOrder');
+    const uniqTrackers = unionBy(sortedTrackers, 'vehicle');
+    return filter(uniqTrackers, tracker => {
       return currentTracker?._id !== tracker._id;
     });
   }, [allTracker, currentTracker]);
@@ -62,7 +71,7 @@ const TrackerOptions = () => {
             {!allTrackerRequestLoading && (
               <Text className="text-sm text-gray-500">
                 (Total activated vehicles: {filteredTrackers?.length}. It will
-                in refresh every 10 minutes)
+                refresh in every 10 minutes)
               </Text>
             )}
           </Box>

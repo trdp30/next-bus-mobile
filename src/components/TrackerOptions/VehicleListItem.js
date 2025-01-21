@@ -41,8 +41,8 @@ const VehicleListItem = ({
   return (
     <Box key={tracker._id} className="flex-row items-center px-4">
       <Box>
-        <Text className="font-bold">{vehicle.name}</Text>
-        <Text>{vehicle.registration_number}</Text>
+        <Text className="font-bold">{vehicle?.name}</Text>
+        <Text>{vehicle?.registration_number}</Text>
         <Text
           className={classNames(
             get(trackerStatus, status)?.color,
@@ -52,7 +52,7 @@ const VehicleListItem = ({
         </Text>
       </Box>
       <Button
-        onPress={() => handleSelectVehicle(vehicle._id)}
+        onPress={() => handleSelectVehicle(vehicle?._id)}
         className="ml-auto">
         <ButtonText>{isSelected ? 'Untrack' : 'Track'}</ButtonText>
       </Button>
