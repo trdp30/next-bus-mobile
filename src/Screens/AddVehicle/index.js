@@ -175,6 +175,7 @@ const AddVehicle = () => {
                         onChangeText={onChange}
                         value={value}
                         textContentType={formField.type}
+                        placeholderTextColor={'black'}
                       />
                     )}
                     name={formField.name}

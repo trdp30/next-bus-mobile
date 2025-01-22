@@ -24,22 +24,22 @@ const VehicleListItem = ({
   vehicles,
 }) => {
   const isSelected = useMemo(() => {
-    return !!find(selectedVehicles, ['_id', tracker.vehicle]);
+    return !!find(selectedVehicles, ['_id', tracker?.vehicle]);
   }, [selectedVehicles, tracker?.vehicle]);
 
   const vehicle = useMemo(() => {
-    return find(vehicles, ['_id', tracker.vehicle]);
+    return find(vehicles, ['_id', tracker?.vehicle]);
   }, [vehicles, tracker?.vehicle]);
 
   const status = useMemo(() => {
     if (tracker?._id) {
-      return tracker.active ? 'Running' : 'Stopped';
+      return tracker?.active ? 'Running' : 'Stopped';
     }
     return 'Not Started';
-  }, [tracker.active, tracker?._id]);
+  }, [tracker?.active, tracker?._id]);
 
   return (
-    <Box key={tracker._id} className="flex-row items-center px-4">
+    <Box key={tracker?._id} className="flex-row items-center px-4">
       <Box>
         <Text className="font-bold">{vehicle?.name}</Text>
         <Text>{vehicle?.registration_number}</Text>

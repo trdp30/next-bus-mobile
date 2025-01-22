@@ -19,19 +19,22 @@ const initialState = {
   location: {
     granted: false,
     name: 'Location',
-    description: 'To track your trip and provide you with the best experience.',
+    description:
+      'To track your trip only when it is active and provide you with the best experience.',
     error: '',
   },
   background: {
     granted: false,
     name: 'Background Location',
-    description: 'To track your trip even when the app is not in use.',
+    description:
+      'To track your trip only when it is active even when the app is not in use.',
     error: '',
   },
   gps: {
     granted: false,
     name: 'GPS Setting',
-    description: 'To track your trip when the app is in use.',
+    description:
+      'To track your trip only when it is active when the app is in use.',
     error: '',
   },
 };

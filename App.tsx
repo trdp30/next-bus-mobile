@@ -17,6 +17,9 @@ Sentry.init({
   enableNative: true,
   release: Config.VERSION,
   attachScreenshot: true,
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0,
+  integrations: [Sentry.mobileReplayIntegration()],
 });
 
 function App(): React.JSX.Element {

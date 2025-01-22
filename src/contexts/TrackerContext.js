@@ -10,7 +10,7 @@ import {
   stopProximityCheck,
 } from '@/src/utils/locationHelpers';
 import {roles} from '@/src/utils/roles';
-import {find, map, reverse, sortBy, uniq} from 'lodash';
+import {find, first, map, reverse, sortBy, uniq} from 'lodash';
 import React, {
   useCallback,
   useContext,
@@ -241,6 +241,27 @@ const TrackerProvider = ({children}) => {
     ],
   );
 
+  const handleStartReverseTrip = useCallback(
+    lastActiveTracker => {
+      if (createTrackerRequest.isLoading) {
+        return;
+      }
+      const startFrom = lastActiveTracker?.destination?._id;
+      const destination = lastActiveTracker?.started_from?._id;
+      const vehicle = lastActiveTracker?.vehicle?._id;
+      handleCreateTracker({
+        driver: user?._id,
+        vehicle: vehicle,
+        started_from: startFrom,
+        trackerLogs: [],
+        destination: destination,
+        active: true,
+        isPrivate: lastActiveTracker?.isPrivate,
+      });
+    },
+    [handleCreateTracker, user, createTrackerRequest?.isLoading],
+  );
+
   useEffect(() => {
     if (
       user?._id &&
@@ -336,6 +357,8 @@ const TrackerProvider = ({children}) => {
       tripType: currentTracker?.isPrivate ? 'private' : 'public',
       handleUpdateTrackerToInactive,
       allTrackersForToday,
+      handleStartReverseTrip,
+      lastActiveTracker: first(allTrackersForToday),
     };
   }, [
     handleFetchTrackerForCurrentUser,
@@ -349,6 +372,7 @@ const TrackerProvider = ({children}) => {
     vehicles,
     handleUpdateTrackerToInactive,
     allTrackersForToday,
+    handleStartReverseTrip,
   ]);
 
   return (

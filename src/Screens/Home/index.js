@@ -1,4 +1,5 @@
 import {Box} from '@/src/components/ui/box';
+import {Button, ButtonText} from '@/src/components/ui/button';
 import {Pressable} from '@/src/components/ui/pressable';
 import {Text} from '@/src/components/ui/text';
 import ApplicationContext from '@/src/contexts/ApplicationContext';
@@ -13,7 +14,13 @@ export function Home() {
   const isDarkMode = useColorScheme() === 'dark';
   const {user} = useContext(AuthContext);
   const navigation = useNavigation();
-  const {isTrackerActive, tripType} = useContext(TrackerContext);
+  const {
+    isTrackerActive,
+    tripType,
+    handleStartReverseTrip,
+    lastActiveTracker,
+    createTrackerRequest,
+  } = useContext(TrackerContext);
   const isFocused = useIsFocused();
   const {setShowActiveTracker} = useContext(ApplicationContext);
 
@@ -60,8 +67,33 @@ export function Home() {
                 </Text>
               ) : (
                 <Text className="text-xl font-medium text-center">
-                  You have not started your trip yet.{' '}
+                  {lastActiveTracker?._id
+                    ? 'You have not restarted any trip yet.'
+                    : 'You have not started your trip yet.'}
                 </Text>
+              )}
+            </Box>
+            <Box>
+              {lastActiveTracker?._id && !lastActiveTracker?.active ? (
+                <Box className="py-2 gap-y-4">
+                  <Text className="text-xl font-medium text-center">
+                    Last trip:
+                  </Text>
+                  <Text className="text-center">
+                    {lastActiveTracker?.destination?.name} - to -{' '}
+                    {lastActiveTracker?.started_from?.name}
+                  </Text>
+                  <Text className="text-center">
+                    {lastActiveTracker?.vehicle?.name}
+                  </Text>
+                  <Button
+                    onPress={() => handleStartReverseTrip(lastActiveTracker)}
+                    disabled={createTrackerRequest.isLoading}>
+                    <ButtonText>Start Reverse Trip</ButtonText>
+                  </Button>
+                </Box>
+              ) : (
+                <></>
               )}
             </Box>
           </Box>

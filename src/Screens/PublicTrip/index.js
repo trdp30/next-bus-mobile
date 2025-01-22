@@ -77,7 +77,9 @@ export const PublicTrip = () => {
             onChange={handleSheetChanges}
             snapPoints={snapPoints}>
             <BottomSheetView style={styles.contentContainer}>
-              <TrackerOptions />
+              <Box>
+                <TrackerOptions />
+              </Box>
             </BottomSheetView>
           </BottomSheet>
         )}

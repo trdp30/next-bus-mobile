@@ -120,6 +120,7 @@ export default function Register() {
                           onChangeText={onChange}
                           value={value}
                           textContentType={formField.type}
+                          placeholderTextColor={'black'}
                         />
                       )}
                       name={formField.name}

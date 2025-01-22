@@ -76,6 +76,7 @@ const Login = () => {
           onChangeText={setEmail}
           editable={!isLoading}
           autoComplete="email"
+          placeholderTextColor={'black'}
         />
         <TextInput
           style={styles.input}
@@ -85,6 +86,7 @@ const Login = () => {
           secureTextEntry
           editable={!isLoading}
           autoComplete="password"
+          placeholderTextColor={'black'}
         />
 
         <Button
