@@ -19,12 +19,8 @@ import React, {
 import {BackHandler, ScrollView, StyleSheet} from 'react-native';
 
 export const PublicTrip = () => {
-  const {
-    currentTracker,
-    handleUpdateTrackerToInactive,
-    allTrackersForToday,
-    isTrackerActive,
-  } = useContext(TrackerContext);
+  const {currentTracker, handleUpdateTrackerToInactive, allTrackersForToday} =
+    useContext(TrackerContext);
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const {setShowActiveTracker} = useContext(ApplicationContext);
@@ -65,11 +61,7 @@ export const PublicTrip = () => {
     return (
       <Box className="flex flex-1 flex-col">
         <Box className="flex flex-1 max-h-[92%]">
-          <TrackerMap
-            currentTracker={tracker}
-            isTrackerActive={isTrackerActive}
-            handleUpdateTrackerToInactive={handleUpdateTrackerToInactive}
-          />
+          <TrackerMap />
         </Box>
         {currentTracker?.active && (
           <BottomSheet

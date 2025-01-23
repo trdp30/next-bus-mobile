@@ -21,12 +21,11 @@ const MonitoringTrackerProvider = ({children}) => {
     },
   );
 
-  const monitoringTrackers = useMemo(() => {
-    const groupedData = groupBy(data, 'vehicle');
-    return groupedData;
-  }, [data]);
-
   const monitoringTrackerLocations = useMemo(() => {
+    if (!selectedVehicles?.length) {
+      return [];
+    }
+    const monitoringTrackers = groupBy(data, 'vehicle');
     const records = [];
     Object.keys(monitoringTrackers).map(vehicleId => {
       const trackers = monitoringTrackers[vehicleId];
@@ -38,7 +37,7 @@ const MonitoringTrackerProvider = ({children}) => {
       });
     });
     return records;
-  }, [monitoringTrackers, selectedVehicles]);
+  }, [data, selectedVehicles]);
 
   useEffect(() => {
     if (isError) {
@@ -48,12 +47,11 @@ const MonitoringTrackerProvider = ({children}) => {
 
   const value = useMemo(
     () => ({
-      monitoringTrackers,
       selectedVehicles,
       setSelectedVehicles,
       monitoringTrackerLocations,
     }),
-    [monitoringTrackers, selectedVehicles, monitoringTrackerLocations],
+    [selectedVehicles, monitoringTrackerLocations],
   );
   return (
     <MonitoringTrackerContext.Provider value={value}>

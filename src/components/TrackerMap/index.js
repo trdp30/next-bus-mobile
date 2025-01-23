@@ -7,7 +7,7 @@
 
 import {MonitoringTrackerContext} from '@/src/contexts/MonitoringTrackerContext';
 import {formatLocation, getCurrentPosition} from '@/src/utils/locationHelpers';
-import {map} from 'lodash';
+import {isEqual, map} from 'lodash';
 import React, {Fragment, memo, useContext, useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
@@ -20,12 +20,14 @@ import {Text} from '../ui/text';
   https://www.npmjs.com/package/@react-native-community/netinfo
 */
 
-const TrackerMap = memo(({currentTracker}) => {
+const TrackerMap = memo(() => {
   const [myLocation, setMyLocation] = useState(null);
   const {monitoringTrackerLocations} = useContext(MonitoringTrackerContext);
-
   const handleOnUserLocationChange = event => {
-    setMyLocation(formatLocation(event?.nativeEvent?.coordinate));
+    const data = formatLocation(event?.nativeEvent?.coordinate);
+    if (!isEqual(data, myLocation)) {
+      setMyLocation(formatLocation(event?.nativeEvent?.coordinate));
+    }
   };
 
   useEffect(() => {
@@ -54,6 +56,7 @@ const TrackerMap = memo(({currentTracker}) => {
             zoomControlEnabled={true}
             moveOnMarkerPress={true}
             userInterfaceStyle="light"
+            userLocationUpdateInterval={50000}
             onUserLocationChange={handleOnUserLocationChange}
             style={styles.map}
             initialRegion={{

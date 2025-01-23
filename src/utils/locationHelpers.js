@@ -26,6 +26,7 @@ export const formatLocation = location => {
     if (location?.coords) {
       const {latitude, longitude, ...rest} = location.coords;
       if (latitude && longitude) {
+        delete rest.timestamp;
         return {
           latitude: latitude,
           longitude: longitude,
@@ -36,6 +37,7 @@ export const formatLocation = location => {
       }
     } else if (location?.latitude && location?.longitude) {
       const {latitude, longitude, ...rest} = location;
+      delete rest.timestamp;
       return {
         latitude: latitude,
         longitude: longitude,
@@ -78,10 +80,8 @@ let intervalId;
 
 export const startProximityCheck = targetLocation => {
   return new Promise((resolve, reject) => {
-    console.log('Starting proximity check');
     const checkProximity = async () => {
       try {
-        console.log('Checking proximity');
         if (targetLocation) {
           const isNearby = await isWithinRadius(targetLocation);
           if (isNearby) {
