@@ -23,11 +23,11 @@ const TrackerOptions = () => {
     isLoading: allTrackerRequestLoading,
     refetch,
     isFetching,
-    ...rest
   } = useGetTrackersQuery(
     {
       date: getIsoGetStartOfDay(),
       destination: currentTracker?.destination?._id,
+      active: true,
     },
     {
       skip: !currentTracker?.destination?._id,

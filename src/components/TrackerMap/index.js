@@ -8,7 +8,7 @@
 import {MonitoringTrackerContext} from '@/src/contexts/MonitoringTrackerContext';
 import {formatLocation, getCurrentPosition} from '@/src/utils/locationHelpers';
 import {map} from 'lodash';
-import React, {Fragment, useContext, useEffect, useState} from 'react';
+import React, {Fragment, memo, useContext, useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import TravelerImage from '../../assets/traveler_xs.png';
@@ -20,7 +20,7 @@ import {Text} from '../ui/text';
   https://www.npmjs.com/package/@react-native-community/netinfo
 */
 
-function TrackerMap({currentTracker}) {
+const TrackerMap = memo(({currentTracker}) => {
   const [myLocation, setMyLocation] = useState(null);
   const {monitoringTrackerLocations} = useContext(MonitoringTrackerContext);
 
@@ -104,7 +104,7 @@ function TrackerMap({currentTracker}) {
       )}
     </Box>
   );
-}
+});
 
 const styles = StyleSheet.create({
   map: {
