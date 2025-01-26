@@ -6,8 +6,8 @@
  */
 
 import {MonitoringTrackerContext} from '@/src/contexts/MonitoringTrackerContext';
-import {formatLocation, getCurrentPosition} from '@/src/utils/locationHelpers';
-import {isEqual, map} from 'lodash';
+import {formatLocation} from '@/src/utils/locationHelpers';
+import {map} from 'lodash';
 import React, {Fragment, memo, useContext, useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
@@ -25,20 +25,20 @@ const TrackerMap = memo(() => {
   const {monitoringTrackerLocations} = useContext(MonitoringTrackerContext);
   const handleOnUserLocationChange = event => {
     const data = formatLocation(event?.nativeEvent?.coordinate);
-    if (!isEqual(data, myLocation)) {
-      setMyLocation(formatLocation(event?.nativeEvent?.coordinate));
-    }
+    // if (!isEqual(data, myLocation)) {
+    //   setMyLocation(formatLocation(event?.nativeEvent?.coordinate));
+    // }
   };
 
   useEffect(() => {
-    getCurrentPosition().then(position => {
-      if (position?.coords) {
-        const data = formatLocation(position);
-        setMyLocation(data);
-      } else {
-        console.log('position.coords is not available');
-      }
-    });
+    // getCurrentPosition().then(position => {
+    //   if (position?.coords) {
+    //     const data = formatLocation(position);
+    //     setMyLocation(data);
+    //   } else {
+    //     console.log('position.coords is not available');
+    //   }
+    // });
   }, []);
 
   return (

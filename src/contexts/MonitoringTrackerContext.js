@@ -16,7 +16,7 @@ const MonitoringTrackerProvider = ({children}) => {
     },
     {
       pollingInterval: Config.POLLING_INTERVAL,
-      skipPollingIfUnfocused: true,
+      // skipPollingIfUnfocused: true,
       skip: !selectedVehicles.length,
     },
   );
@@ -38,6 +38,17 @@ const MonitoringTrackerProvider = ({children}) => {
     });
     return records;
   }, [data, selectedVehicles]);
+
+  // console.log('monitoringTrackers', monitoringTrackerLocations.length);
+  // console.log(
+  //   'monitoringTrackers data',
+  //   data,
+  //   parseDateTime(data?.[0]?.createdAt)?.toFormat('D, tt'),
+  // );
+  // console.log(
+  //   'monitoringTrackers selectedVehicles',
+  //   selectedVehicles.map(vehicle => vehicle._id),
+  // );
 
   useEffect(() => {
     if (isError) {

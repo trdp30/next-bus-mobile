@@ -16,9 +16,9 @@ export const detectAndPostCurrentLocation = async () => {
     );
     if (storedCurrentTrackerDetails) {
       const currentTracker = JSON.parse(storedCurrentTrackerDetails);
-      console.log('bg task running..');
       if (currentTracker?._id && currentTracker?.active) {
         const currentLocation = await getCurrentPosition();
+        console.log('bg task running.., collected location');
         const formattedLocation = formatLocation(currentLocation);
         const response = await makePutRequest(
           `/tracker/log/${currentTracker._id}`,
@@ -26,10 +26,12 @@ export const detectAndPostCurrentLocation = async () => {
             location: formattedLocation,
           },
         );
+        console.log('bg task running.., api request made');
         await localStorageSetItem(
           TRACKER_DETAILS,
           mergeTrackerDataToBeStored({response, tracker: currentTracker}),
         );
+        console.log('bg task running.., localStore updated');
         if (!response?.active) {
           return stopForegroundService();
         }

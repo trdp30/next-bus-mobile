@@ -38,35 +38,10 @@ export const trackerApi = createApi({
           : [{type: 'Trackers', id: 'LIST'}],
       transformResponse: response => response,
     }),
-    findTracker: build.query({
-      query: queryParams => ({
-        url: 'tracker',
-        params: queryParams,
-      }),
-      providesTags: result =>
-        result
-          ? [
-              ...result.map(({_id}) => ({type: 'Trackers', id: _id})),
-              {type: 'Trackers', id: 'LIST'},
-            ]
-          : [{type: 'Trackers', id: 'LIST'}],
-    }),
-    updateTracker: build.mutation({
+    updateTrackerActive: build.mutation({
       query({id, ...payload}) {
         return {
           url: `tracker/${id}`,
-          method: 'PUT',
-          body: payload,
-        };
-      },
-      invalidatesTags: (result, error, arg) => [
-        {type: 'Trackers', id: arg._id},
-      ],
-    }),
-    updateTrackerLog: build.mutation({
-      query({id, ...payload}) {
-        return {
-          url: `tracker/log/${id}`,
           method: 'PUT',
           body: payload,
         };
@@ -89,10 +64,8 @@ export const trackerApi = createApi({
 export const {
   useGetTrackerByIdQuery,
   useCreateTrackerMutation,
-  useUpdateTrackerLogMutation,
-  useFindTrackerQuery,
-  useLazyFindTrackerQuery,
   useGetTrackersQuery,
-  useUpdateTrackerMutation,
+  useLazyGetTrackersQuery,
+  useUpdateTrackerActiveMutation,
   useSubscribeTrackersQuery,
 } = trackerApi;

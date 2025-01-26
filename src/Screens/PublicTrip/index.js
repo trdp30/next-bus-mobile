@@ -1,12 +1,9 @@
-import TrackerMap from '@/src/components/TrackerMap';
-import TrackerOptions from '@/src/components/TrackerOptions';
 import {Box} from '@/src/components/ui/box';
 import {Button, ButtonText} from '@/src/components/ui/button';
 import {Text} from '@/src/components/ui/text';
 import ApplicationContext from '@/src/contexts/ApplicationContext';
 import {TrackerContext} from '@/src/contexts/TrackerContext';
 import {parseDateTime} from '@/src/utils/dateHelpers';
-import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {map} from 'lodash';
 import React, {
@@ -60,10 +57,8 @@ export const PublicTrip = () => {
   if (tracker?.active) {
     return (
       <Box className="flex flex-1 flex-col">
-        <Box className="flex flex-1 max-h-[92%]">
-          <TrackerMap />
-        </Box>
-        {currentTracker?.active && (
+        <Box className="flex flex-1 max-h-[92%]">{/* <TrackerMap /> */}</Box>
+        {/* {currentTracker?.active && (
           <BottomSheet
             ref={bottomSheetRef}
             onChange={handleSheetChanges}
@@ -74,7 +69,7 @@ export const PublicTrip = () => {
               </Box>
             </BottomSheetView>
           </BottomSheet>
-        )}
+        )} */}
       </Box>
     );
   } else {

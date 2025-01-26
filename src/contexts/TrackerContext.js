@@ -22,8 +22,8 @@ import ActiveTrackerFloatingCard from '../components/ActiveTrackerFloatingCard';
 import {useGetPlacesQuery} from '../store/services/placeApi';
 import {
   useCreateTrackerMutation,
-  useLazyFindTrackerQuery,
-  useUpdateTrackerMutation,
+  useLazyGetTrackersQuery,
+  useUpdateTrackerActiveMutation,
 } from '../store/services/trackerApi';
 import {mergeTrackerDataToBeStored} from '../utils/commonHelpers';
 import {
@@ -66,20 +66,20 @@ const TrackerProvider = ({children}) => {
   const {user} = useContext(AuthContext);
   const [isLoading, toggleLoading] = useState(true);
   const [createTracker, createTrackerRequest] = useCreateTrackerMutation();
-  const [updateTracker] = useUpdateTrackerMutation();
-  const [lazyFindTracker, lazyFindTrackerResult] = useLazyFindTrackerQuery();
+  const [updateTracker] = useUpdateTrackerActiveMutation();
+  const [lazyGetTracker, lazyGetTrackerResult] = useLazyGetTrackersQuery();
   const {data: placeData} = useGetPlacesQuery(); //TODO: Need to only those place that are need to the tracker
   const {displayNotification, clearNotifications, clearNotificationsByChannel} =
     useContext(NotificationContext);
 
   const vehicleIds = useMemo(() => {
-    const data = lazyFindTrackerResult?.data;
+    const data = lazyGetTrackerResult?.data;
     if (Array.isArray(data) && data.length) {
       const ids = data.map(tracker => tracker?.vehicle);
       return uniq([...ids]);
     }
     return [];
-  }, [lazyFindTrackerResult?.data]);
+  }, [lazyGetTrackerResult?.data]);
 
   const {data: vehicles} = useGetVehiclesQuery(
     {
@@ -92,7 +92,7 @@ const TrackerProvider = ({children}) => {
 
   const currentTracker = useMemo(() => {
     const data =
-      (lazyFindTrackerResult?.data?.length && lazyFindTrackerResult?.data) ||
+      (lazyGetTrackerResult?.data?.length && lazyGetTrackerResult?.data) ||
       (createTrackerRequest.data?.length && createTrackerRequest.data) ||
       (createTrackerRequest?.data?.existingTracker?.length &&
         createTrackerRequest?.data?.existingTracker) ||
@@ -133,21 +133,21 @@ const TrackerProvider = ({children}) => {
     vehicles,
     createTrackerRequest.data,
     user?.roles,
-    lazyFindTrackerResult?.data,
+    lazyGetTrackerResult?.data,
     user?._id,
   ]);
 
   const handleFetchTrackerForCurrentUser = useCallback(async () => {
-    return lazyFindTracker({
+    return lazyGetTracker({
       driver: user?._id,
       date: getIsoGetStartOfDay(),
       // active: true,
     });
-  }, [lazyFindTracker, user]);
+  }, [lazyGetTracker, user]);
 
   const handleFetchTrackerByPayload = useCallback(
     async payload => {
-      lazyFindTracker({
+      lazyGetTracker({
         driver: payload?.driver || user?._id,
         vehicle: payload?.vehicle,
         started_from: payload?.started_from,
@@ -155,7 +155,7 @@ const TrackerProvider = ({children}) => {
         date: getIsoGetStartOfDay(),
       });
     },
-    [lazyFindTracker, user],
+    [lazyGetTracker, user],
   );
 
   const handleCreateTracker = useCallback(
@@ -188,12 +188,12 @@ const TrackerProvider = ({children}) => {
     [updateTracker, currentTracker],
   );
 
-  const handleUpdateTrackerToActive = useCallback(async () => {
-    return updateTracker({
-      id: currentTracker?._id,
-      active: true,
-    });
-  }, [updateTracker, currentTracker]);
+  // const handleUpdateTrackerToActive = useCallback(async () => {
+  //   return updateTracker({
+  //     id: currentTracker?._id,
+  //     active: true,
+  //   });
+  // }, [updateTracker, currentTracker]);
 
   const startCheckingProximity = useCallback(
     async targetLocation => {
@@ -320,10 +320,10 @@ const TrackerProvider = ({children}) => {
   }, [currentTracker, toggleTrackerNotification]);
 
   const allTrackersForToday = useMemo(() => {
-    if (lazyFindTrackerResult?.data?.length) {
+    if (lazyGetTrackerResult?.data?.length) {
       return reverse(
         sortBy(
-          map(lazyFindTrackerResult?.data, tracker => {
+          map(lazyGetTrackerResult?.data, tracker => {
             return {
               ...tracker,
               vehicle: find(vehicles, v => v._id === tracker?.vehicle),
@@ -340,7 +340,7 @@ const TrackerProvider = ({children}) => {
       );
     }
     return [];
-  }, [lazyFindTrackerResult?.data, vehicles, placeData]);
+  }, [lazyGetTrackerResult?.data, vehicles, placeData]);
 
   const value = useMemo(() => {
     return {
