@@ -1,8 +1,11 @@
+import {catchError} from '@/src/utils/catchError';
 import classNames from 'classnames';
 import {find, get} from 'lodash';
 import React, {useMemo} from 'react';
+import {Linking} from 'react-native';
 import {Box} from '../ui/box';
-import {Button, ButtonText} from '../ui/button';
+import {Button, ButtonIcon, ButtonText} from '../ui/button';
+import {PhoneIcon} from '../ui/icon';
 import {Text} from '../ui/text';
 
 const trackerStatus = {
@@ -38,8 +41,24 @@ const VehicleListItem = ({
     return 'Not Started';
   }, [tracker?.active, tracker?._id]);
 
+  const handleCallClick = async () => {
+    try {
+      const phone = vehicle?.phone;
+      const url = `tel:${phone}`;
+      await Linking.openURL(url);
+    } catch (error) {
+      catchError(error);
+    }
+  };
+
+  if (!vehicle?._id) {
+    return <></>;
+  }
+
   return (
-    <Box key={tracker?._id} className="flex-row items-center px-4">
+    <Box
+      key={tracker?._id}
+      className="flex-row items-center px-4 justify-between">
       <Box>
         <Text className="font-bold">{vehicle?.name}</Text>
         <Text>{vehicle?.registration_number}</Text>
@@ -51,11 +70,21 @@ const VehicleListItem = ({
           {status}
         </Text>
       </Box>
-      <Button
-        onPress={() => handleSelectVehicle(vehicle?._id)}
-        className="ml-auto">
-        <ButtonText>{isSelected ? 'Untrack' : 'Track'}</ButtonText>
-      </Button>
+      <Box className="flex-row items-center gap-x-4">
+        {String(vehicle?.phone)?.length > 0 && (
+          <Button
+            size="lg"
+            className="rounded-full p-3.5"
+            onPress={handleCallClick}>
+            <ButtonIcon as={PhoneIcon} />
+          </Button>
+        )}
+        <Button
+          onPress={() => handleSelectVehicle(vehicle?._id)}
+          className="ml-auto">
+          <ButtonText>{isSelected ? 'Untrack' : 'Track'}</ButtonText>
+        </Button>
+      </Box>
     </Box>
   );
 };

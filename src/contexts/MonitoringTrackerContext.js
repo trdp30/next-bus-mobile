@@ -22,9 +22,12 @@ const MonitoringTrackerProvider = ({children}) => {
   );
 
   const monitoringTrackers = useMemo(() => {
+    if (selectedVehicles.length === 0) {
+      return {};
+    }
     const groupedData = groupBy(data, 'vehicle');
     return groupedData;
-  }, [data]);
+  }, [data, selectedVehicles]);
 
   const monitoringTrackerLocations = useMemo(() => {
     const records = [];

@@ -9,6 +9,7 @@ import React, {useContext, useMemo} from 'react';
 import {Pressable} from 'react-native';
 import {Box} from '../ui/box';
 import {Button, ButtonText} from '../ui/button';
+import {Icon, SearchIcon} from '../ui/icon';
 import {Text} from '../ui/text';
 import VehicleListItem from './VehicleListItem';
 
@@ -94,6 +95,14 @@ const TrackerOptions = () => {
                 )}
               </Box>
             )}
+          </Box>
+          <Box className="border border-gray-300 py-3 pl-4 pr-2 rounded-lg flex flex-row my-4">
+            <Text className="text-md text-gray-700 flex-1 pr-2">
+              Enter "Name" or "Registration Number" to search
+            </Text>
+            <Box>
+              <Icon as={SearchIcon} />
+            </Box>
           </Box>
           <Box className="gap-y-4 py-4">
             {allTrackerRequestLoading && (
