@@ -1,5 +1,5 @@
 import {first, groupBy, map} from 'lodash';
-import React, {createContext, useEffect, useMemo} from 'react';
+import React, {createContext, useEffect, useMemo, useState} from 'react';
 import Config from 'react-native-config';
 import {useSubscribeTrackersQuery} from '../store/services/trackerApi';
 import {catchError} from '../utils/catchError';
@@ -8,7 +8,8 @@ import {getIsoGetStartOfDay} from '../utils/dateHelpers';
 export const MonitoringTrackerContext = createContext();
 
 const MonitoringTrackerProvider = ({children}) => {
-  const [selectedVehicles, setSelectedVehicles] = React.useState([]);
+  const [selectedVehicles, setSelectedVehicles] = useState([]);
+  const [selectedPlaces, setSelectedPlaces] = useState([]);
   const {data, error, isError} = useSubscribeTrackersQuery(
     {
       date: getIsoGetStartOfDay(),
@@ -37,7 +38,7 @@ const MonitoringTrackerProvider = ({children}) => {
       records.push({
         _id: tracker?._id,
         location: first(tracker.trackerLogs)?.location,
-        vehicle: selectedVehicles.find(vehicle => vehicle._id === vehicleId),
+        vehicle: selectedVehicles.find(vehicle => vehicle?._id === vehicleId),
       });
     });
     return records;
@@ -55,8 +56,16 @@ const MonitoringTrackerProvider = ({children}) => {
       selectedVehicles,
       setSelectedVehicles,
       monitoringTrackerLocations,
+      selectedPlaces,
+      setSelectedPlaces,
     }),
-    [monitoringTrackers, selectedVehicles, monitoringTrackerLocations],
+    [
+      monitoringTrackers,
+      selectedVehicles,
+      monitoringTrackerLocations,
+      selectedPlaces,
+      setSelectedPlaces,
+    ],
   );
   return (
     <MonitoringTrackerContext.Provider value={value}>

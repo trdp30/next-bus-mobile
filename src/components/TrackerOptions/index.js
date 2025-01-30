@@ -7,6 +7,7 @@ import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {filter, find, findIndex, map, sortBy, unionBy, uniq} from 'lodash';
 import React, {useContext, useMemo} from 'react';
 import {Pressable} from 'react-native';
+import {SearchBox} from '../SearchBox';
 import {Box} from '../ui/box';
 import {Button, ButtonText} from '../ui/button';
 import {Text} from '../ui/text';
@@ -15,9 +16,12 @@ import VehicleListItem from './VehicleListItem';
 const TrackerOptions = () => {
   const {handleUpdateTrackerToInactive, currentTracker} =
     useContext(TrackerContext);
-  const {selectedVehicles, setSelectedVehicles} = useContext(
-    MonitoringTrackerContext,
-  );
+  const {
+    selectedVehicles,
+    setSelectedVehicles,
+    selectedPlaces,
+    setSelectedPlaces,
+  } = useContext(MonitoringTrackerContext);
   const {
     data: allTracker,
     isLoading: allTrackerRequestLoading,
@@ -26,7 +30,10 @@ const TrackerOptions = () => {
   } = useGetTrackersQuery(
     {
       date: getIsoGetStartOfDay(),
-      destination: currentTracker?.destination?._id,
+      destination: map(
+        [...selectedPlaces, currentTracker?.destination],
+        p => p?._id,
+      ),
       active: true,
     },
     {
@@ -48,6 +55,10 @@ const TrackerOptions = () => {
         return uniq(value);
       }
     });
+  };
+
+  const handleSelectedPlaces = places => {
+    setSelectedPlaces(places);
   };
 
   const filteredTrackers = useMemo(() => {
@@ -96,7 +107,12 @@ const TrackerOptions = () => {
             )}
           </Box>
           <Box className="my-4">
-            {/* <SearchBox placeholder='Enter "Name" or "Registration Number" to search' /> */}
+            <SearchBox
+              placeholder="Search destination"
+              label={'Get active vehicle list by destination'}
+              applySelectedOptions={handleSelectedPlaces}
+              appliedOptions={selectedPlaces}
+            />
           </Box>
           <Box className="gap-y-4 py-4">
             {allTrackerRequestLoading && (
