@@ -66,7 +66,7 @@ const TrackerOptions = () => {
       return {
         ...tracker,
         active: tracker.active,
-        sortOrder: +parseDateTime(tracker?.created_by),
+        sortOrder: +parseDateTime(tracker?.createdAt),
       };
     });
     const sortedTrackers = sortBy(parsedTrackers, 'sortOrder');

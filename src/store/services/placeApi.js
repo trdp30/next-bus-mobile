@@ -45,4 +45,4 @@ export const placeApi = createApi({
   }),
 });
 
-export const {useGetPlacesQuery} = placeApi;
+export const {useGetPlacesQuery, useGetPlaceIdByIdQuery} = placeApi;

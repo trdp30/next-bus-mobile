@@ -1,3 +1,4 @@
+import {useGetPlaceIdByIdQuery} from '@/src/store/services/placeApi';
 import {catchError} from '@/src/utils/catchError';
 import classNames from 'classnames';
 import {find, get} from 'lodash';
@@ -26,6 +27,7 @@ const VehicleListItem = ({
   selectedVehicles,
   vehicles,
 }) => {
+  const {data: destination} = useGetPlaceIdByIdQuery(tracker?.destination);
   const isSelected = useMemo(() => {
     return !!find(selectedVehicles, ['_id', tracker?.vehicle]);
   }, [selectedVehicles, tracker?.vehicle]);
@@ -61,6 +63,10 @@ const VehicleListItem = ({
       className="flex-row items-center px-4 justify-between">
       <Box>
         <Text className="font-bold">{vehicle?.name}</Text>
+        <Text className="text-xs font-bold">Destination:</Text>
+        <Text className="text-sm">{destination?.name}</Text>
+      </Box>
+      <Box>
         <Text>{vehicle?.registration_number}</Text>
         <Text
           className={classNames(
