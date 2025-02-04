@@ -115,6 +115,15 @@ export const PublicTrip = () => {
                 </Text>
               </Box>
               <Box>
+                <Text className="text-md font-bold mt-2">
+                  Trip was stopped at
+                </Text>
+                <Text className="text-sm text-gray-600">
+                  {parseDateTime(trk?.updatedAt)?.isValid &&
+                    parseDateTime(trk?.updatedAt).toFormat('dd/MM/yy, hh:mm a')}
+                </Text>
+              </Box>
+              <Box>
                 <Text className="text-md font-bold mt-2">Start Location</Text>
                 <Text className="text-sm text-gray-600">
                   {tracker?.started_from?.name}
