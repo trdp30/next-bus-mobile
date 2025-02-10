@@ -1619,10 +1619,10 @@
   resolved "https://registry.yarnpkg.com/@gluestack-ui/hooks/-/hooks-0.1.12.tgz#4a92de73eec7b6ba6fc8e781c23417252993c95c"
   integrity sha512-jMZS+aIPYvouRKkWUzOYFKeWyt+YFIojYFuSq8sNZTjAq72xtiKZQKxNwOgTorEDD4CAIk0bncRS0TneNSuMAA==
 
-"@gluestack-ui/icon@^0.1.23":
-  version "0.1.23"
-  resolved "https://registry.yarnpkg.com/@gluestack-ui/icon/-/icon-0.1.23.tgz#68ce538ef2e485d103e8d4192a54105a726e0e98"
-  integrity sha512-au4WIwtAQRsvXV9rSZEvLvv4w8O2ikaTQjaCmF1poZyZabeEIXjun7qFIRTKmJsxoRmWK7ziM22i4OER/BlTCQ==
+"@gluestack-ui/icon@^0.1.25":
+  version "0.1.25"
+  resolved "https://registry.yarnpkg.com/@gluestack-ui/icon/-/icon-0.1.25.tgz#234a75896a388b39cd3c9f5b5a033cc5dcb546ee"
+  integrity sha512-HCyiHHHZzHpP5MIy5F2hP8iBc+0yt2NNM+jhbPYeoRG4WY7wc1whaUs9EIQvj880cq/zxOQP0Bz4mnyhuKsEKQ==
   dependencies:
     "@gluestack-ui/provider" "^0.1.13"
     "@gluestack-ui/utils" "^0.1.14"
@@ -1651,10 +1651,10 @@
     "@react-native-aria/interactions" "0.2.13"
     "@react-native-aria/overlays" "^0.3.12"
 
-"@gluestack-ui/nativewind-utils@^1.0.26-alpha.2":
-  version "1.0.26-alpha.2"
-  resolved "https://registry.yarnpkg.com/@gluestack-ui/nativewind-utils/-/nativewind-utils-1.0.26-alpha.2.tgz#c3ae0459f12e0187d985082681434d9ed7544cf4"
-  integrity sha512-YTIm6xLu/TBlnqWOE67cjcHFN7x1FE9iMPyspFD63lE8k58ZV5e9GngzS+HXQ+vfoumPMfY/Gxi5RJhIYy/tWA==
+"@gluestack-ui/nativewind-utils@^1.0.26":
+  version "1.0.26"
+  resolved "https://registry.yarnpkg.com/@gluestack-ui/nativewind-utils/-/nativewind-utils-1.0.26.tgz#1abb57a6a818da843345808216acc9d4cbc01e92"
+  integrity sha512-Ul/nHkYOKMH5CTmDUndM826GKYqWI6jFaz7/v7AgOo9dFuokOYm6Sd3pcJHqzPghwODRXV9L4nQgxa7dJX96pg==
   dependencies:
     find-yarn-workspace-root "^2.0.0"
     patch-package "8.0.0"
