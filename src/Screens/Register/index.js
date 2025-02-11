@@ -6,6 +6,7 @@ import {Text} from '@/src/components/ui/text';
 import {VStack} from '@/src/components/ui/vstack';
 import {AuthContext} from '@/src/contexts/AuthContext';
 import {useRegisterUserMutation} from '@/src/store/services/userApi';
+import {catchError} from '@/src/utils/catchError';
 import {roles} from '@/src/utils/roles';
 import classNames from 'classnames';
 import React, {useContext, useEffect, useState} from 'react';
@@ -47,6 +48,7 @@ export default function Register() {
     if (result.isSuccess) {
       handleSignInWithCustomToken(result.data.customToken);
     } else if (result.isError) {
+      catchError(result.error);
       console.log('register user error', result.error);
       // Todo: Handle the error format
     }
