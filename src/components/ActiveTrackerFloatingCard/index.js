@@ -1,12 +1,14 @@
 import {Box} from '@/src/components/ui/box';
 import {Text} from '@/src/components/ui/text';
 import {TrackerContext} from '@/src/contexts/TrackerContext';
+import {useGetVehicleIdByIdQuery} from '@/src/store/services/vehicleApi';
 import {useNavigation} from '@react-navigation/native';
 import React, {useContext, useEffect, useRef} from 'react';
 import {Animated, Easing, Pressable} from 'react-native';
 
 const ActiveTrackerFloatingCard = () => {
   const {currentTracker} = useContext(TrackerContext);
+  const {data: vehicle} = useGetVehicleIdByIdQuery(currentTracker?.vehicle);
   const navigation = useNavigation();
 
   const slideAnim = useRef(new Animated.Value(100)).current; // Initial position off-screen
@@ -34,11 +36,10 @@ const ActiveTrackerFloatingCard = () => {
               )}
             </Text>
             <Text className="text-sm text-gray-600">
-              Vehicle Name: {currentTracker?.vehicle?.name}
+              Vehicle Name: {vehicle?.name}
             </Text>
             <Text className="text-sm text-gray-600">
-              Registration Number:{' '}
-              {currentTracker?.vehicle?.registration_number}
+              Registration Number: {vehicle?.registration_number}
             </Text>
           </Box>
         </Box>

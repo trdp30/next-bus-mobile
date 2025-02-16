@@ -78,10 +78,8 @@ let intervalId;
 
 export const startProximityCheck = targetLocation => {
   return new Promise((resolve, reject) => {
-    console.log('Starting proximity check');
     const checkProximity = async () => {
       try {
-        console.log('Checking proximity');
         if (targetLocation) {
           const isNearby = await isWithinRadius(targetLocation);
           if (isNearby) {
@@ -102,7 +100,6 @@ export const startProximityCheck = targetLocation => {
 };
 
 export const stopProximityCheck = () => {
-  console.log('Stopping proximity check');
   if (intervalId) {
     clearInterval(intervalId);
   }

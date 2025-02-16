@@ -70,7 +70,6 @@ export const PermissionContext = React.createContext({});
 
 export const PermissionProvider = ({children}) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [isRequesting, toggleIsRequesting] = useState(false);
   const [requestError, setRequestError] = useState('');
   const [showPermissionModal, setShowPermissionModal] = useState(false);
   const resetPermissions = () => {
@@ -195,12 +194,10 @@ export const PermissionProvider = ({children}) => {
   const startRequestingPermission = useCallback(async () => {
     try {
       resetPermissions();
-      toggleIsRequesting(true);
       const locationEnabled = await getIsLocationEnabled();
       const locationGranted = await getLocationPermission();
       const bgGranted = await getBackgroundLocationPermission();
       const notificationGranted = await getNotificationPermission();
-      toggleIsRequesting(false);
       return (
         locationEnabled && locationGranted && bgGranted && notificationGranted
       );
@@ -211,7 +208,6 @@ export const PermissionProvider = ({children}) => {
           error ||
           'An error occurred while requesting permissions.',
       );
-      toggleIsRequesting(false);
       return false;
     }
   }, [getIsLocationEnabled, getNotificationPermission]);
@@ -239,7 +235,6 @@ export const PermissionProvider = ({children}) => {
     return {
       state: state,
       startRequestingPermission,
-      isRequesting,
       requestError,
       hasMissingPermissions,
       getNotificationPermission,
@@ -249,7 +244,6 @@ export const PermissionProvider = ({children}) => {
   }, [
     state,
     startRequestingPermission,
-    isRequesting,
     requestError,
     hasMissingPermissions,
     getNotificationPermission,

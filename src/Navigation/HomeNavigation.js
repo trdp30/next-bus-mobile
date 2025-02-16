@@ -1,8 +1,6 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React, {useContext} from 'react';
-import {ScrollView} from 'react-native';
-import ApplicationContext from '../contexts/ApplicationContext';
-import {TrackerContext} from '../contexts/TrackerContext';
+import React from 'react';
+import {ScrollView, StyleSheet} from 'react-native';
 import AddVehicle from '../Screens/AddVehicle';
 import CollectPermission from '../Screens/CollectPermission';
 import {Home} from '../Screens/Home';
@@ -13,16 +11,10 @@ import StartPublicTrip from '../Screens/StartPublicTrip';
 const Stack = createNativeStackNavigator({});
 
 export default function HomeNavigation() {
-  const {showActiveTracker} = useContext(ApplicationContext);
-  const {isTrackerActive} = useContext(TrackerContext);
-
   return (
     <ScrollView
       contentContainerStyle={{
-        display: 'flex',
-        flex: 1,
-        flexDirection: 'column',
-        marginBottom: showActiveTracker && isTrackerActive ? 100 : 'auto',
+        ...styles.contentContainer,
       }}>
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="Dashboard" component={Home} />
@@ -35,3 +27,11 @@ export default function HomeNavigation() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  contentContainer: {
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
+  },
+});

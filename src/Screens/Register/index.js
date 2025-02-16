@@ -49,8 +49,6 @@ export default function Register() {
       handleSignInWithCustomToken(result.data.customToken);
     } else if (result.isError) {
       catchError(result.error);
-      console.log('register user error', result.error);
-      // Todo: Handle the error format
     }
   }, [result, handleSignInWithCustomToken]);
 
