@@ -1,13 +1,19 @@
 import * as Sentry from '@sentry/react-native';
-import {makePutRequest} from './axiosHelper';
+import {makeGetRequest, makePutRequest} from './axiosHelper';
 import {mergeTrackerDataToBeStored} from './commonHelpers';
 import {stopForegroundService} from './foregroundService';
-import {formatLocation, getCurrentPosition} from './locationHelpers';
+import {
+  checkProximityWithLoop,
+  formatLocation,
+  getCurrentPosition,
+} from './locationHelpers';
 import {
   localStorageGetItem,
   localStorageSetItem,
   TRACKER_DETAILS,
 } from './storageHelper';
+
+let destination = null;
 
 export const detectAndPostCurrentLocation = async () => {
   try {
@@ -30,16 +36,33 @@ export const detectAndPostCurrentLocation = async () => {
           TRACKER_DETAILS,
           mergeTrackerDataToBeStored({response, tracker: currentTracker}),
         );
+        if (!destination) {
+          destination = await makeGetRequest(
+            `/place/${currentTracker?.destination}`,
+          );
+        }
+        const result = await checkProximityWithLoop(destination?.location);
+        if (result && currentTracker?._id) {
+          await makePutRequest(`/tracker/${currentTracker?._id}`, {
+            active: false,
+          });
+          destination = null;
+          return stopForegroundService();
+        }
         if (!response?.active) {
+          destination = null;
           return stopForegroundService();
         }
       } else {
+        destination = null;
         return stopForegroundService();
       }
     } else {
+      destination = null;
       return stopForegroundService();
     }
   } catch (error) {
+    destination = null;
     console.error('Error in detectAndPostCurrentLocation:', error);
     Sentry.captureException(error);
   }

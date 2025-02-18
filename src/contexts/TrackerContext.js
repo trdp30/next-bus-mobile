@@ -119,22 +119,6 @@ const TrackerProvider = ({children}) => {
     [updateTracker, currentTracker],
   );
 
-  // const startCheckingProximity = useCallback(
-  //   async targetLocation => {
-  //     try {
-  //       const result = await startProximityCheck(targetLocation);
-  //       if (result) {
-  //         handleUpdateTrackerToInactive();
-  //       }
-  //       // where the result is true we have to make the tracker inactive
-  //     } catch (error) {
-  //       console.log('Error in startCheckingProximity:', error);
-  //       setShowPermissionModal(true);
-  //     }
-  //   },
-  //   [handleUpdateTrackerToInactive, setShowPermissionModal],
-  // );
-
   const toggleTrackerNotification = useCallback(
     show => {
       if (show) {
@@ -218,7 +202,6 @@ const TrackerProvider = ({children}) => {
       toggleTrackerNotification(true);
     } else {
       toggleTrackerNotification(false);
-      // stopProximityCheck();
       removeLocalStorageItem(TRACKER_DETAILS);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

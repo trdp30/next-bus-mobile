@@ -31,13 +31,13 @@ const TrackerOptions = () => {
     {
       date: getIsoGetStartOfDay(),
       destination: map(
-        [...selectedPlaces, currentTracker?.destination],
+        [...selectedPlaces, {_id: currentTracker?.destination}],
         p => p?._id,
       ),
       active: true,
     },
     {
-      skip: !currentTracker?.destination?._id,
+      skip: !currentTracker?.destination,
       pollingInterval: 60000 * 10,
     },
   );

@@ -17,7 +17,8 @@ export function Home() {
   const {isTrackerActive, tripType, lastActiveTracker} =
     useContext(TrackerContext);
   const isFocused = useIsFocused();
-  const {setShowActiveTracker} = useContext(ApplicationContext);
+  const {setShowActiveTracker, showActiveTracker} =
+    useContext(ApplicationContext);
 
   useEffect(() => {
     if (isFocused && isTrackerActive) {
@@ -39,7 +40,11 @@ export function Home() {
   };
 
   return (
-    <Box className="flex flex-1">
+    <Box
+      className={classNames(
+        'flex flex-1',
+        showActiveTracker && 'margin-bottom-[100px]',
+      )}>
       <Box
         className={classNames(
           'absolute h-2/6 w-full top-0 rounded-b-[50%] shadow-md',

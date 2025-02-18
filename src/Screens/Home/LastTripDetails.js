@@ -20,24 +20,27 @@ export const LastTripDetails = () => {
 
   const {data: vehicle} = useGetVehicleIdByIdQuery(lastActiveTracker?.vehicle);
 
-  const destination = useMemo(() => {
-    return placeData?.find(
-      place => place._id === lastActiveTracker?.destination,
-    );
-  }, [placeData, lastActiveTracker?.destination]);
-
-  const startedFrom = useMemo(() => {
-    return placeData?.find(
-      place => place._id === lastActiveTracker?.started_from,
-    );
-  }, [placeData, lastActiveTracker?.started_from]);
+  const addresses = useMemo(() => {
+    return {
+      destination: placeData?.find(
+        place => place._id === lastActiveTracker?.destination,
+      ),
+      startedFrom: placeData?.find(
+        place => place._id === lastActiveTracker?.started_from,
+      ),
+    };
+  }, [
+    placeData,
+    lastActiveTracker?.destination,
+    lastActiveTracker?.started_from,
+  ]);
 
   if (lastActiveTracker?._id && !lastActiveTracker?.active) {
     return (
       <Box className="py-2 gap-y-4">
         <Text className="text-xl font-medium text-center">Last trip:</Text>
         <Text className="text-center">
-          {destination?.name} - to - {startedFrom?.name}
+          {addresses?.destination?.name} - to - {addresses?.startedFrom?.name}
         </Text>
         <Box>
           <Text className="text-center">{vehicle?.name}</Text>
