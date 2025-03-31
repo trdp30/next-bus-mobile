@@ -1,5 +1,6 @@
 import {useGetPlaceIdByIdQuery} from '@/src/store/services/placeApi';
 import {catchError} from '@/src/utils/catchError';
+import {parseDateTime} from '@/src/utils/dateHelpers';
 import classNames from 'classnames';
 import {find, get} from 'lodash';
 import React, {useMemo} from 'react';
@@ -60,20 +61,29 @@ const VehicleListItem = ({
   return (
     <Box
       key={tracker?._id}
-      className="flex-row items-center px-4 justify-between">
+      className="flex flex-1 flex-row items-center px-4 justify-between">
       <Box>
-        <Text className="font-bold">{vehicle?.name}</Text>
-        <Text className="text-xs font-bold">Destination:</Text>
-        <Text className="text-sm">{destination?.name}</Text>
+        <Text className="text-sm font-bold">{vehicle?.name}</Text>
+        <Text className="text-sm font-bold">Destination:</Text>
+        <Text className="text-sm font-bold">Status:</Text>
+        {/* <Text className="text-sm">{destination?.name}</Text> */}
+        <Text className="text-sm font-bold">Last updated at:</Text>
       </Box>
       <Box>
         <Text>{vehicle?.registration_number}</Text>
+        <Text className="text-sm">{destination?.name}</Text>
         <Text
           className={classNames(
             get(trackerStatus, status)?.color,
             'font-bold text-sm',
           )}>
           {status}
+        </Text>
+
+        <Text className="text-sm">
+          {parseDateTime(tracker?.updatedAt)
+            ? parseDateTime(tracker?.updatedAt).toFormat('hh:mm:ss a')
+            : '--'}
         </Text>
       </Box>
       <Box className="flex-row items-center gap-x-4">
