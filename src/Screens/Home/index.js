@@ -1,5 +1,4 @@
 import {Box} from '@/src/components/ui/box';
-import {Button, ButtonText} from '@/src/components/ui/button';
 import {Pressable} from '@/src/components/ui/pressable';
 import {Text} from '@/src/components/ui/text';
 import ApplicationContext from '@/src/contexts/ApplicationContext';
@@ -9,29 +8,26 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 import classNames from 'classnames';
 import React, {useContext, useEffect} from 'react';
 import {useColorScheme} from 'react-native';
+import {LastTripDetails} from './LastTripDetails';
 
 export function Home() {
   const isDarkMode = useColorScheme() === 'dark';
   const {user} = useContext(AuthContext);
   const navigation = useNavigation();
-  const {
-    isTrackerActive,
-    tripType,
-    handleStartReverseTrip,
-    lastActiveTracker,
-    createTrackerRequest,
-  } = useContext(TrackerContext);
+  const {isTrackerActive, tripType, lastActiveTracker} =
+    useContext(TrackerContext);
   const isFocused = useIsFocused();
-  const {setShowActiveTracker} = useContext(ApplicationContext);
+  const {setShowActiveTracker, showActiveTracker} =
+    useContext(ApplicationContext);
 
   useEffect(() => {
-    if (isFocused) {
+    if (isFocused && isTrackerActive) {
       setShowActiveTracker(true);
     }
     return () => {
       setShowActiveTracker(false);
     };
-  }, [isFocused, setShowActiveTracker]);
+  }, [isFocused, setShowActiveTracker, isTrackerActive]);
 
   const handleStartTrip = () => {
     navigation.navigate('SelectTripType');
@@ -44,7 +40,11 @@ export function Home() {
   };
 
   return (
-    <Box className="flex flex-1">
+    <Box
+      className={classNames(
+        'flex flex-1',
+        showActiveTracker && 'margin-bottom-[100px]',
+      )}>
       <Box
         className={classNames(
           'absolute h-2/6 w-full top-0 rounded-b-[50%] shadow-md',
@@ -73,29 +73,7 @@ export function Home() {
                 </Text>
               )}
             </Box>
-            <Box>
-              {lastActiveTracker?._id && !lastActiveTracker?.active ? (
-                <Box className="py-2 gap-y-4">
-                  <Text className="text-xl font-medium text-center">
-                    Last trip:
-                  </Text>
-                  <Text className="text-center">
-                    {lastActiveTracker?.destination?.name} - to -{' '}
-                    {lastActiveTracker?.started_from?.name}
-                  </Text>
-                  <Text className="text-center">
-                    {lastActiveTracker?.vehicle?.name}
-                  </Text>
-                  <Button
-                    onPress={() => handleStartReverseTrip(lastActiveTracker)}
-                    disabled={createTrackerRequest.isLoading}>
-                    <ButtonText>Start Reverse Trip</ButtonText>
-                  </Button>
-                </Box>
-              ) : (
-                <></>
-              )}
-            </Box>
+            <LastTripDetails />
           </Box>
           {/* <Pressable className="shadow-sm bg-teal-200 rounded-sm w-full">
             <Text className="text-3xl font-bold text-teal-700 py-4 text-center">

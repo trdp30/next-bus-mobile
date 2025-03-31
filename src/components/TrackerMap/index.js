@@ -5,15 +5,14 @@
  * @format
  */
 
-import {MonitoringTrackerContext} from '@/src/contexts/MonitoringTrackerContext';
 import {formatLocation, getCurrentPosition} from '@/src/utils/locationHelpers';
-import {map} from 'lodash';
-import React, {Fragment, memo, useContext, useEffect, useState} from 'react';
+import React, {memo, useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import TravelerImage from '../../assets/traveler_xs.png';
 import {Box} from '../ui/box';
 import {Text} from '../ui/text';
+import {ObservingVehicleMarker} from './ObservingVehicleMarker';
 
 /*
   Internet connection is required to load the map.
@@ -22,7 +21,6 @@ import {Text} from '../ui/text';
 
 const TrackerMap = memo(({currentTracker}) => {
   const [myLocation, setMyLocation] = useState(null);
-  const {monitoringTrackerLocations} = useContext(MonitoringTrackerContext);
 
   const handleOnUserLocationChange = event => {
     setMyLocation(formatLocation(event?.nativeEvent?.coordinate));
@@ -63,25 +61,7 @@ const TrackerMap = memo(({currentTracker}) => {
               longitudeDelta: 0,
             }}
             provider={PROVIDER_GOOGLE}>
-            {map(monitoringTrackerLocations, monitoringTracker => (
-              <Fragment key={monitoringTracker?._id}>
-                {monitoringTracker?.location?.latitude &&
-                monitoringTracker?.location?.longitude ? (
-                  <Marker
-                    key={monitoringTracker?._id}
-                    coordinate={{
-                      latitude: monitoringTracker?.location?.latitude,
-                      longitude: monitoringTracker?.location?.longitude,
-                    }}
-                    title={`${monitoringTracker?.vehicle?.name}, ${monitoringTracker?.vehicle?.registration_number}`}
-                    image={TravelerImage}
-                    rotation={monitoringTracker?.location?.heading}
-                  />
-                ) : (
-                  <></>
-                )}
-              </Fragment>
-            ))}
+            <ObservingVehicleMarker />
             {myLocation?.latitude && myLocation?.longitude ? (
               <Marker
                 coordinate={{

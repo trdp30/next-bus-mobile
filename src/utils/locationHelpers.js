@@ -76,12 +76,26 @@ export const isWithinRadius = async targetLocation => {
 
 let intervalId;
 
+export const checkProximityWithLoop = async targetLocation => {
+  try {
+    console.log('Checking proximity...');
+    if (targetLocation) {
+      const isNearby = await isWithinRadius(targetLocation);
+      if (isNearby) {
+        return true;
+      }
+    } else {
+      throw Error('Target location is not provided');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const startProximityCheck = targetLocation => {
   return new Promise((resolve, reject) => {
-    console.log('Starting proximity check');
     const checkProximity = async () => {
       try {
-        console.log('Checking proximity');
         if (targetLocation) {
           const isNearby = await isWithinRadius(targetLocation);
           if (isNearby) {
@@ -102,7 +116,6 @@ export const startProximityCheck = targetLocation => {
 };
 
 export const stopProximityCheck = () => {
-  console.log('Stopping proximity check');
   if (intervalId) {
     clearInterval(intervalId);
   }

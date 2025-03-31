@@ -48,7 +48,7 @@ export const Dropdown = ({
           <Pressable onPress={() => onSelectedChange('')}>
             <Box className="py-8">
               {isLoading && <Text>Loading</Text>}
-              {!isLoading && !options.length ? (
+              {!isLoading && !options?.length ? (
                 <>{emptyOptionContent}</>
               ) : (
                 <></>

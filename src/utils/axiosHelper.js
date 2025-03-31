@@ -23,3 +23,18 @@ export async function makePutRequest(url, data) {
     Sentry.captureException(error);
   }
 }
+
+export async function makeGetRequest(url, data) {
+  try {
+    const user = firebase.auth()?.currentUser;
+    const token = user ? await user?.getIdToken() : null;
+    axiosInstance.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error) {
+    /*
+      Todo: Handle the error, if possible have the error message to the user and ask to take some action
+    */
+    Sentry.captureException(error);
+  }
+}
